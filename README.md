@@ -1,5 +1,5 @@
 # jurassiclab2000-pixel.github.io
 
-## app-adx.txt
+## app-ads.txt
 * [app-adx.txt](https://jurassiclab2000-pixel.github.io/app-ads.txt)
 
