@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpsMon — User Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d0f14;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #0d0f14;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 24px 24px 20px;
+      text-align: center;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .logo-text { font-size: 24px; font-weight: 700; color: #fff; }
+    .logo-text span { color: #3b9eff; }
+    header p {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 60px 24px 48px;
+      background: linear-gradient(180deg, #111827 0%, #0d0f14 100%);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .hero h1 span { color: #3b9eff; }
+    .hero p {
+      color: #94a3b8;
+      font-size: 16px;
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(59,158,255,0.1);
+      border: 1px solid rgba(59,158,255,0.25);
+      color: #3b9eff;
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* ── Section ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 56px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    section:last-of-type { border-bottom: none; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #3b9eff;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .section-desc {
+      color: #94a3b8;
+      font-size: 15px;
+      max-width: 560px;
+      margin-bottom: 36px;
+    }
+
+    /* ── Feature grid (dashboard overview) ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .feature-card {
+      background: #161b25;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 18px 16px;
+    }
+    .feature-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .feature-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .feature-card p {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    /* ── Step layout (screenshot + text side by side) ── */
+    .step {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-bottom: 64px;
+    }
+    .step:last-child { margin-bottom: 0; }
+    .step.reverse { direction: rtl; }
+    .step.reverse > * { direction: ltr; }
+
+    .step-phone {
+      display: flex;
+      justify-content: center;
+    }
+    .phone-frame {
+      width: 100%;
+      max-width: 260px;
+      background: #1c1f2a;
+      border-radius: 36px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      padding: 12px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+    .phone-frame img {
+      width: 100%;
+      border-radius: 26px;
+      display: block;
+      object-fit: cover;
+      object-position: top;
+      /* Show top 65% of screenshot */
+      max-height: 460px;
+    }
+
+    .step-content {}
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px; height: 30px;
+      background: rgba(59,158,255,0.15);
+      border: 1px solid rgba(59,158,255,0.3);
+      color: #3b9eff;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 50%;
+      margin-bottom: 12px;
+    }
+    .step-content h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .step-content p {
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .tip {
+      background: rgba(59,158,255,0.07);
+      border-left: 3px solid #3b9eff;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #93c5fd;
+    }
+    .tip strong { color: #bfdbfe; }
+
+    /* ── Privacy strip ── */
+    .privacy-strip {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .privacy-strip .icon { font-size: 28px; flex-shrink: 0; }
+    .privacy-strip h3 { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+    .privacy-strip p { font-size: 13px; color: #64748b; line-height: 1.6; }
+    .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .pill {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      color: #334155;
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    footer a { color: #3b9eff; text-decoration: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .step, .step.reverse {
+        grid-template-columns: 1fr;
+        direction: ltr;
+      }
+      .step.reverse .step-phone { order: -1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="28" height="28" rx="8" fill="#1a2035"/>
+      <path d="M4 14 L8 10 L12 14 L16 9 L20 13 L24 11" stroke="#3b9eff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="logo-text">Ops<span>Mon</span></span>
+  </div>
+  <p>DevOps Service Monitor</p>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>Get started with <span>OpsMon</span></h1>
+  <p>A lightweight, privacy-first tool to monitor your servers and services — entirely on your device.</p>
+  <div class="badge-row">
+    <span class="badge">🔒 No account required</span>
+    <span class="badge">☁️ No cloud</span>
+    <span class="badge">📡 No agent</span>
+    <span class="badge">🛡 No tracking</span>
+  </div>
+</div>
+
+<!-- Overview -->
+<section>
+  <div class="section-label">Overview</div>
+  <h2 class="section-title">What can you monitor?</h2>
+  <p class="section-desc">OpsMon supports four types of monitors. Each runs locally on your device with no backend required.</p>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>TLS / HTTPS</h3>
+      <p>Track SSL/TLS certificate expiry. Stay ahead before certificates expire.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📡</div>
+      <h3>TCP Port</h3>
+      <p>Check host reachability. Know immediately when a service goes down.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏱</div>
+      <h3>Latency</h3>
+      <p>Measure response time. Set your own warning threshold to catch slowdowns early.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3>HTTP Status</h3>
+      <p>Monitor endpoints for non-2xx responses. Follows redirects automatically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Step 1: Dashboard -->
+<section>
+  <div class="section-label">Step 1</div>
+  <h2 class="section-title">The Dashboard</h2>
+  <p class="section-desc">When you open OpsMon, you'll see the main dashboard — a summary of all your monitor types with live counts.</p>
+
+  <div class="step">
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-main.jpeg" alt="OpsMon main dashboard" />
+      </div>
+    </div>
+    <div class="step-content">
+      <div class="step-num">1</div>
+      <h3>At-a-glance status</h3>
+      <p>The dashboard shows each monitor category — TLS, TCP, Latency, and HTTP — with a count of how many are being monitored and how many have triggered an alert.</p>
+      <p>Color-coded status indicators (🟢 green, 🟡 amber, 🔴 red) let you immediately spot any issues across your infrastructure.</p>
+      <div class="tip"><strong>Tip:</strong> Tap any category card to drill into individual monitors for that type.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 2: TLS -->
+<section>
+  <div class="section-label">Step 2</div>
+  <h2 class="section-title">TLS Certificate Monitoring</h2>
+  <p class="section-desc">Track the expiry of your SSL/TLS certificates and get warned before they cause an outage.</p>
+
+  <div class="step reverse">
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-tls-expiring.jpeg" alt="TLS certificate expiring soon" />
+      </div>
+    </div>
+    <div class="step-content">
+      <div class="step-num">2</div>
+      <h3>Certificate details & expiry</h3>
+      <p>Tap into any TLS monitor to see the full certificate details — valid period, days remaining, issuer, Subject CN, TLS version, and DNS resolution info.</p>
+      <p>An <strong style="color:#f59e0b;">Expiring soon</strong> status (amber) warns you before the certificate actually expires, giving you time to renew.</p>
+      <div class="tip"><strong>Tip:</strong> Add all your production domains here so you never get caught by an unexpected certificate expiry.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 3: TCP -->
+<section>
+  <div class="section-label">Step 3</div>
+  <h2 class="section-title">TCP Port Availability</h2>
+  <p class="section-desc">Check if a host and port are reachable. Useful for verifying that your services are actually accepting connections.</p>
+
+  <div class="step">
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-tcp-details.jpeg" alt="TCP port details" />
+      </div>
+    </div>
+    <div class="step-content">
+      <div class="step-num">3</div>
+      <h3>Connection test results</h3>
+      <p>OpsMon runs 10 connection attempts and shows you the result of each one — green for success, red for failure — along with P50, P90, and average latency.</p>
+      <p>Actionable suggestions at the bottom tell you what the results mean, so you don't need to interpret the numbers yourself.</p>
+      <div class="tip"><strong>Tip:</strong> Use this to monitor non-HTTP services like databases, SSH, or custom TCP ports.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 4: HTTP -->
+<section>
+  <div class="section-label">Step 4</div>
+  <h2 class="section-title">HTTP Endpoint Monitoring</h2>
+  <p class="section-desc">Monitor your HTTP endpoints for non-2xx status codes and detailed response time breakdowns.</p>
+
+  <div class="step reverse">
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-http-details.jpeg" alt="HTTP deep diagnostic" />
+      </div>
+    </div>
+    <div class="step-content">
+      <div class="step-num">4</div>
+      <h3>Deep diagnostic view</h3>
+      <p>The deep diagnostic view shows P50, P90, average, fastest, slowest, and jitter response times across 10 requests — giving you a clear picture of your endpoint's health.</p>
+      <p>Status code breakdown (2XX, 4XX, 5XX) is shown with a progress bar, so you can quickly see the success rate.</p>
+      <div class="tip"><strong>Tip:</strong> A high jitter value may indicate network instability even when average latency looks fine.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 5: Latency -->
+<section>
+  <div class="section-label">Step 5</div>
+  <h2 class="section-title">Latency Diagnostic</h2>
+  <p class="section-desc">Measure and break down response times across all connection phases — DNS, TCP, TLS, and TTFB.</p>
+
+  <div class="step">
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-latency-details.jpeg" alt="Latency diagnostic breakdown" />
+      </div>
+    </div>
+    <div class="step-content">
+      <div class="step-num">5</div>
+      <h3>Phase-by-phase breakdown</h3>
+      <p>The latency diagnostic breaks down each request into its component phases — DNS resolution, TCP handshake, TLS negotiation, and Time to First Byte (TTFB) — visualized as a stacked bar chart.</p>
+      <p>This makes it easy to pinpoint exactly where slowdowns are happening, whether it's DNS, your server, or the network.</p>
+      <div class="tip"><strong>Tip:</strong> If DNS time is consistently high, consider switching to a faster DNS resolver on your device.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Privacy -->
+<section>
+  <div class="section-label">Privacy</div>
+  <h2 class="section-title">100% local. Zero data shared.</h2>
+  <p class="section-desc">OpsMon is built with privacy at its core. Everything runs on your device.</p>
+  <div class="privacy-strip">
+    <div class="icon">🛡</div>
+    <div>
+      <h3>What OpsMon does NOT do</h3>
+      <p>OpsMon does not collect or store any of your monitoring data — your servers, endpoints, and credentials never leave your device. Ad serving is provided by Google AdMob, which may collect device information for advertising purposes in accordance with Google's privacy policy.</p>
+      <div class="pill-row">
+        <span class="pill">No account</span>
+        <span class="pill">No cloud storage</span>
+        <span class="pill">No analytics</span>
+        <span class="pill">No agent on server</span>
+        <span class="pill">No subscription</span>
+        <span class="pill">No data leaving your device</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2026 JurassicLab · <a href="opsmon_privacy_policy.html">Privacy Policy</a></p>
+</footer>
+
+</body>
+</html>
