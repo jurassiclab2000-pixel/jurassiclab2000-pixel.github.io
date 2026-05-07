@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpsMon — Solutions & Use Cases</title>
+  <meta name="description" content="Discover real-world monitoring solutions using OpsMon. Monitor SMTP ports, API status codes, webmail latency, and TLS certificate expiry safely." />
+  <style>
+    /* Reset & Base Styles */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d0f14; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
+    
+    /* Navigation & Header */
+    header { background: #0d0f14; border-bottom: 1px solid rgba(255,255,255,0.07); padding: 24px; text-align: center; position: relative; }
+    .lang-switcher { position: absolute; top: 24px; right: 24px; z-index: 100; }
+    .lang-switcher select { background: #1a2035; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer; }
+    .logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .logo-text { font-size: 24px; font-weight: 700; color: #fff; text-decoration: none; }
+    .logo-text span { color: #3b9eff; }
+
+    /* Hero / Intro Section */
+    .hero { max-width: 900px; margin: 0 auto; padding: 60px 24px 40px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .hero-title { font-size: clamp(28px, 5vw, 42px); font-weight: 800; color: #fff; margin-bottom: 16px; }
+    .hero-desc { font-size: 17px; color: #94a3b8; max-width: 700px; margin: 0 auto 40px; }
+    
+    /* Section & Grid Styles */
+    section { max-width: 900px; margin: 0 auto; padding: 56px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3b9eff; margin-bottom: 8px; }
+    .section-title { font-size: clamp(22px, 4vw, 30px); font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .section-desc { color: #94a3b8; font-size: 15px; max-width: 600px; margin-bottom: 36px; }
+    
+    /* Responsive Step Layout */
+    .step { display: flex; flex-direction: row; gap: 48px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .step.reverse { flex-direction: row-reverse; }
+    .step-phone { flex: 1; max-width: 280px; display: flex; justify-content: center; }
+    .step-content { flex: 1.2; }
+    
+    /* Phone Frame Container */
+    .phone-frame { width: 100%; background: #1c1f2a; border-radius: 36px; border: 1.5px solid rgba(255,255,255,0.1); padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .phone-frame img { width: 100%; border-radius: 26px; display: block; height: auto; }
+    
+    /* UI Callouts */
+    .tip { background: rgba(59,158,255,0.07); border-left: 3px solid #3b9eff; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; color: #93c5fd; margin-top: 20px; }
+    
+    /* Footer */
+    footer { text-align: center; padding: 48px 24px; color: #64748b; font-size: 13px; }
+    footer a { color: #3b9eff; text-decoration: none; margin: 0 10px; transition: color 0.2s; }
+    footer a:hover { color: #60a5fa; }
+
+    /* Mobile Adaptations */
+    @media (max-width: 768px) {
+      .step, .step.reverse { flex-direction: column; text-align: center; gap: 32px; }
+      .step-phone { max-width: 260px; }
+      .lang-switcher { top: 16px; right: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="lang-switcher">
+    <select id="langSelect" onchange="switchLanguage(this.value)">
+      <option value="en">English</option>
+      <option value="zh_TW">繁體中文</option>
+    </select>
+  </div>
+  <div class="logo">
+    <a href="opsmon_guide.html" class="logo-text">Ops<span>Mon</span> Solutions</a>
+  </div>
+</header>
+
+<div class="hero">
+  <h1 class="hero-title" data-i18n="hero_title">OpsMon Use Cases & Solutions</h1>
+  <p class="hero-desc" data-i18n="hero_desc">Explore how to set up professional, local-first monitoring scenarios for mail servers, custom APIs, network latency, and SSL security.</p>
+  
+  <div class="step" style="justify-content: center; margin-top: 40px;">
+    <div class="step-phone" style="max-width: 300px;">
+      <div class="phone-frame">
+        <img src="img/en-main-case.jpeg" alt="OpsMon Main Dashboard" />
+      </div>
+    </div>
+    <div class="step-content" style="text-align: left; max-width: 450px;">
+      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="hero_sub">All Alerts at a Glance</h3>
+      <p style="color:#94a3b8; font-size:15px;" data-i18n="hero_p1">Our main dashboard categorizes monitors into TLS, TCP, Latency, and HTTP Status. Easily track your monitoing scope and see the exact number of active alerts without searching through endless logs.</p>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="section-label" data-i18n="label_a">Scenario A</div>
+  <h2 class="section-title" data-i18n="a_title">Mail Server Availability (TCP Port)</h2>
+  <p class="section-desc" data-i18n="a_desc">Mail services rely heavily on specific network ports. If a firewall rule changes or the server crashes, mail flow ceases immediately.</p>
+  
+  <div class="step">
+    <div class="step-phone">
+      <div class="phone-frame"><img src="img/en-tcp-details-case.jpeg" alt="TCP Port Monitoring on Port 465" /></div>
+    </div>
+    <div class="step-content">
+      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="a_sub">Port Availability Check</h3>
+      <p data-i18n="a_p1">Using Gmail's SMTP server (<code>smtp.gmail.com:465</code>) as an example, OpsMon directly runs connection tests to verify port availability. You'll get clear confirmation when the port is "Open and reachable".</p>
+      <div class="tip">
+        <strong data-i18n="rec_config">Recommended Configuration:</strong><br>
+        • TCP Monitor: Host <code>smtp.gmail.com</code> / Port <code>465</code> (SMTP) or <code>993</code> (IMAP).
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label" data-i18n="label_b">Scenario B</div>
+  <h2 class="section-title" data-i18n="b_title">Custom API Health Check (HTTP Status)</h2>
+  <p class="section-desc" data-i18n="b_desc">Ensure your critical web applications and backend APIs are serving requests properly with HTTP status code monitoring.</p>
+  
+  <div class="step reverse">
+    <div class="step-phone">
+      <div class="phone-frame"><img src="img/en-http-details-case.jpeg" alt="HTTP Status Code Check" /></div>
+    </div>
+    <div class="step-content">
+      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="b_sub">Custom GET Request Monitoring</h3>
+      <p data-i18n="b_p1">OpsMon supports customized HTTP GET endpoints (e.g. testing queries). You can monitor request success rates, track average response times, and verify if the host persistently returns healthy HTTP 2XX responses.</p>
+      <div class="tip">
+        <strong data-i18n="rec_config">Recommended Configuration:</strong><br>
+        • HTTP Status Monitor: Set up your target API URL and monitor for successful status code ranges.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label" data-i18n="label_c">Scenario C</div>
+  <h2 class="section-title" data-i18n="c_title">Webmail Performance Diagnostics (Latency)</h2>
+  <p class="section-desc" data-i18n="c_desc">When essential web portals, like corporate Webmail, run slow, users experience immediate productivity blockages.</p>
+  
+  <div class="step">
+    <div class="step-phone">
+      <div class="phone-frame"><img src="img/en-latency-details-case.jpeg" alt="Latency Diagnostics for Webmail" /></div>
+    </div>
+    <div class="step-content">
+      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="c_sub">Network Timing Breakdown</h3>
+      <p data-i18n="c_p1">Using <code>https://mail.yahoo.com</code> as an example, OpsMon visualizes latency spikes and neatly dissects response times into DNS resolution, TCP handshake, TLS negotiation, and TTFB (Time to First Byte) so you can pinpoint the exact cause of slowness.</p>
+      <div class="tip">
+        <strong data-i18n="rec_config">Recommended Configuration:</strong><br>
+        • Latency Monitor: Track latency trends on vital portals and identify whether bottlenecks lie in the network or server backend.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label" data-i18n="label_d">Scenario D</div>
+  <h2 class="section-title" data-i18n="d_title">SSL/TLS Expiry Protection (TLS Check)</h2>
+  <p class="section-desc" data-i18n="d_desc">Avoid the ultimate website trust killer: unexpected SSL/TLS certificate expirations that trigger intimidating browser warnings.</p>
+  
+  <div class="step reverse">
+    <div class="step-phone">
+      <div class="phone-frame"><img src="img/en-tls-details-case.jpeg" alt="TLS Expiry Details" /></div>
+    </div>
+    <div class="step-content">
+      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="d_sub">Color-Coded Status Warnings</h3>
+      <p data-i18n="d_p1">By monitoring core domains like <code>yahoo.com</code>, OpsMon displays clear, color-coded warnings (such as orange "Expiring soon" with exact remaining days) giving you ample buffer time to renew certificates before they disrupt traffic.</p>
+      <div class="tip">
+        <strong data-i18n="rec_config">Recommended Configuration:</strong><br>
+        • TLS Monitor: Domain target URL. Setup proactive alert thresholds for remaining certificate days.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 JurassicLab · <a href="opsmon_guide.html">User Guide</a> · <a href="opsmon_privacy_policy.html">Privacy Policy</a></p>
+</footer>
+
+<script>
+const translations = {
+  "en": {
+    "hero_title": "OpsMon Use Cases & Solutions",
+    "hero_desc": "Explore how to set up professional, local-first monitoring scenarios for mail servers, custom APIs, network latency, and SSL security.",
+    "hero_sub": "All Alerts at a Glance",
+    "hero_p1": "Our main dashboard categorizes monitors into TLS, TCP, Latency, and HTTP Status. Easily track your monitoring scope and see the exact number of active alerts without searching through endless logs.",
+    
+    "label_a": "Scenario A: Mail Server Port Availability",
+    "a_title": "Is your Mail Server reachable?",
+    "a_desc": "Mail services rely heavily on specific network ports. If a firewall rule changes or the server crashes, mail flow ceases immediately.",
+    "a_sub": "Port Availability Check",
+    "a_p1": "Using Gmail's SMTP server (smtp.gmail.com:465) as an example, OpsMon directly runs connection tests to verify port availability. You'll get clear confirmation when the port is 'Open and reachable'.",
+    
+    "label_b": "Scenario B: Custom API & Web Health",
+    "b_title": "Check HTTP Status Codes",
+    "b_desc": "Ensure your critical web applications and backend APIs are serving requests properly with HTTP status code monitoring.",
+    "b_sub": "Custom GET Request Monitoring",
+    "b_p1": "OpsMon supports customized HTTP GET endpoints (e.g. testing queries). You can monitor request success rates, track average response times, and verify if the host persistently returns healthy HTTP 2XX responses.",
+    
+    "label_c": "Scenario C: Webmail Latency Diagnostics",
+    "c_title": "Track Network Response Times",
+    "c_desc": "When essential web portals, like corporate Webmail, run slow, users experience immediate productivity blockages.",
+    "c_sub": "Network Timing Breakdown",
+    "c_p1": "Using mail.yahoo.com as an example, OpsMon visualizes latency spikes and neatly dissects response times into DNS resolution, TCP handshake, TLS negotiation, and TTFB (Time to First Byte) so you can pinpoint the exact cause of slowness.",
+    
+    "label_d": "Scenario D: TLS Certificate Monitoring",
+    "d_title": "Prevent Expired SSL Certificates",
+    "d_desc": "Avoid the ultimate website trust killer: unexpected SSL/TLS certificate expirations that trigger intimidating browser warnings.",
+    "d_sub": "Color-Coded Status Warnings",
+    "d_p1": "By monitoring core domains like yahoo.com, OpsMon displays clear, color-coded warnings (such as orange 'Expiring soon' with exact remaining days) giving you ample buffer time to renew certificates before they disrupt traffic.",
+    
+    "rec_config": "Recommended Configuration:"
+  },
+  "zh_TW": {
+    "hero_title": "OpsMon 實際應用場景",
+    "hero_desc": "了解如何針對郵件伺服器、自訂 API、網路延遲與 SSL 安全性，建立專業且資料完全儲存於本地端的監控配置。",
+    "hero_sub": "警報狀態一目了然",
+    "hero_p1": "我們的主控制面板將監控項目分類為 TLS、TCP、Latency 與 HTTP Status。您可以輕鬆追蹤監控規模，並在不翻閱冗長日誌的情況下，直接掌握當下作用中的警報數量。",
+    
+    "label_a": "場景 A：郵件伺服器 Port 連通性",
+    "a_title": "您的郵件伺服器還在線嗎？",
+    "a_desc": "郵件服務極度依賴特定網路端口。一旦防火牆規則變更或服務崩潰，收發信件就會立刻中斷。",
+    "a_sub": "Port 可用性驗證",
+    "a_p1": "以 Gmail 的 SMTP 伺服器 (smtp.gmail.com:465) 為例，OpsMon 會直接進行連線測試，在端口正常回應時給出明確的「Port Open」綠色狀態，確保郵件傳輸正常。",
+    
+    "label_b": "場景 B：自訂 API 與網頁健康狀態",
+    "b_title": "檢查 HTTP 狀態碼",
+    "b_desc": "透過 HTTP 狀態碼與成功率監控，確保您關鍵的網路應用程式或後端 API 正常運作。",
+    "b_sub": "自訂 GET 請求監控",
+    "b_p1": "OpsMon 支援自訂 HTTP GET 端點（例如自訂查詢參數）。您可以監控請求成功率、平均響應時間，並驗證主機是否始終返回健康的 HTTP 2XX 狀態碼。",
+    
+    "label_c": "場景 C：Webmail 網路延遲診斷",
+    "c_title": "追蹤網路回應時間",
+    "c_desc": "當企業 Webmail 等重要服務網頁變慢時，往往會直接阻礙日常辦公與業務溝通。",
+    "c_sub": "網路耗時詳細拆解",
+    "c_p1": "以 mail.yahoo.com 為例，OpsMon 的延遲診斷工具能將回應時間精確拆解為 DNS 解析、TCP 握手、TLS 協議與 TTFB（首位元回應時間），讓您快速抓出連線變慢的底層關鍵因素。",
+    
+    "label_d": "場景 D：TLS 憑證到期監控",
+    "d_title": "避免 SSL 憑證過期警告",
+    "d_desc": "防止因忘記更新憑證，導致使用者開啟網站時被瀏覽器彈出的「不安全連線」警告畫面擋在門外。",
+    "d_sub": "直覺的狀態顏色警示",
+    "d_p1": "透過監控 yahoo.com 等主機域名，OpsMon 能在憑證即將到期時，以醒目的橘色顯示「Expiring soon」橫幅並列出精確的剩餘天數，給予您充足的時間提前更換憑證。",
+    
+    "rec_config": "推薦配置："
+  }
+};
+
+function switchLanguage(lang) {
+  localStorage.setItem('user-lang', lang);
+  document.getElementById('langSelect').value = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      el.innerHTML = translations[lang][key];
+    }
+  });
+}
+
+window.onload = () => {
+  const savedLang = localStorage.getItem('user-lang') || 'en';
+  switchLanguage(savedLang);
+};
+</script>
+</body>
+</html>
