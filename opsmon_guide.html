@@ -26,31 +26,12 @@
       line-height: 1.6;
     }
 
-    /* ── Language Switcher ── */
-    .lang-switcher {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 100;
-    }
-    .lang-switcher select {
-      background: #1a2035;
-      color: #e2e8f0;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      outline: none;
-      cursor: pointer;
-    }
-
     /* ── Header ── */
     header {
       background: #0d0f14;
       border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 24px 24px 20px;
       text-align: center;
-      position: relative;
     }
     .logo {
       display: inline-flex;
@@ -108,6 +89,7 @@
       padding: 56px 24px;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
+    section:last-of-type { border-bottom: none; }
 
     .section-label {
       font-size: 11px;
@@ -130,7 +112,7 @@
       margin-bottom: 36px;
     }
 
-    /* ── Feature grid ── */
+    /* ── Feature grid (dashboard overview) ── */
     .feature-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -159,7 +141,7 @@
       line-height: 1.5;
     }
 
-    /* ── Step layout ── */
+    /* ── Step layout (screenshot + text side by side) ── */
     .step {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -190,9 +172,11 @@
       display: block;
       object-fit: cover;
       object-position: top;
+      /* Show top 65% of screenshot */
       max-height: 460px;
     }
 
+    .step-content {}
     .step-num {
       display: inline-flex;
       align-items: center;
@@ -252,54 +236,51 @@
       color: #94a3b8;
     }
 
-    /* ── Solution CTA ── */
-    .solution-cta {
-      text-align: center;
-      padding: 64px 24px;
-      background: #0d0f14;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .btn-primary {
-      display: inline-block;
-      padding: 14px 28px;
-      background: #3b9eff;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 16px;
-      transition: transform 0.2s;
-    }
-    .btn-primary:hover { transform: translateY(-2px); }
-
     /* ── Footer ── */
     footer {
       text-align: center;
-      padding: 48px 24px;
+      padding: 32px 24px;
       color: #334155;
       font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
-    footer a { color: #3b9eff; text-decoration: none; margin: 0 10px; }
+    footer a { color: #3b9eff; text-decoration: none; }
 
+    /* ── Responsive ── */
     @media (max-width: 640px) {
-      .step, .step.reverse { grid-template-columns: 1fr; direction: ltr; }
+      .step, .step.reverse {
+        grid-template-columns: 1fr;
+        direction: ltr;
+      }
       .step.reverse .step-phone { order: -1; }
     }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "OpsMon",
+    "operatingSystem": "Android",
+    "applicationCategory": "DeveloperApplication",
+    "description": "A lightweight, privacy-first server and service monitoring tool for developers, sysadmins, and self-hosters. Monitor TLS certificates, TCP ports, HTTP endpoints, and latency — entirely on your device.",
+    "url": "https://play.google.com/store/apps/details?id=com.jurassiclab.opsmon",
+    "author": {
+      "@type": "Organization",
+      "name": "JurassicLab"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "keywords": "server monitoring, TLS monitor, TCP port check, HTTP endpoint, latency, devops, sysadmin, homelab, self-hosted, agentless, privacy"
+  }
+  </script>
 </head>
 <body>
 
+<!-- Header -->
 <header>
-  <div class="lang-switcher">
-    <select id="langSelect" onchange="switchLanguage(this.value)">
-      <option value="en">English</option>
-      <option value="zh_TW">繁體中文</option>
-      <option value="zh_CN">简体中文</option>
-      <option value="ja">日本語</option>
-      <option value="ko">한국어</option>
-      <option value="de">Deutsch</option>
-    </select>
-  </div>
   <div class="logo">
     <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="28" height="28" rx="8" fill="#1a2035"/>
@@ -307,208 +288,192 @@
     </svg>
     <span class="logo-text">Ops<span>Mon</span></span>
   </div>
-  <p data-i18n="header_sub">DevOps Service Monitor</p>
+  <p>DevOps Service Monitor</p>
 </header>
 
+<!-- Hero -->
 <div class="hero">
-  <h1 data-i18n="hero_title">Get started with <span>OpsMon</span></h1>
-  <p data-i18n="hero_desc">A lightweight, privacy-first tool to monitor your servers and services — entirely on your device.</p>
+  <h1>Get started with <span>OpsMon</span></h1>
+  <p>A lightweight, privacy-first tool to monitor your servers and services — entirely on your device.</p>
   <div class="badge-row">
-    <span class="badge">🔒 <span data-i18n="no_account">No account required</span></span>
-    <span class="badge">☁️ <span data-i18n="no_cloud">No cloud</span></span>
-    <span class="badge">📡 <span data-i18n="no_agent">No agent</span></span>
-    <span class="badge">🛡 <span data-i18n="no_tracking">No tracking</span></span>
+    <span class="badge">🔒 No account required</span>
+    <span class="badge">☁️ No cloud</span>
+    <span class="badge">📡 No agent</span>
+    <span class="badge">🛡 No tracking</span>
+  </div>
+  <div style="margin-top: 28px;">
+    <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.opsmon" target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:#3b9eff;color:#fff;font-size:15px;font-weight:600;padding:13px 24px;border-radius:12px;text-decoration:none;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M3 20.5v-17c0-.83 1-.96 1.4-.43l14 8.5a.5.5 0 0 1 0 .86l-14 8.5C3.99 21.46 3 21.33 3 20.5z"/></svg>
+      Download on Google Play
+    </a>
   </div>
 </div>
 
+<!-- Overview -->
 <section>
-  <div class="section-label" data-i18n="label_overview">Overview</div>
-  <h2 class="section-title" data-i18n="overview_title">What can you monitor?</h2>
+  <div class="section-label">Overview</div>
+  <h2 class="section-title">What can you monitor?</h2>
+  <p class="section-desc">OpsMon supports four types of monitors. Each runs locally on your device with no backend required.</p>
   <div class="feature-grid">
-    <div class="feature-card"><div class="feature-icon">🔒</div><h3 data-i18n="feat_tls_t">TLS / HTTPS</h3><p data-i18n="feat_tls_d">Track SSL/TLS certificate expiry.</p></div>
-    <div class="feature-card"><div class="feature-icon">📡</div><h3 data-i18n="feat_tcp_t">TCP Port</h3><p data-i18n="feat_tcp_d">Check host reachability.</p></div>
-    <div class="feature-card"><div class="feature-icon">⏱</div><h3 data-i18n="feat_lat_t">Latency</h3><p data-i18n="feat_lat_d">Measure response time.</p></div>
-    <div class="feature-card"><div class="feature-icon">🌐</div><h3 data-i18n="feat_http_t">HTTP Status</h3><p data-i18n="feat_http_d">Monitor status codes.</p></div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>TLS / HTTPS</h3>
+      <p>Track SSL/TLS certificate expiry. Stay ahead before certificates expire.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📡</div>
+      <h3>TCP Port</h3>
+      <p>Check host reachability. Know immediately when a service goes down.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏱</div>
+      <h3>Latency</h3>
+      <p>Measure response time. Set your own warning threshold to catch slowdowns early.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3>HTTP Status</h3>
+      <p>Monitor endpoints for non-2xx responses. Follows redirects automatically.</p>
+    </div>
   </div>
 </section>
 
+<!-- Step 1: Dashboard -->
 <section>
-  <div class="section-label" data-i18n="label_step1">Step 1</div>
-  <h2 class="section-title" data-i18n="step1_title">The Dashboard</h2>
+  <div class="section-label">Step 1</div>
+  <h2 class="section-title">The Dashboard</h2>
+  <p class="section-desc">When you open OpsMon, you'll see the main dashboard — a summary of all your monitor types with live counts.</p>
+
   <div class="step">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-main.jpeg" /></div></div>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-main.jpeg" alt="OpsMon main dashboard" />
+      </div>
+    </div>
     <div class="step-content">
       <div class="step-num">1</div>
-      <h3 data-i18n="step1_content_t">At-a-glance status</h3>
-      <p data-i18n="step1_p1">The dashboard shows each monitor category summary.</p>
+      <h3>At-a-glance status</h3>
+      <p>The dashboard shows each monitor category — TLS, TCP, Latency, and HTTP — with a count of how many are being monitored and how many have triggered an alert.</p>
+      <p>Color-coded status indicators (🟢 green, 🟡 amber, 🔴 red) let you immediately spot any issues across your infrastructure.</p>
+      <div class="tip"><strong>Tip:</strong> Tap any category card to drill into individual monitors for that type.</div>
     </div>
   </div>
 </section>
 
+<!-- Step 2: TLS -->
 <section>
-  <div class="section-label" data-i18n="label_step2">Step 2</div>
-  <h2 class="section-title" data-i18n="step2_title">TLS Certificate Monitoring</h2>
+  <div class="section-label">Step 2</div>
+  <h2 class="section-title">TLS Certificate Monitoring</h2>
+  <p class="section-desc">Track the expiry of your SSL/TLS certificates and get warned before they cause an outage.</p>
+
   <div class="step reverse">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-tls-details.jpeg" /></div></div>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-tls-expiring.jpeg" alt="TLS certificate expiring soon" />
+      </div>
+    </div>
     <div class="step-content">
       <div class="step-num">2</div>
-      <h3 data-i18n="step2_content_t">Certificate details</h3>
-      <p data-i18n="step2_p1">View valid period and days remaining.</p>
+      <h3>Certificate details & expiry</h3>
+      <p>Tap into any TLS monitor to see the full certificate details — valid period, days remaining, issuer, Subject CN, TLS version, and DNS resolution info.</p>
+      <p>An <strong style="color:#f59e0b;">Expiring soon</strong> status (amber) warns you before the certificate actually expires, giving you time to renew.</p>
+      <div class="tip"><strong>Tip:</strong> Add all your production domains here so you never get caught by an unexpected certificate expiry.</div>
     </div>
   </div>
 </section>
 
+<!-- Step 3: TCP -->
 <section>
-  <div class="section-label" data-i18n="label_step3">Step 3</div>
-  <h2 class="section-title" data-i18n="step3_title">TCP Port Availability</h2>
+  <div class="section-label">Step 3</div>
+  <h2 class="section-title">TCP Port Availability</h2>
+  <p class="section-desc">Check if a host and port are reachable. Useful for verifying that your services are actually accepting connections.</p>
+
   <div class="step">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-tcp-details.jpeg" /></div></div>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-tcp-details.jpeg" alt="TCP port details" />
+      </div>
+    </div>
     <div class="step-content">
       <div class="step-num">3</div>
-      <h3 data-i18n="step3_content_t">Connection tests</h3>
-      <p data-i18n="step3_p1">Runs 10 attempts to verify reachability.</p>
+      <h3>Connection test results</h3>
+      <p>OpsMon runs 10 connection attempts and shows you the result of each one — green for success, red for failure — along with P50, P90, and average latency.</p>
+      <p>Actionable suggestions at the bottom tell you what the results mean, so you don't need to interpret the numbers yourself.</p>
+      <div class="tip"><strong>Tip:</strong> Use this to monitor non-HTTP services like databases, SSH, or custom TCP ports.</div>
     </div>
   </div>
 </section>
 
+<!-- Step 4: HTTP -->
 <section>
-  <div class="section-label" data-i18n="label_step4">Step 4</div>
-  <h2 class="section-title" data-i18n="step4_title">HTTP Endpoint Monitoring</h2>
+  <div class="section-label">Step 4</div>
+  <h2 class="section-title">HTTP Endpoint Monitoring</h2>
+  <p class="section-desc">Monitor your HTTP endpoints for non-2xx status codes and detailed response time breakdowns.</p>
+
   <div class="step reverse">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-http-details.jpeg" /></div></div>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-http-details.jpeg" alt="HTTP deep diagnostic" />
+      </div>
+    </div>
     <div class="step-content">
       <div class="step-num">4</div>
-      <h3 data-i18n="step4_content_t">Status code breakdown</h3>
-      <p data-i18n="step4_p1">Track 2XX, 4XX, and 5XX ratios.</p>
+      <h3>Deep diagnostic view</h3>
+      <p>The deep diagnostic view shows P50, P90, average, fastest, slowest, and jitter response times across 10 requests — giving you a clear picture of your endpoint's health.</p>
+      <p>Status code breakdown (2XX, 4XX, 5XX) is shown with a progress bar, so you can quickly see the success rate.</p>
+      <div class="tip"><strong>Tip:</strong> A high jitter value may indicate network instability even when average latency looks fine.</div>
     </div>
   </div>
 </section>
 
+<!-- Step 5: Latency -->
 <section>
-  <div class="section-label" data-i18n="label_step5">Step 5</div>
-  <h2 class="section-title" data-i18n="step5_title">Latency Diagnostic</h2>
+  <div class="section-label">Step 5</div>
+  <h2 class="section-title">Latency Diagnostic</h2>
+  <p class="section-desc">Measure and break down response times across all connection phases — DNS, TCP, TLS, and TTFB.</p>
+
   <div class="step">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-latency-details.jpeg" /></div></div>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-latency-details.jpeg" alt="Latency diagnostic breakdown" />
+      </div>
+    </div>
     <div class="step-content">
       <div class="step-num">5</div>
-      <h3 data-i18n="step5_content_t">Timing breakdown</h3>
-      <p data-i18n="step5_p1">Analyze DNS, TCP, TLS, and TTFB phases.</p>
+      <h3>Phase-by-phase breakdown</h3>
+      <p>The latency diagnostic breaks down each request into its component phases — DNS resolution, TCP handshake, TLS negotiation, and Time to First Byte (TTFB) — visualized as a stacked bar chart.</p>
+      <p>This makes it easy to pinpoint exactly where slowdowns are happening, whether it's DNS, your server, or the network.</p>
+      <div class="tip"><strong>Tip:</strong> If DNS time is consistently high, consider switching to a faster DNS resolver on your device.</div>
     </div>
   </div>
 </section>
 
-<div class="solution-cta">
-  <a href="opsmon_solutions.html" class="btn-primary" data-i18n="view_solutions">
-    View Real-World Solutions Guide →
-  </a>
-</div>
+<!-- Privacy -->
+<section>
+  <div class="section-label">Privacy</div>
+  <h2 class="section-title">100% local. Zero data shared.</h2>
+  <p class="section-desc">OpsMon is built with privacy at its core. Everything runs on your device.</p>
+  <div class="privacy-strip">
+    <div class="icon">🛡</div>
+    <div>
+      <h3>What OpsMon does NOT do</h3>
+      <p>OpsMon does not collect or store any of your monitoring data — your servers, endpoints, and credentials never leave your device. Ad serving is provided by Google AdMob, which may collect device information for advertising purposes in accordance with Google's privacy policy.</p>
+      <div class="pill-row">
+        <span class="pill">No account</span>
+        <span class="pill">No cloud storage</span>
+        <span class="pill">No analytics</span>
+        <span class="pill">No agent on server</span>
+        <span class="pill">No subscription</span>
+        <span class="pill">No data leaving your device</span>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- Footer -->
 <footer>
-  <p>© 2026 JurassicLab · <a href="opsmon_privacy_policy.html" data-i18n="footer_privacy">Privacy Policy</a></p>
+  <p>© 2026 JurassicLab · <a href="opsmon_privacy_policy.html">Privacy Policy</a> · <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.opsmon" target="_blank">Download on Google Play</a></p>
 </footer>
 
-<script>
-const translations = {
-  "en": {
-    "header_sub": "DevOps Service Monitor",
-    "hero_title": "Get started with <span>OpsMon</span>",
-    "hero_desc": "A lightweight, privacy-first tool to monitor your servers and services — entirely on your device.",
-    "no_account": "No account required", "no_cloud": "No cloud", "no_agent": "No agent", "no_tracking": "No tracking",
-    "label_overview": "Overview", "overview_title": "What can you monitor?",
-    "feat_tls_t": "TLS / HTTPS", "feat_tls_d": "Track SSL/TLS certificate expiry.",
-    "feat_tcp_t": "TCP Port", "feat_tcp_d": "Check host reachability.",
-    "feat_lat_t": "Latency", "feat_lat_d": "Measure response time.",
-    "feat_http_t": "HTTP Status", "feat_http_d": "Monitor status codes.",
-    "label_step1": "Step 1", "step1_title": "The Dashboard", "step1_content_t": "At-a-glance status", "step1_p1": "The dashboard shows each monitor category summary.",
-    "label_step2": "Step 2", "step2_title": "TLS Certificate Monitoring", "step2_content_t": "Certificate details", "step2_p1": "View valid period and days remaining.",
-    "label_step3": "Step 3", "step3_title": "TCP Port Availability", "step3_content_t": "Connection tests", "step3_p1": "Runs 10 attempts to verify reachability.",
-    "label_step4": "Step 4", "step4_title": "HTTP Endpoint Monitoring", "step4_content_t": "Status code breakdown", "step4_p1": "Track 2XX, 4XX, and 5XX ratios.",
-    "label_step5": "Step 5", "step5_title": "Latency Diagnostic", "step5_content_t": "Timing breakdown", "step5_p1": "Analyze DNS, TCP, TLS, and TTFB phases.",
-    "view_solutions": "Looking for real-world examples? View our Solutions Guide →",
-    "footer_privacy": "Privacy Policy"
-  },
-  "zh_TW": {
-    "header_sub": "DevOps 服務監控工具",
-    "hero_title": "開始使用 <span>OpsMon</span>",
-    "hero_desc": "輕量、隱私優先的伺服器與服務監控工具 — 完全在您的裝置上運行。",
-    "no_account": "免註冊帳號", "no_cloud": "不經雲端", "no_agent": "無需代理程式", "no_tracking": "無追蹤行為",
-    "label_overview": "概覽", "overview_title": "您可以監控什麼？",
-    "feat_tls_t": "TLS / HTTPS", "feat_tls_d": "追蹤 SSL/TLS 憑證過期時間。",
-    "feat_tcp_t": "TCP 通訊埠", "feat_tcp_d": "檢查主機連線能力。",
-    "feat_lat_t": "延遲診斷", "feat_lat_d": "測量回應時間。",
-    "feat_http_t": "HTTP 狀態碼", "feat_http_d": "監控端點狀態碼。",
-    "label_step1": "第一步", "step1_title": "控制台首頁", "step1_content_t": "狀態一目了然", "step1_p1": "儀表板彙整了所有監控類型的即時狀態。",
-    "label_step2": "第二步", "step2_title": "TLS 憑證監控", "step2_content_t": "憑證詳細資訊", "step2_p1": "查看有效期限與剩餘天數。",
-    "label_step3": "第三步", "step3_title": "TCP 通訊埠連線能力", "step3_content_t": "連線測試結果", "step3_p1": "進行 10 次連線嘗試以驗證可達性。",
-    "label_step4": "第四步", "step4_title": "HTTP 端點監控", "step4_content_t": "狀態碼比例分析", "step4_p1": "追蹤 2XX、4XX 與 5XX 的成功率。",
-    "label_step5": "第五步", "step5_title": "延遲解析", "step5_content_t": "階段性耗時拆解", "step5_p1": "分析 DNS、TCP、TLS 與 TTFB 各階段延遲。",
-    "view_solutions": "想看實際應用案例？查看應用解決方案指南 →",
-    "footer_privacy": "隱私權政策"
-  },
-  "zh_CN": {
-    "header_sub": "DevOps 服务监控工具",
-    "hero_title": "开始使用 <span>OpsMon</span>",
-    "hero_desc": "轻量、隐私优先的服务器与服务监控工具 — 完全在您的设备上运行。",
-    "no_account": "无需账号", "no_cloud": "不经云端", "no_agent": "无需代理", "no_tracking": "无追踪行为",
-    "label_overview": "概览", "overview_title": "您可以监控什么？",
-    "feat_tls_t": "TLS / HTTPS", "feat_tls_d": "追踪 SSL/TLS 证书过期时间。",
-    "feat_tcp_t": "TCP 端口", "feat_tcp_d": "检查主机连通性。",
-    "feat_lat_t": "延迟诊断", "feat_lat_d": "测量响应时间。",
-    "feat_http_t": "HTTP 状态码", "feat_http_d": "监控端点状态码。",
-    "label_step1": "第一步", "step1_title": "仪表板首页", "step1_content_t": "状态一目了然", "step1_p1": "仪表板汇总了所有监控类型的实时状态。",
-    "label_step2": "第二步", "step2_title": "TLS 证书监控", "step2_content_t": "证书详细信息", "step2_p1": "查看有效期限与剩余天数。",
-    "label_step3": "第三步", "step3_title": "TCP 端口连通性", "step3_content_t": "连接测试结果", "step3_p1": "进行 10 次连接尝试以验证可达性。",
-    "label_step4": "第四步", "step4_title": "HTTP 端点监控", "step4_content_t": "状态码比例分析", "step4_p1": "追踪 2XX、4XX 与 5XX 的成功率。",
-    "label_step5": "第五步", "step5_title": "延迟解析", "step5_content_t": "阶段性耗时拆解", "step5_p1": "分析 DNS、TCP、TLS 与 TTFB 各阶段延迟。",
-    "view_solutions": "想看实际应用案例？查看应用解决方案指南 →",
-    "footer_privacy": "隐私权政策"
-  },
-  "ja": {
-    "header_sub": "DevOps サービス監視ツール",
-    "hero_title": "<span>OpsMon</span> を始める",
-    "hero_desc": "軽量でプライバシー重視の監視ツール。すべてデバイス上で動作します。",
-    "no_account": "アカウント不要", "no_cloud": "クラウドなし", "no_agent": "エージェント不要", "no_tracking": "追跡なし",
-    "label_overview": "概要", "overview_title": "監視できる項目",
-    "feat_tls_t": "TLS / HTTPS", "feat_tls_d": "SSL/TLS 証明書の期限追跡。",
-    "feat_tcp_t": "TCP ポート", "feat_tcp_d": "ホストの到達可能性確認。",
-    "feat_lat_t": "遅延診断", "feat_lat_d": "応答時間の測定。",
-    "feat_http_t": "HTTP 状態", "feat_http_d": "ステータスコード監視。",
-    "label_step1": "ステップ 1", "step1_title": "ダッシュボード", "step1_content_t": "一目でわかる状態", "step1_p1": "各カテゴリのサマリーを表示します。",
-    "view_solutions": "実際の活用事例をお探しですか？ソリューションガイドを見る →",
-    "footer_privacy": "プライバシーポリシー"
-  },
-  "ko": {
-    "header_sub": "DevOps 서비스 모니터링",
-    "hero_title": "<span>OpsMon</span> 시작하기",
-    "hero_desc": "가볍고 개인정보를 보호하는 모니터링 도구입니다.",
-    "no_account": "계정 없음", "no_cloud": "클라우드 없음", "no_agent": "에이전트 없음", "no_tracking": "추적 없음",
-    "label_overview": "개요", "overview_title": "모니터링 가능 항목",
-    "feat_tls_t": "TLS / HTTPS", "feat_tls_d": "인증서 만료 추적.",
-    "feat_tcp_t": "TCP 포트", "feat_tcp_d": "호스트 연결성 확인.",
-    "view_solutions": "실제 사례를 찾으시나요? 솔루션 가이드 보기 →",
-    "footer_privacy": "개인정보 처리방침"
-  },
-  "de": {
-    "header_sub": "DevOps Monitoring",
-    "hero_title": "Start mit <span>OpsMon</span>",
-    "hero_desc": "Ein leichtes Tool zur Serverüberwachung.",
-    "no_account": "Kein Konto", "no_cloud": "Keine Cloud", "no_agent": "Kein Agent", "no_tracking": "Kein Tracking",
-    "label_overview": "Überblick", "overview_title": "Was überwachen?",
-    "feat_tls_t": "TLS / HTTPS", "feat_tls_d": "SSL-Zertifikate verfolgen.",
-    "view_solutions": "Praxisbeispiele? Lösungskatalog anzeigen →",
-    "footer_privacy": "Datenschutz"
-  }
-};
-
-function switchLanguage(lang) {
-  localStorage.setItem('user-lang', lang);
-  document.getElementById('langSelect').value = lang;
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
-  });
-}
-window.onload = () => { switchLanguage(localStorage.getItem('user-lang') || 'en'); };
-</script>
 </body>
 </html>
