@@ -4,177 +4,1127 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OpsMon — Solutions & Use Cases</title>
+  <meta name="description" content="OpsMon use cases — real-world monitoring configurations for TLS, TCP, HTTP, and Latency." />
+  <link rel="canonical" href="https://jurassiclab2000-pixel.github.io/opsmon_solutions.html" />
   <style>
-    /* 這裡使用與 guide 一致的 CSS 樣式 */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0d0f14; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
-    header { background: #0d0f14; border-bottom: 1px solid rgba(255,255,255,0.07); padding: 24px; text-align: center; position: relative; }
-    .lang-switcher { position: absolute; top: 24px; right: 24px; z-index: 100; }
-    .lang-switcher select { background: #1a2035; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer; }
-    .logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .logo-text { font-size: 24px; font-weight: 700; color: #fff; text-decoration: none; }
+
+    body {
+      background: #0d0f14;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Language Switcher (same as guide) ── */
+    .lang-switcher {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+    }
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(22,27,37,0.92);
+      border: 1px solid rgba(59,158,255,0.3);
+      border-radius: 10px;
+      padding: 7px 12px;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+    .lang-btn:hover { border-color: rgba(59,158,255,0.6); background: rgba(30,38,54,0.96); }
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #161b25;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      min-width: 160px;
+    }
+    .lang-switcher.open .lang-dropdown { display: block; }
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .lang-option:hover { background: rgba(59,158,255,0.1); color: #fff; }
+    .lang-option.active { color: #3b9eff; background: rgba(59,158,255,0.07); }
+    .lang-option .flag { font-size: 16px; }
+
+    /* ── Header ── */
+    header {
+      background: #0d0f14;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 24px 24px 20px;
+      text-align: center;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      text-decoration: none;
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .logo-text { font-size: 24px; font-weight: 700; color: #fff; }
     .logo-text span { color: #3b9eff; }
-    .hero { max-width: 900px; margin: 0 auto; padding: 60px 24px 40px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .hero-title { font-size: clamp(28px, 5vw, 42px); font-weight: 800; color: #fff; margin-bottom: 16px; }
-    .hero-desc { font-size: 17px; color: #94a3b8; max-width: 700px; margin: 0 auto 40px; }
-    section { max-width: 900px; margin: 0 auto; padding: 56px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3b9eff; margin-bottom: 8px; }
-    .section-title { font-size: clamp(22px, 4vw, 30px); font-weight: 700; color: #fff; margin-bottom: 10px; }
-    .section-desc { color: #94a3b8; font-size: 15px; max-width: 600px; margin-bottom: 36px; }
-    .step { display: flex; flex-direction: row; gap: 48px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .step.reverse { flex-direction: row-reverse; }
-    .step-phone { flex: 1; max-width: 280px; display: flex; justify-content: center; }
-    .phone-frame { width: 100%; background: #1c1f2a; border-radius: 36px; border: 1.5px solid rgba(255,255,255,0.1); padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
-    .phone-frame img { width: 100%; border-radius: 26px; display: block; height: auto; }
-    .step-content { flex: 1.2; }
-    .tip { background: rgba(59,158,255,0.07); border-left: 3px solid #3b9eff; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; color: #93c5fd; margin-top: 20px; }
-    footer { text-align: center; padding: 48px 24px; color: #64748b; font-size: 13px; }
-    footer a { color: #3b9eff; text-decoration: none; margin: 0 10px; }
-    @media (max-width: 768px) { .step, .step.reverse { flex-direction: column; text-align: center; gap: 32px; } .lang-switcher { top: 16px; right: 16px; } }
+    header p { color: #94a3b8; font-size: 14px; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 60px 24px 48px;
+      background: linear-gradient(180deg, #111827 0%, #0d0f14 100%);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .hero h1 span { color: #3b9eff; }
+    .hero p {
+      color: #94a3b8;
+      font-size: 16px;
+      max-width: 520px;
+      margin: 0 auto 28px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #3b9eff;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 4px;
+      opacity: 0.85;
+      transition: opacity 0.15s;
+    }
+    .back-link:hover { opacity: 1; }
+
+    /* ── Scenario nav pills ── */
+    .scenario-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 0 24px 40px;
+      background: linear-gradient(180deg, #0d0f14 0%, #0d0f14 100%);
+    }
+    .scenario-pill {
+      background: #161b25;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .scenario-pill:hover { color: #fff; border-color: rgba(59,158,255,0.4); background: rgba(59,158,255,0.06); }
+    .scenario-pill.tcp   { border-color: rgba(59,158,255,0.25); color: #3b9eff; }
+    .scenario-pill.http  { border-color: rgba(52,211,153,0.25); color: #34d399; }
+    .scenario-pill.lat   { border-color: rgba(251,191,36,0.25);  color: #fbbf24; }
+    .scenario-pill.tls   { border-color: rgba(167,139,250,0.25); color: #a78bfa; }
+
+    /* ── Section ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 56px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      scroll-margin-top: 20px;
+    }
+    section:last-of-type { border-bottom: none; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #3b9eff;
+      margin-bottom: 8px;
+    }
+    .section-label.green  { color: #34d399; }
+    .section-label.yellow { color: #fbbf24; }
+    .section-label.purple { color: #a78bfa; }
+
+    .section-title {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .section-desc {
+      color: #94a3b8;
+      font-size: 15px;
+      max-width: 600px;
+      margin-bottom: 36px;
+    }
+
+    /* ── Step layout ── */
+    .step {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      margin-bottom: 40px;
+    }
+    .step.reverse { direction: rtl; }
+    .step.reverse > * { direction: ltr; }
+
+    .step-phone { display: flex; justify-content: center; }
+    .phone-frame {
+      width: 100%;
+      max-width: 240px;
+      background: #1c1f2a;
+      border-radius: 36px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      padding: 12px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+    .phone-frame img {
+      width: 100%;
+      border-radius: 26px;
+      display: block;
+      object-fit: cover;
+      object-position: top;
+      max-height: 420px;
+    }
+
+    .step-content h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .step-content p {
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    /* ── Steps list ── */
+    .steps-list {
+      list-style: none;
+      margin: 16px 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .steps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .step-dot {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(59,158,255,0.15);
+      border: 1px solid rgba(59,158,255,0.35);
+      color: #3b9eff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .step-dot.green  { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.35); color: #34d399; }
+    .step-dot.yellow { background: rgba(251,191,36,0.12);  border-color: rgba(251,191,36,0.35);  color: #fbbf24; }
+    .step-dot.purple { background: rgba(167,139,250,0.12); border-color: rgba(167,139,250,0.35); color: #a78bfa; }
+
+    /* ── Config table ── */
+    .config-table-wrap {
+      margin-top: 24px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .config-table-title {
+      background: rgba(59,158,255,0.08);
+      border-bottom: 1px solid rgba(59,158,255,0.15);
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #3b9eff;
+    }
+    .config-table-title.green  { background: rgba(52,211,153,0.08);  border-color: rgba(52,211,153,0.15);  color: #34d399; }
+    .config-table-title.yellow { background: rgba(251,191,36,0.08);   border-color: rgba(251,191,36,0.15);   color: #fbbf24; }
+    .config-table-title.purple { background: rgba(167,139,250,0.08);  border-color: rgba(167,139,250,0.15);  color: #a78bfa; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #161b25;
+    }
+    th {
+      text-align: left;
+      padding: 9px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #64748b;
+      background: #131720;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    td {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { color: #e2e8f0; font-weight: 500; width: 36%; }
+    td code {
+      background: rgba(59,158,255,0.1);
+      border: 1px solid rgba(59,158,255,0.2);
+      border-radius: 5px;
+      padding: 1px 7px;
+      font-size: 12px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #93c5fd;
+    }
+
+    /* ── Tip & Warning boxes ── */
+    .tip {
+      background: rgba(59,158,255,0.07);
+      border-left: 3px solid #3b9eff;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #93c5fd;
+      margin-top: 16px;
+    }
+    .tip strong { color: #bfdbfe; }
+    .warn {
+      background: rgba(251,191,36,0.07);
+      border-left: 3px solid #fbbf24;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #fde68a;
+      margin-top: 12px;
+    }
+    .warn strong { color: #fef3c7; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      color: #334155;
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    footer a { color: #3b9eff; text-decoration: none; margin: 0 6px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .step, .step.reverse { grid-template-columns: 1fr; direction: ltr; }
+      .lang-switcher { top: 12px; right: 12px; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="lang-switcher">
-    <select id="langSelect" onchange="switchLanguage(this.value)">
-      <option value="en">English</option>
-      <option value="zh_TW">繁體中文</option>
-      <option value="zh_CN">简体中文</option>
-      <option value="ja">日本語</option>
-      <option value="ko">한국어</option>
-      <option value="de">Deutsch</option>
-    </select>
+<!-- Language Switcher -->
+<div class="lang-switcher" id="langSwitcher">
+  <div class="lang-btn" id="langBtn" onclick="toggleDropdown()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b9eff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    <span id="currentLangLabel">English</span>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
-  <div class="logo">
-    <a href="opsmon_guide.html" class="logo-text">Ops<span>Mon</span> Solutions</a>
-  </div>
-</header>
-
-<div class="hero">
-  <h1 class="hero-title" data-i18n="hero_title">OpsMon Use Cases</h1>
-  <p class="hero-desc" data-i18n="hero_desc">Explore how to set up professional monitoring for your infrastructure.</p>
-  <div class="step" style="justify-content: center; margin-top: 40px;">
-    <div class="step-phone" style="max-width: 300px;"><div class="phone-frame"><img src="img/en-main-case.jpeg" alt="Dashboard" /></div></div>
-    <div class="step-content" style="text-align: left; max-width: 450px;">
-      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="hero_sub">Total Visibility</h3>
-      <p style="color:#94a3b8; font-size:15px;" data-i18n="hero_p1">Monitor TLS, TCP, Latency, and HTTP Status in one place.</p>
-    </div>
+  <div class="lang-dropdown" id="langDropdown">
+    <div class="lang-option" data-lang="en"    onclick="setLang('en')">   <span class="flag">🇺🇸</span> English</div>
+    <div class="lang-option" data-lang="zh-TW" onclick="setLang('zh-TW')"><span class="flag">🇹🇼</span> 繁體中文</div>
+    <div class="lang-option" data-lang="zh-CN" onclick="setLang('zh-CN')"><span class="flag">🇨🇳</span> 简体中文</div>
+    <div class="lang-option" data-lang="ja"    onclick="setLang('ja')">   <span class="flag">🇯🇵</span> 日本語</div>
+    <div class="lang-option" data-lang="ko"    onclick="setLang('ko')">   <span class="flag">🇰🇷</span> 한국어</div>
+    <div class="lang-option" data-lang="de"    onclick="setLang('de')">   <span class="flag">🇩🇪</span> Deutsch</div>
   </div>
 </div>
 
-<section>
-  <div class="section-label" data-i18n="label_a">Scenario A</div>
-  <h2 class="section-title" data-i18n="a_title">Mail Server (TCP Port)</h2>
+<!-- Header -->
+<header>
+  <a href="opsmon_guide.html" class="logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="28" height="28" rx="8" fill="#1a2035"/>
+      <path d="M4 14 L8 10 L12 14 L16 9 L20 13 L24 11" stroke="#3b9eff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="logo-text">Ops<span>Mon</span></span>
+  </a>
+  <p data-i18n="header.subtitle">Solutions &amp; Use Cases</p>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <h1 data-i18n="hero.title"><span>OpsMon</span> in the Real World</h1>
+  <p data-i18n="hero.desc">Step-by-step monitoring setups for common infrastructure scenarios — with exact configuration parameters.</p>
+  <a href="opsmon_guide.html" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    <span data-i18n="hero.back">Back to User Guide</span>
+  </a>
+</div>
+
+<!-- Scenario nav -->
+<div class="scenario-nav">
+  <a href="#scenario-a" class="scenario-pill tcp"  data-i18n="nav.a">📡 A · TCP Port</a>
+  <a href="#scenario-b" class="scenario-pill http" data-i18n="nav.b">🌐 B · HTTP Status</a>
+  <a href="#scenario-c" class="scenario-pill lat"  data-i18n="nav.c">⏱ C · Latency</a>
+  <a href="#scenario-d" class="scenario-pill tls"  data-i18n="nav.d">🔒 D · TLS Certificate</a>
+</div>
+
+<!-- ── Scenario A: TCP ── -->
+<section id="scenario-a">
+  <div class="section-label" data-i18n="a.label">Scenario A · TCP Port Monitor</div>
+  <h2 class="section-title" data-i18n="a.title">Mail Server Port Availability</h2>
+  <p class="section-desc" data-i18n="a.desc">Verify that your mail server's SMTP and IMAP ports are open and accepting connections. A port being "open" means the server is listening — TCP monitoring catches infrastructure-level failures before they affect your users.</p>
+
   <div class="step">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-tcp-details-case.jpeg" /></div></div>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-tcp-details-case.jpeg" alt="TCP port test results" />
+      </div>
+    </div>
     <div class="step-content">
-      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="a_sub">Port Check</h3>
-      <p data-i18n="a_p1">Verify smtp.gmail.com:465 is open and reachable.</p>
-      <div class="tip"><strong data-i18n="rec_config">Config:</strong><br>TCP: Port 465 / 993</div>
+      <h3 data-i18n="a.h3">How to set it up</h3>
+      <ul class="steps-list" data-i18n-list="a.steps">
+        <li><span class="step-dot">1</span><span>Open OpsMon → tap <strong style="color:#fff;">TCP</strong> on the dashboard.</span></li>
+        <li><span class="step-dot">2</span><span>Tap <strong style="color:#fff;">＋ Add</strong> to create a new TCP monitor.</span></li>
+        <li><span class="step-dot">3</span><span>Enter <code style="background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.2);border-radius:4px;padding:1px 6px;font-size:12px;color:#93c5fd;">smtp.gmail.com</code> as the Host and <code style="background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.2);border-radius:4px;padding:1px 6px;font-size:12px;color:#93c5fd;">465</code> as the Port.</span></li>
+        <li><span class="step-dot">4</span><span>Tap <strong style="color:#fff;">Save</strong>. OpsMon immediately runs 10 connection attempts and displays results.</span></li>
+        <li><span class="step-dot">5</span><span>Check the result bars — all green means the port is healthy. Any red bars indicate intermittent or full connection failures.</span></li>
+      </ul>
+      <div class="warn"><strong data-i18n="note.label">Note:</strong> <span data-i18n="a.warn">A successful TCP connection only confirms the port is open. It does not verify that the mail protocol (SMTP/IMAP) itself is functioning correctly — use HTTP monitoring for application-level health checks.</span></div>
     </div>
   </div>
+
+  <div class="config-table-wrap">
+    <div class="config-table-title" data-i18n="table.config">⚙️ Recommended Configuration</div>
+    <table>
+      <thead><tr><th data-i18n="table.field">Field</th><th data-i18n="table.value">Value</th><th data-i18n="table.notes">Notes</th></tr></thead>
+      <tbody>
+        <tr><td data-i18n="field.host">Host</td><td><code>smtp.gmail.com</code></td><td data-i18n="a.cfg.host">Gmail SMTP server. Replace with your own mail server hostname.</td></tr>
+        <tr><td data-i18n="field.port">Port</td><td><code>465</code> / <code>993</code></td><td data-i18n="a.cfg.port">465 = SMTPS (send mail), 993 = IMAPS (receive mail). Monitor both for full coverage.</td></tr>
+        <tr><td data-i18n="field.enabled">Enabled</td><td><code>ON</code></td><td data-i18n="a.cfg.enabled">Keep enabled to run checks continuously.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tip"><strong data-i18n="tip.label">Tip:</strong> <span data-i18n="a.tip">Add a second monitor for port 993 (IMAP) so you cover both outbound and inbound mail paths. If port 465 fails but 993 is fine, the issue is likely with your SMTP service specifically.</span></div>
 </section>
 
-<section>
-  <div class="section-label" data-i18n="label_b">Scenario B</div>
-  <h2 class="section-title" data-i18n="b_title">API Health (HTTP Status)</h2>
+<!-- ── Scenario B: HTTP ── -->
+<section id="scenario-b">
+  <div class="section-label green" data-i18n="b.label">Scenario B · HTTP Status Monitor</div>
+  <h2 class="section-title" data-i18n="b.title">API Endpoint Health Check</h2>
+  <p class="section-desc" data-i18n="b.desc">Monitor your REST API or web service for unexpected status codes. Unlike TCP, HTTP monitoring checks whether the application layer is responding correctly — catching 4XX errors, 5XX server failures, and broken redirects.</p>
+
   <div class="step reverse">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-http-details-case.jpeg" /></div></div>
-    <div class="step-content">
-      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="b_sub">Status Monitoring</h3>
-      <p data-i18n="b_p1">Monitor custom GET endpoints for healthy 2XX responses.</p>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-http-details-case.jpeg" alt="HTTP status monitoring" />
+      </div>
     </div>
+    <div class="step-content">
+      <h3 data-i18n="b.h3">How to set it up</h3>
+      <ul class="steps-list" data-i18n-list="b.steps">
+        <li><span class="step-dot green">1</span><span>Open OpsMon → tap <strong style="color:#fff;">HTTP</strong> on the dashboard.</span></li>
+        <li><span class="step-dot green">2</span><span>Tap <strong style="color:#fff;">＋ Add</strong> to create a new HTTP monitor.</span></li>
+        <li><span class="step-dot green">3</span><span>Enter the full URL including <code style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);border-radius:4px;padding:1px 6px;font-size:12px;color:#6ee7b7;">https://</code>, e.g. your API health endpoint.</span></li>
+        <li><span class="step-dot green">4</span><span>Set a <strong style="color:#fff;">Warning threshold</strong> — OpsMon shows 🟡 WARNING if response time exceeds this value (ms).</span></li>
+        <li><span class="step-dot green">5</span><span>Set a <strong style="color:#fff;">Timeout</strong> — OpsMon shows 🔴 FAILED if response time exceeds this value (ms).</span></li>
+        <li><span class="step-dot green">6</span><span>Tap <strong style="color:#fff;">Save</strong>. OpsMon runs 10 requests and shows the status code distribution.</span></li>
+      </ul>
+      <div class="warn"><strong data-i18n="note.label">Note:</strong> <span data-i18n="b.warn">OpsMon follows redirects automatically. If your endpoint returns 301/302, it will follow through to the final destination and report that status code. Ensure the final URL still returns 2XX.</span></div>
+    </div>
+  </div>
+
+  <div class="config-table-wrap">
+    <div class="config-table-title green" data-i18n="table.config">⚙️ Recommended Configuration</div>
+    <table>
+      <thead><tr><th data-i18n="table.field">Field</th><th data-i18n="table.value">Value</th><th data-i18n="table.notes">Notes</th></tr></thead>
+      <tbody>
+        <tr><td data-i18n="field.url">URL</td><td><code>https://yourapi.com/health</code></td><td data-i18n="b.cfg.url">Use your API's dedicated health check endpoint if available. Must include https://.</td></tr>
+        <tr><td data-i18n="field.warn_threshold">Warning threshold (ms)</td><td><code>1000</code></td><td data-i18n="b.cfg.warn">🟡 WARNING shown if response exceeds this. 1000ms is a reasonable default for most APIs.</td></tr>
+        <tr><td data-i18n="field.timeout">Timeout (ms)</td><td><code>3000</code></td><td data-i18n="b.cfg.timeout">🔴 FAILED shown if response exceeds this. Set 3–5× your warning threshold.</td></tr>
+        <tr><td data-i18n="field.enabled">Enabled</td><td><code>ON</code></td><td data-i18n="b.cfg.enabled">Keep enabled to monitor continuously.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tip" style="border-left-color:#34d399;background:rgba(52,211,153,0.07);color:#6ee7b7;">
+    <strong style="color:#a7f3d0;" data-i18n="tip.label">Tip:</strong> <span data-i18n="b.tip">For internal APIs behind a VPN, run the check while connected to the VPN. OpsMon issues all requests from your device, so your network conditions directly affect the results.</span>
   </div>
 </section>
 
-<section>
-  <div class="section-label" data-i18n="label_c">Scenario C</div>
-  <h2 class="section-title" data-i18n="c_title">Latency Diagnostics</h2>
+<!-- ── Scenario C: Latency ── -->
+<section id="scenario-c">
+  <div class="section-label yellow" data-i18n="c.label">Scenario C · Latency Monitor</div>
+  <h2 class="section-title" data-i18n="c.title">Network Latency Diagnostics</h2>
+  <p class="section-desc" data-i18n="c.desc">Identify exactly where delays occur in the connection chain — DNS resolution, TCP handshake, TLS negotiation, or server response (TTFB). This goes beyond simple ping: it tells you which phase to investigate.</p>
+
   <div class="step">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-latency-details-case.jpeg" /></div></div>
-    <div class="step-content">
-      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="c_sub">Network Breakdown</h3>
-      <p data-i18n="c_p1">Analyze DNS, TCP, TLS, and TTFB for mail.yahoo.com.</p>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-latency-details-case.jpeg" alt="Latency phase breakdown" />
+      </div>
     </div>
+    <div class="step-content">
+      <h3 data-i18n="c.h3">How to set it up</h3>
+      <ul class="steps-list" data-i18n-list="c.steps">
+        <li><span class="step-dot yellow">1</span><span>Open OpsMon → tap <strong style="color:#fff;">Latency</strong> on the dashboard.</span></li>
+        <li><span class="step-dot yellow">2</span><span>Tap <strong style="color:#fff;">＋ Add</strong> to create a new Latency monitor.</span></li>
+        <li><span class="step-dot yellow">3</span><span>Enter the target URL, e.g. <code style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);border-radius:4px;padding:1px 6px;font-size:12px;color:#fde68a;">https://mail.yahoo.com</code>.</span></li>
+        <li><span class="step-dot yellow">4</span><span>Set a <strong style="color:#fff;">Warning threshold</strong> — shown in 🟡 WARNING when P50 latency exceeds this value (ms).</span></li>
+        <li><span class="step-dot yellow">5</span><span>Set a <strong style="color:#fff;">Timeout</strong> — requests exceeding this are counted as failures.</span></li>
+        <li><span class="step-dot yellow">6</span><span>Tap <strong style="color:#fff;">Save</strong>. The stacked bar chart breaks down DNS, TCP, TLS, and TTFB for each of the 10 requests.</span></li>
+      </ul>
+      <div class="warn"><strong data-i18n="note.label">Note:</strong> <span data-i18n="c.warn">Latency results vary based on your current network conditions. Run checks on both Wi-Fi and mobile data to compare. High DNS values on mobile may indicate your carrier's DNS is slow — consider changing your DNS resolver in device settings.</span></div>
+    </div>
+  </div>
+
+  <div class="config-table-wrap">
+    <div class="config-table-title yellow" data-i18n="table.config">⚙️ Recommended Configuration</div>
+    <table>
+      <thead><tr><th data-i18n="table.field">Field</th><th data-i18n="table.value">Value</th><th data-i18n="table.notes">Notes</th></tr></thead>
+      <tbody>
+        <tr><td data-i18n="field.url">URL</td><td><code>https://mail.yahoo.com</code></td><td data-i18n="c.cfg.url">Any HTTPS endpoint. Use a stable, always-online host for baseline comparison.</td></tr>
+        <tr><td data-i18n="field.warn_threshold">Warning threshold (ms)</td><td><code>1000</code></td><td data-i18n="c.cfg.warn">🟡 WARNING if response exceeds this. Adjust based on your expected latency — lower for LAN targets, higher for overseas hosts.</td></tr>
+        <tr><td data-i18n="field.timeout">Timeout (ms)</td><td><code>3000</code></td><td data-i18n="c.cfg.timeout">🔴 FAILED if no response within this window. Requests that time out are excluded from P50/P90 calculations.</td></tr>
+        <tr><td data-i18n="field.enabled">Enabled</td><td><code>ON</code></td><td data-i18n="c.cfg.enabled">Keep enabled for continuous baseline tracking.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 24px; background: #161b25; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 20px 20px 8px; overflow-x: auto;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:14px;" data-i18n="c.interpret.title">📊 How to Interpret Phase Timings</div>
+    <table style="border:none;">
+      <thead><tr><th data-i18n="table.phase">Phase</th><th data-i18n="table.high_means">High value means…</th><th data-i18n="table.action">Action</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#fbbf24;">DNS</td><td data-i18n="c.dns.high">DNS resolver is slow or overloaded</td><td data-i18n="c.dns.action">Switch to 1.1.1.1 or 8.8.8.8 in device settings</td></tr>
+        <tr><td style="color:#fbbf24;">TCP</td><td data-i18n="c.tcp.high">Network routing or server is far/busy</td><td data-i18n="c.tcp.action">Check network quality; consider CDN for global users</td></tr>
+        <tr><td style="color:#fbbf24;">TLS</td><td data-i18n="c.tls.high">Certificate negotiation is slow (older cipher or distant server)</td><td data-i18n="c.tls.action">Ensure server supports TLS 1.3; optimize cipher suite</td></tr>
+        <tr><td style="color:#fbbf24;">TTFB</td><td data-i18n="c.ttfb.high">Server processing is slow (app, DB, heavy computation)</td><td data-i18n="c.ttfb.action">Profile your backend; add caching; check DB query times</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip" style="border-left-color:#fbbf24;background:rgba(251,191,36,0.07);color:#fde68a;margin-top:16px;">
+    <strong style="color:#fef3c7;" data-i18n="tip.label">Tip:</strong> <span data-i18n="c.tip">P50 is your "typical" experience; P90 is what your slowest users see. If P90 is much higher than P50, you have high jitter — investigate network stability rather than raw speed.</span>
   </div>
 </section>
 
-<section>
-  <div class="section-label" data-i18n="label_d">Scenario D</div>
-  <h2 class="section-title" data-i18n="d_title">TLS Certificate Expiry</h2>
+<!-- ── Scenario D: TLS ── -->
+<section id="scenario-d">
+  <div class="section-label purple" data-i18n="d.label">Scenario D · TLS Certificate Monitor</div>
+  <h2 class="section-title" data-i18n="d.title">SSL Certificate Expiry Tracking</h2>
+  <p class="section-desc" data-i18n="d.desc">An expired TLS certificate causes immediate HTTPS failures for all visitors — browsers show scary "Not Secure" warnings and most users will leave. OpsMon monitors expiry dates and warns you weeks in advance so renewals never catch you off guard.</p>
+
   <div class="step reverse">
-    <div class="step-phone"><div class="phone-frame"><img src="img/en-tls-details-case.jpeg" /></div></div>
-    <div class="step-content">
-      <h3 style="color:#fff; margin-bottom:12px;" data-i18n="d_sub">Expiry Warning</h3>
-      <p data-i18n="d_p1">See orange 'Expiring soon' alerts for critical domains.</p>
+    <div class="step-phone">
+      <div class="phone-frame">
+        <img src="img/en-tls-details-case.jpeg" alt="TLS certificate expiry warning" />
+      </div>
     </div>
+    <div class="step-content">
+      <h3 data-i18n="d.h3">How to set it up</h3>
+      <ul class="steps-list" data-i18n-list="d.steps">
+        <li><span class="step-dot purple">1</span><span>Open OpsMon → tap <strong style="color:#fff;">TLS</strong> on the dashboard.</span></li>
+        <li><span class="step-dot purple">2</span><span>Tap <strong style="color:#fff;">＋ Add</strong> to create a new TLS monitor.</span></li>
+        <li><span class="step-dot purple">3</span><span>Enter the <strong style="color:#fff;">Host</strong>, e.g. <code style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:4px;padding:1px 6px;font-size:12px;color:#c4b5fd;">yahoo.com</code>. No need to include <code style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:4px;padding:1px 6px;font-size:12px;color:#c4b5fd;">https://</code>.</span></li>
+        <li><span class="step-dot purple">4</span><span>Enter <strong style="color:#fff;">Port</strong> — use <code style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:4px;padding:1px 6px;font-size:12px;color:#c4b5fd;">443</code> for standard HTTPS.</span></li>
+        <li><span class="step-dot purple">5</span><span>Set <strong style="color:#fff;">Warn before expiry (days)</strong>. OpsMon shows 🟡 when the certificate has fewer than this many days remaining.</span></li>
+        <li><span class="step-dot purple">6</span><span>Tap <strong style="color:#fff;">Save</strong>. OpsMon connects and retrieves the full certificate chain immediately.</span></li>
+      </ul>
+      <div class="warn"><strong data-i18n="note.label">Note:</strong> <span data-i18n="d.warn">Wildcard certificates (e.g. *.example.com) cover all subdomains under one expiry date. You only need one monitor per wildcard cert — but it's good practice to also monitor the root domain separately.</span></div>
+    </div>
+  </div>
+
+  <div class="config-table-wrap">
+    <div class="config-table-title purple" data-i18n="table.config">⚙️ Recommended Configuration</div>
+    <table>
+      <thead><tr><th data-i18n="table.field">Field</th><th data-i18n="table.value">Value</th><th data-i18n="table.notes">Notes</th></tr></thead>
+      <tbody>
+        <tr><td data-i18n="field.host">Host</td><td><code>yahoo.com</code></td><td data-i18n="d.cfg.host">Enter hostname only, without https://. Add each critical domain separately.</td></tr>
+        <tr><td data-i18n="field.port">Port</td><td><code>443</code></td><td data-i18n="d.cfg.port">443 is standard HTTPS. Use 8443 or custom ports if your server is non-standard.</td></tr>
+        <tr><td data-i18n="field.warn_days">Warn before expiry (days)</td><td><code>120</code></td><td data-i18n="d.cfg.warn">🟡 WARNING shown when ≤ 120 days remain. 120 days gives ample time to renew, especially for certificates with 90-day validity (e.g. Let's Encrypt).</td></tr>
+        <tr><td data-i18n="field.enabled">Enabled</td><td><code>ON</code></td><td data-i18n="d.cfg.enabled">Keep enabled so OpsMon checks the certificate on every run.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 24px; background: #161b25; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 20px 20px 8px; overflow-x: auto;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#a78bfa;margin-bottom:14px;" data-i18n="d.status.title">🔒 Certificate Status Reference</div>
+    <table style="border:none;">
+      <thead><tr><th data-i18n="table.status">Status</th><th data-i18n="table.color">Indicator</th><th data-i18n="table.meaning">Meaning</th></tr></thead>
+      <tbody>
+        <tr><td data-i18n="d.status.ok">Valid</td><td>🟢</td><td data-i18n="d.status.ok.desc">Certificate is valid and has more days remaining than your warning threshold.</td></tr>
+        <tr><td data-i18n="d.status.warn">Expiring soon</td><td>🟡</td><td data-i18n="d.status.warn.desc">Certificate will expire within your configured warning window. Time to renew.</td></tr>
+        <tr><td data-i18n="d.status.fail">Expired / Error</td><td>🔴</td><td data-i18n="d.status.fail.desc">Certificate has expired, is self-signed (untrusted), or the host could not be reached.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip" style="border-left-color:#a78bfa;background:rgba(167,139,250,0.07);color:#c4b5fd;margin-top:16px;">
+    <strong style="color:#ddd6fe;" data-i18n="tip.label">Tip:</strong> <span data-i18n="d.tip">Set the warning threshold to at least 30 days more than your certificate authority's processing time. For Let's Encrypt (90-day certs), 120 days gives you a full renewal cycle as buffer. For 1-year commercial certs, 60 days is usually sufficient.</span>
   </div>
 </section>
 
-<footer><p>© 2026 JurassicLab · <a href="opsmon_guide.html">User Guide</a></p></footer>
+<!-- Footer -->
+<footer>
+  <p>© 2026 JurassicLab ·
+    <a href="opsmon_guide.html" data-i18n="footer.guide">User Guide</a> ·
+    <a href="opsmon_privacy_policy.html" data-i18n="footer.privacy">Privacy Policy</a> ·
+    <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.opsmon" target="_blank" data-i18n="footer.download">Download on Google Play</a>
+  </p>
+</footer>
 
 <script>
+// ─────────────────────────────────────────────
+//  Translations
+// ─────────────────────────────────────────────
 const translations = {
-  "en": {
-    "hero_title": "OpsMon Use Cases", "hero_desc": "Professional monitoring for your infrastructure.", "hero_sub": "Total Visibility", "hero_p1": "Track TLS, TCP, Latency, and HTTP alerts in one dashboard.",
-    "label_a": "Scenario A", "a_title": "Mail Server (TCP Port)", "a_sub": "Port Availability", "a_p1": "Monitor smtp.gmail.com:465 to ensure your mail flow is never interrupted.",
-    "label_b": "Scenario B", "b_title": "API Health (HTTP Status)", "b_sub": "Status Code Check", "b_p1": "Monitor custom GET endpoints to ensure they return healthy 2XX responses.",
-    "label_c": "Scenario C", "c_title": "Latency Diagnostics", "c_sub": "Timing Breakdown", "c_p1": "Analyze mail.yahoo.com and pinpoint delays in DNS, TCP, TLS, or TTFB.",
-    "label_d": "Scenario D", "d_title": "TLS Certificate Expiry", "d_sub": "Expiry Alerts", "d_p1": "Get orange 'Expiring soon' warnings for domains like yahoo.com.",
-    "rec_config": "Recommended Configuration:"
+  en: {
+    langLabel: "English",
+    "header.subtitle": "Solutions &amp; Use Cases",
+    "hero.title": "<span>OpsMon</span> in the Real World",
+    "hero.desc": "Step-by-step monitoring setups for common infrastructure scenarios — with exact configuration parameters.",
+    "hero.back": "Back to User Guide",
+    "nav.a": "📡 A · TCP Port",
+    "nav.b": "🌐 B · HTTP Status",
+    "nav.c": "⏱ C · Latency",
+    "nav.d": "🔒 D · TLS Certificate",
+    "a.label": "Scenario A · TCP Port Monitor",
+    "a.title": "Mail Server Port Availability",
+    "a.desc": "Verify that your mail server's SMTP and IMAP ports are open and accepting connections. A port being \"open\" means the server is listening — TCP monitoring catches infrastructure-level failures before they affect your users.",
+    "a.h3": "How to set it up",
+    "a.warn": "A successful TCP connection only confirms the port is open. It does not verify that the mail protocol (SMTP/IMAP) itself is functioning correctly — use HTTP monitoring for application-level health checks.",
+    "a.cfg.host": "Gmail SMTP server. Replace with your own mail server hostname.",
+    "a.cfg.port": "465 = SMTPS (send mail), 993 = IMAPS (receive mail). Monitor both for full coverage.",
+    "a.cfg.enabled": "Keep enabled to run checks continuously.",
+    "a.tip": "Add a second monitor for port 993 (IMAP) so you cover both outbound and inbound mail paths. If port 465 fails but 993 is fine, the issue is likely with your SMTP service specifically.",
+    "b.label": "Scenario B · HTTP Status Monitor",
+    "b.title": "API Endpoint Health Check",
+    "b.desc": "Monitor your REST API or web service for unexpected status codes. Unlike TCP, HTTP monitoring checks whether the application layer is responding correctly — catching 4XX errors, 5XX server failures, and broken redirects.",
+    "b.h3": "How to set it up",
+    "b.warn": "OpsMon follows redirects automatically. If your endpoint returns 301/302, it will follow through to the final destination and report that status code. Ensure the final URL still returns 2XX.",
+    "b.cfg.url": "Use your API's dedicated health check endpoint if available. Must include https://.",
+    "b.cfg.warn": "🟡 WARNING shown if response exceeds this. 1000ms is a reasonable default for most APIs.",
+    "b.cfg.timeout": "🔴 FAILED shown if response exceeds this. Set 3–5× your warning threshold.",
+    "b.cfg.enabled": "Keep enabled to monitor continuously.",
+    "b.tip": "For internal APIs behind a VPN, run the check while connected to the VPN. OpsMon issues all requests from your device, so your network conditions directly affect the results.",
+    "c.label": "Scenario C · Latency Monitor",
+    "c.title": "Network Latency Diagnostics",
+    "c.desc": "Identify exactly where delays occur in the connection chain — DNS resolution, TCP handshake, TLS negotiation, or server response (TTFB). This goes beyond simple ping: it tells you which phase to investigate.",
+    "c.h3": "How to set it up",
+    "c.warn": "Latency results vary based on your current network conditions. Run checks on both Wi-Fi and mobile data to compare. High DNS values on mobile may indicate your carrier's DNS is slow — consider changing your DNS resolver in device settings.",
+    "c.cfg.url": "Any HTTPS endpoint. Use a stable, always-online host for baseline comparison.",
+    "c.cfg.warn": "🟡 WARNING if response exceeds this. Adjust based on your expected latency — lower for LAN targets, higher for overseas hosts.",
+    "c.cfg.timeout": "🔴 FAILED if no response within this window. Requests that time out are excluded from P50/P90 calculations.",
+    "c.cfg.enabled": "Keep enabled for continuous baseline tracking.",
+    "c.interpret.title": "📊 How to Interpret Phase Timings",
+    "c.dns.high": "DNS resolver is slow or overloaded",
+    "c.dns.action": "Switch to 1.1.1.1 or 8.8.8.8 in device settings",
+    "c.tcp.high": "Network routing or server is far/busy",
+    "c.tcp.action": "Check network quality; consider CDN for global users",
+    "c.tls.high": "Certificate negotiation is slow (older cipher or distant server)",
+    "c.tls.action": "Ensure server supports TLS 1.3; optimize cipher suite",
+    "c.ttfb.high": "Server processing is slow (app, DB, heavy computation)",
+    "c.ttfb.action": "Profile your backend; add caching; check DB query times",
+    "c.tip": "P50 is your \"typical\" experience; P90 is what your slowest users see. If P90 is much higher than P50, you have high jitter — investigate network stability rather than raw speed.",
+    "d.label": "Scenario D · TLS Certificate Monitor",
+    "d.title": "SSL Certificate Expiry Tracking",
+    "d.desc": "An expired TLS certificate causes immediate HTTPS failures for all visitors — browsers show scary \"Not Secure\" warnings and most users will leave. OpsMon monitors expiry dates and warns you weeks in advance so renewals never catch you off guard.",
+    "d.h3": "How to set it up",
+    "d.warn": "Wildcard certificates (e.g. *.example.com) cover all subdomains under one expiry date. You only need one monitor per wildcard cert — but it's good practice to also monitor the root domain separately.",
+    "d.cfg.host": "Enter hostname only, without https://. Add each critical domain separately.",
+    "d.cfg.port": "443 is standard HTTPS. Use 8443 or custom ports if your server is non-standard.",
+    "d.cfg.warn": "🟡 WARNING shown when ≤ 120 days remain. Gives ample time to renew, especially for 90-day certs (e.g. Let's Encrypt).",
+    "d.cfg.enabled": "Keep enabled so OpsMon checks the certificate on every run.",
+    "d.status.title": "🔒 Certificate Status Reference",
+    "d.status.ok": "Valid",
+    "d.status.ok.desc": "Certificate is valid and has more days remaining than your warning threshold.",
+    "d.status.warn": "Expiring soon",
+    "d.status.warn.desc": "Certificate will expire within your configured warning window. Time to renew.",
+    "d.status.fail": "Expired / Error",
+    "d.status.fail.desc": "Certificate has expired, is self-signed (untrusted), or the host could not be reached.",
+    "d.tip": "Set the warning threshold to at least 30 days more than your CA's processing time. For Let's Encrypt (90-day certs), 120 days gives you a full renewal cycle as buffer.",
+    "table.config": "⚙️ Recommended Configuration",
+    "table.field": "Field", "table.value": "Value", "table.notes": "Notes",
+    "table.phase": "Phase", "table.high_means": "High value means…", "table.action": "Action",
+    "table.status": "Status", "table.color": "Indicator", "table.meaning": "Meaning",
+    "field.host": "Host", "field.port": "Port", "field.url": "URL",
+    "field.warn_threshold": "Warning threshold (ms)", "field.timeout": "Timeout (ms)",
+    "field.warn_days": "Warn before expiry (days)", "field.enabled": "Enabled",
+    "tip.label": "Tip:", "note.label": "Note:",
+    "footer.guide": "User Guide", "footer.privacy": "Privacy Policy", "footer.download": "Download on Google Play"
   },
-  "zh_TW": {
-    "hero_title": "OpsMon 應用場景", "hero_desc": "為您的基礎設施建立專業監控。", "hero_sub": "完整掌控狀態", "hero_p1": "在單一面板追蹤 TLS、TCP、延遲與 HTTP 警報。",
-    "label_a": "場景 A", "a_title": "郵件伺服器 (TCP Port)", "a_sub": "端口可用性", "a_p1": "監控 smtp.gmail.com:465，確保郵件收發永不中斷。",
-    "label_b": "場景 B", "b_title": "API 健康檢查 (HTTP Status)", "b_sub": "狀態碼監測", "b_p1": "監控自訂 GET 端點，確保其回傳正常的 2XX 回應。",
-    "label_c": "場景 C", "c_title": "延遲診斷", "c_sub": "耗時詳細拆解", "c_p1": "分析 mail.yahoo.com，精確定位 DNS、TCP、TLS 或 TTFB 的延遲。",
-    "label_d": "場景 D", "d_title": "TLS 憑證到期", "d_sub": "到期警示", "d_p1": "針對 yahoo.com 等域名，獲取醒目的橘色「即將到期」預警。",
-    "rec_config": "推薦配置："
+
+  "zh-TW": {
+    langLabel: "繁體中文",
+    "header.subtitle": "應用場景與設定範例",
+    "hero.title": "<span>OpsMon</span> 實際應用場景",
+    "hero.desc": "針對常見基礎設施情境的逐步監控設定說明，附上完整配置參數。",
+    "hero.back": "返回使用指南",
+    "nav.a": "📡 A · TCP 連接埠",
+    "nav.b": "🌐 B · HTTP 狀態",
+    "nav.c": "⏱ C · 延遲診斷",
+    "nav.d": "🔒 D · TLS 憑證",
+    "a.label": "場景 A · TCP 連接埠監控",
+    "a.title": "郵件伺服器連接埠可用性",
+    "a.desc": "確認您的郵件伺服器 SMTP 和 IMAP 連接埠已開放並接受連線。連接埠「開放」代表伺服器正在監聽——TCP 監控能在問題影響使用者前，提早偵測到基礎設施層面的故障。",
+    "a.h3": "設定步驟",
+    "a.warn": "TCP 連線成功只代表連接埠是開放的，並不代表郵件協定（SMTP/IMAP）本身運作正常。若需確認應用層是否健康，請使用 HTTP 監控。",
+    "a.cfg.host": "Gmail SMTP 伺服器。請替換為您自己的郵件伺服器主機名稱。",
+    "a.cfg.port": "465 = SMTPS（寄信），993 = IMAPS（收信）。建議兩個都監控，確保完整覆蓋。",
+    "a.cfg.enabled": "保持啟用以持續執行檢測。",
+    "a.tip": "建議新增第二個監控項目，監測 993 port（IMAP），同時涵蓋寄信與收信路徑。若 465 失敗但 993 正常，問題很可能出在 SMTP 服務本身。",
+    "b.label": "場景 B · HTTP 狀態監控",
+    "b.title": "API 端點健康檢查",
+    "b.desc": "監控您的 REST API 或 Web 服務是否回傳異常狀態碼。與 TCP 不同，HTTP 監控會確認應用層是否正常回應，能捕捉 4XX 錯誤、5XX 伺服器失敗及損壞的重新導向。",
+    "b.h3": "設定步驟",
+    "b.warn": "OpsMon 會自動追蹤重新導向。若您的端點回傳 301/302，它會跟隨到最終目的地並回報該狀態碼。請確認最終 URL 仍然回傳 2XX。",
+    "b.cfg.url": "建議使用 API 專用的健康檢查端點。URL 必須包含 https://。",
+    "b.cfg.warn": "回應超過此值時顯示 🟡 WARNING。1000ms 對大多數 API 來說是合理的預設值。",
+    "b.cfg.timeout": "回應超過此值時顯示 🔴 FAILED。建議設定為警告閾值的 3～5 倍。",
+    "b.cfg.enabled": "保持啟用以持續監控。",
+    "b.tip": "若 API 位於 VPN 後面，請在連接 VPN 的狀態下進行檢測。OpsMon 從您的裝置發出所有請求，因此您的網路狀況會直接影響結果。",
+    "c.label": "場景 C · 延遲監控",
+    "c.title": "網路延遲診斷",
+    "c.desc": "精確找出連線鏈中的延遲發生在哪個階段——DNS 解析、TCP 交握、TLS 協商或伺服器回應（TTFB）。這比單純的 ping 更深入：它能告訴您該檢查哪個環節。",
+    "c.h3": "設定步驟",
+    "c.warn": "延遲結果會因您當前的網路狀況而有所不同。建議分別在 Wi-Fi 和行動數據下進行比較。行動數據的 DNS 時間偏高，可能代表電信業者的 DNS 較慢，可考慮在裝置設定中更換 DNS 解析伺服器。",
+    "c.cfg.url": "任何 HTTPS 端點均可。建議使用穩定、持續在線的主機作為基準比較。",
+    "c.cfg.warn": "回應超過此值時顯示 🟡 WARNING。請依預期延遲調整——本地端點設低一點，海外主機設高一點。",
+    "c.cfg.timeout": "在此時間內無回應時顯示 🔴 FAILED。逾時的請求不計入 P50/P90 計算。",
+    "c.cfg.enabled": "保持啟用以持續追蹤基準值。",
+    "c.interpret.title": "📊 如何解讀各階段耗時",
+    "c.dns.high": "DNS 解析器速度慢或超載",
+    "c.dns.action": "在裝置設定中切換至 1.1.1.1 或 8.8.8.8",
+    "c.tcp.high": "網路路由或伺服器距離遠／繁忙",
+    "c.tcp.action": "確認網路品質；考慮為全球使用者導入 CDN",
+    "c.tls.high": "憑證協商過慢（舊版加密套件或伺服器距離遠）",
+    "c.tls.action": "確認伺服器支援 TLS 1.3；優化加密套件",
+    "c.ttfb.high": "伺服器處理速度慢（應用程式、資料庫、運算量大）",
+    "c.ttfb.action": "分析後端效能；加入快取；檢查資料庫查詢時間",
+    "c.tip": "P50 代表「典型」使用者體驗；P90 代表最慢的使用者所看到的情況。若 P90 遠高於 P50，代表抖動（Jitter）偏高——應優先排查網路穩定性，而不是單純的速度問題。",
+    "d.label": "場景 D · TLS 憑證監控",
+    "d.title": "SSL 憑證到期追蹤",
+    "d.desc": "TLS 憑證過期會立即導致所有訪客的 HTTPS 連線失敗——瀏覽器會顯示嚇人的「不安全」警告，大多數使用者會立刻離開。OpsMon 監控到期日，提前數週發出警告，讓憑證更新不再措手不及。",
+    "d.h3": "設定步驟",
+    "d.warn": "萬用字元憑證（如 *.example.com）涵蓋所有子網域，共用同一個到期日。每張萬用字元憑證只需一個監控項目——但建議同時監控根網域，以確保完整覆蓋。",
+    "d.cfg.host": "只輸入主機名稱，不需加 https://。請為每個重要網域分別新增監控。",
+    "d.cfg.port": "443 是標準 HTTPS 連接埠。若您的伺服器使用非標準設定，請改用 8443 或對應的自訂埠號。",
+    "d.cfg.warn": "剩餘天數 ≤ 120 天時顯示 🟡 WARNING。這為更新作業留下充裕時間，尤其適合 90 天效期的憑證（如 Let's Encrypt）。",
+    "d.cfg.enabled": "保持啟用，讓 OpsMon 每次執行時都檢查憑證狀態。",
+    "d.status.title": "🔒 憑證狀態說明",
+    "d.status.ok": "有效",
+    "d.status.ok.desc": "憑證有效，且剩餘天數超過您設定的警告閾值。",
+    "d.status.warn": "即將到期",
+    "d.status.warn.desc": "憑證將在您設定的警告期間內到期，請盡快更新。",
+    "d.status.fail": "已到期 / 錯誤",
+    "d.status.fail.desc": "憑證已到期、為自簽憑證（不受信任）或無法連線至主機。",
+    "d.tip": "建議將警告閾值設定為至少比憑證機構的處理時間多 30 天。對於 Let's Encrypt（90 天憑證），120 天能提供一個完整的更新週期作為緩衝。",
+    "table.config": "⚙️ 建議配置",
+    "table.field": "欄位", "table.value": "數值", "table.notes": "說明",
+    "table.phase": "階段", "table.high_means": "數值偏高代表…", "table.action": "建議處理方式",
+    "table.status": "狀態", "table.color": "指示燈", "table.meaning": "含義",
+    "field.host": "主機 (Host)", "field.port": "連接埠 (Port)", "field.url": "網址 (URL)",
+    "field.warn_threshold": "警告閾值 (ms)", "field.timeout": "逾時 (ms)",
+    "field.warn_days": "到期前警告天數", "field.enabled": "啟用 (Enabled)",
+    "tip.label": "小提示：", "note.label": "注意：",
+    "footer.guide": "使用指南", "footer.privacy": "隱私政策", "footer.download": "前往 Google Play 下載"
   },
-  "zh_CN": {
-    "hero_title": "OpsMon 应用场景", "hero_desc": "为您的基础设施建立专业监控。", "hero_sub": "完整掌控状态", "hero_p1": "在单一面板追踪 TLS、TCP、延迟与 HTTP 警报。",
-    "label_a": "场景 A", "a_title": "邮件服务器 (TCP Port)", "a_sub": "端口可用性", "a_p1": "监控 smtp.gmail.com:465，确保邮件收发永不中断。",
-    "label_b": "场景 B", "b_title": "API 健康检查 (HTTP Status)", "b_sub": "状态码监测", "b_p1": "监控自定义 GET 端点，确保其返回正常的 2XX 响应。",
-    "label_c": "场景 C", "c_title": "延迟诊断", "c_sub": "耗时详细拆解", "c_p1": "分析 mail.yahoo.com，精確定位 DNS、TCP、TLS 或 TTFB 的延迟。",
-    "label_d": "场景 D", "d_title": "TLS 证书到期", "d_sub": "到期警示", "d_p1": "针对 yahoo.com 等域名，获取醒目的橘色“即将到期”预警。",
-    "rec_config": "推荐配置："
+
+  "zh-CN": {
+    langLabel: "简体中文",
+    "header.subtitle": "应用场景与配置示例",
+    "hero.title": "<span>OpsMon</span> 实际应用场景",
+    "hero.desc": "针对常见基础设施场景的逐步监控配置说明，附完整参数参考。",
+    "hero.back": "返回使用指南",
+    "nav.a": "📡 A · TCP 端口",
+    "nav.b": "🌐 B · HTTP 状态",
+    "nav.c": "⏱ C · 延迟诊断",
+    "nav.d": "🔒 D · TLS 证书",
+    "a.label": "场景 A · TCP 端口监控",
+    "a.title": "邮件服务器端口可用性",
+    "a.desc": "确认您的邮件服务器 SMTP 和 IMAP 端口已开放并接受连接。端口「开放」代表服务器正在监听——TCP 监控能在问题影响用户前，提早发现基础设施层面的故障。",
+    "a.h3": "设置步骤",
+    "a.warn": "TCP 连接成功只代表端口是开放的，并不代表邮件协议（SMTP/IMAP）本身运行正常。如需确认应用层健康状态，请使用 HTTP 监控。",
+    "a.cfg.host": "Gmail SMTP 服务器。请替换为您自己的邮件服务器主机名。",
+    "a.cfg.port": "465 = SMTPS（发送邮件），993 = IMAPS（接收邮件）。建议同时监控两者以确保完整覆盖。",
+    "a.cfg.enabled": "保持启用以持续执行检测。",
+    "a.tip": "建议添加第二个监控项，监测 993 端口（IMAP），同时覆盖发信与收信路径。若 465 失败但 993 正常，问题很可能出在 SMTP 服务本身。",
+    "b.label": "场景 B · HTTP 状态监控",
+    "b.title": "API 端点健康检查",
+    "b.desc": "监控您的 REST API 或 Web 服务是否返回异常状态码。与 TCP 不同，HTTP 监控会确认应用层是否正常响应，能捕捉 4XX 错误、5XX 服务器故障及损坏的重定向。",
+    "b.h3": "设置步骤",
+    "b.warn": "OpsMon 会自动跟踪重定向。若端点返回 301/302，它会跟随到最终目的地并上报该状态码。请确认最终 URL 仍返回 2XX。",
+    "b.cfg.url": "建议使用 API 专用健康检查端点。URL 必须包含 https://。",
+    "b.cfg.warn": "响应超过此值时显示 🟡 WARNING。1000ms 对大多数 API 来说是合理的默认值。",
+    "b.cfg.timeout": "响应超过此值时显示 🔴 FAILED。建议设置为警告阈值的 3～5 倍。",
+    "b.cfg.enabled": "保持启用以持续监控。",
+    "b.tip": "若 API 位于 VPN 后面，请在连接 VPN 的情况下进行检测。OpsMon 从您的设备发出所有请求，因此网络状况会直接影响结果。",
+    "c.label": "场景 C · 延迟监控",
+    "c.title": "网络延迟诊断",
+    "c.desc": "精确找出连接链中的延迟发生在哪个阶段——DNS 解析、TCP 握手、TLS 协商或服务器响应（TTFB）。这比简单的 ping 更深入：它能告诉您该检查哪个环节。",
+    "c.h3": "设置步骤",
+    "c.warn": "延迟结果会因当前网络状况而有所不同。建议分别在 Wi-Fi 和移动数据下进行比较。移动数据的 DNS 时间偏高，可能代表运营商 DNS 较慢，可考虑在设备设置中更换 DNS 解析服务器。",
+    "c.cfg.url": "任何 HTTPS 端点均可。建议使用稳定、持续在线的主机作为基准对比。",
+    "c.cfg.warn": "响应超过此值时显示 🟡 WARNING。请依预期延迟调整——本地端点设低一点，海外主机设高一点。",
+    "c.cfg.timeout": "在此时间内无响应时显示 🔴 FAILED。超时的请求不计入 P50/P90 计算。",
+    "c.cfg.enabled": "保持启用以持续追踪基准值。",
+    "c.interpret.title": "📊 如何解读各阶段耗时",
+    "c.dns.high": "DNS 解析器速度慢或超载",
+    "c.dns.action": "在设备设置中切换至 1.1.1.1 或 8.8.8.8",
+    "c.tcp.high": "网络路由或服务器距离远/繁忙",
+    "c.tcp.action": "确认网络质量；考虑为全球用户引入 CDN",
+    "c.tls.high": "证书协商过慢（旧版加密套件或服务器距离远）",
+    "c.tls.action": "确认服务器支持 TLS 1.3；优化加密套件",
+    "c.ttfb.high": "服务器处理速度慢（应用、数据库、计算量大）",
+    "c.ttfb.action": "分析后端性能；添加缓存；检查数据库查询时间",
+    "c.tip": "P50 代表「典型」用户体验；P90 代表最慢的用户看到的情况。若 P90 远高于 P50，代表抖动（Jitter）偏高——应优先排查网络稳定性，而不是单纯的速度问题。",
+    "d.label": "场景 D · TLS 证书监控",
+    "d.title": "SSL 证书到期追踪",
+    "d.desc": "TLS 证书过期会立即导致所有访客的 HTTPS 连接失败——浏览器会显示「不安全」警告，大多数用户会立刻离开。OpsMon 监控到期日，提前数周发出预警，让证书更新不再措手不及。",
+    "d.h3": "设置步骤",
+    "d.warn": "通配符证书（如 *.example.com）涵盖所有子域名，共用同一个到期日。每张通配符证书只需一个监控项——但建议同时监控根域名以确保完整覆盖。",
+    "d.cfg.host": "只输入主机名，不需加 https://。请为每个重要域名分别添加监控。",
+    "d.cfg.port": "443 是标准 HTTPS 端口。若服务器使用非标准配置，请改用 8443 或对应的自定义端口。",
+    "d.cfg.warn": "剩余天数 ≤ 120 天时显示 🟡 WARNING。为续期操作留出充裕时间，尤其适合 90 天有效期的证书（如 Let's Encrypt）。",
+    "d.cfg.enabled": "保持启用，让 OpsMon 每次运行时都检查证书状态。",
+    "d.status.title": "🔒 证书状态说明",
+    "d.status.ok": "有效",
+    "d.status.ok.desc": "证书有效，且剩余天数超过您设定的警告阈值。",
+    "d.status.warn": "即将到期",
+    "d.status.warn.desc": "证书将在您设定的警告期限内到期，请尽快续期。",
+    "d.status.fail": "已到期 / 错误",
+    "d.status.fail.desc": "证书已过期、为自签证书（不受信任）或无法连接至主机。",
+    "d.tip": "建议将警告阈值设置为至少比证书机构处理时间多 30 天。对于 Let's Encrypt（90 天证书），120 天能提供一个完整的续期周期作为缓冲。",
+    "table.config": "⚙️ 建议配置",
+    "table.field": "字段", "table.value": "数值", "table.notes": "说明",
+    "table.phase": "阶段", "table.high_means": "数值偏高代表…", "table.action": "建议处理方式",
+    "table.status": "状态", "table.color": "指示灯", "table.meaning": "含义",
+    "field.host": "主机 (Host)", "field.port": "端口 (Port)", "field.url": "网址 (URL)",
+    "field.warn_threshold": "警告阈值 (ms)", "field.timeout": "超时 (ms)",
+    "field.warn_days": "到期前警告天数", "field.enabled": "启用 (Enabled)",
+    "tip.label": "提示：", "note.label": "注意：",
+    "footer.guide": "使用指南", "footer.privacy": "隐私政策", "footer.download": "前往 Google Play 下载"
   },
-  "ja": {
-    "hero_title": "OpsMon 活用事例", "hero_desc": "インフラストラクチャにプロフェッショナルな監視を。", "hero_sub": "高い視認性", "hero_p1": "TLS、TCP、遅延、HTTPアラートを1つの画面で管理。",
-    "label_a": "シナリオ A", "a_title": "メールサーバー (TCPポート)", "a_sub": "ポートの可用性", "a_p1": "smtp.gmail.com:465を監視し、メールフローの中断を防ぎます。",
-    "label_b": "シナリオ B", "b_title": "APIヘルスチェック (HTTP)", "b_sub": "ステータスコード確認", "b_p1": "カスタムGETエンドポイントを監視し、2XXレスポンスを確認します。",
-    "label_c": "シナシナリオ C", "c_title": "遅延診断", "c_sub": "タイミングの詳細分解", "c_p1": "mail.yahoo.comを分析し、DNS、TCP、TLS、TTFBの遅延を特定します。",
-    "label_d": "シナリオ D", "d_title": "TLS証明書の期限", "d_sub": "期限切れアラート", "d_p1": "yahoo.comなどのドメインに対し、オレンジ色の「間もなく期限切れ」警告を表示。",
-    "rec_config": "推奨設定:"
+
+  ja: {
+    langLabel: "日本語",
+    "header.subtitle": "活用事例と設定ガイド",
+    "hero.title": "<span>OpsMon</span> 実践活用ガイド",
+    "hero.desc": "よくある監視シナリオのステップバイステップ設定と、正確な設定パラメーター。",
+    "hero.back": "ユーザーガイドに戻る",
+    "nav.a": "📡 A · TCP ポート",
+    "nav.b": "🌐 B · HTTP ステータス",
+    "nav.c": "⏱ C · レイテンシ",
+    "nav.d": "🔒 D · TLS 証明書",
+    "a.label": "シナリオ A · TCP ポートモニター",
+    "a.title": "メールサーバーのポート可用性",
+    "a.desc": "メールサーバーの SMTP および IMAP ポートが開放されていることを確認します。ポートが「開放」状態とはサーバーがリッスンしていることを意味し、TCP 監視はユーザーに影響が及ぶ前にインフラ障害を検知します。",
+    "a.h3": "設定手順",
+    "a.warn": "TCP 接続が成功してもポートが開いていることの確認に過ぎず、メールプロトコル（SMTP/IMAP）自体が正常に機能しているかは確認できません。アプリケーション層のヘルスチェックには HTTP 監視を使用してください。",
+    "a.cfg.host": "Gmail の SMTP サーバー。自社メールサーバーのホスト名に置き換えてください。",
+    "a.cfg.port": "465 = SMTPS（送信）、993 = IMAPS（受信）。完全なカバレッジのために両方を監視することを推奨します。",
+    "a.cfg.enabled": "継続的にチェックするために有効のままにしてください。",
+    "a.tip": "ポート 993（IMAP）の監視を追加し、送受信の両経路をカバーしましょう。465 が失敗して 993 が正常なら、SMTP サービス固有の問題である可能性が高いです。",
+    "b.label": "シナリオ B · HTTP ステータスモニター",
+    "b.title": "API エンドポイントのヘルスチェック",
+    "b.desc": "REST API や Web サービスの異常なステータスコードを監視します。TCP と異なり、HTTP 監視はアプリケーション層が正常に応答しているかを確認し、4XX エラー・5XX サーバー障害・リダイレクト破損を検知します。",
+    "b.h3": "設定手順",
+    "b.warn": "OpsMon はリダイレクトを自動的に追跡します。エンドポイントが 301/302 を返す場合、最終的なリダイレクト先まで追跡してそのステータスコードを報告します。最終 URL が 2XX を返すことを確認してください。",
+    "b.cfg.url": "API 専用のヘルスチェックエンドポイントがあればそちらを使用。https:// を含む必要があります。",
+    "b.cfg.warn": "応答がこの値を超えると 🟡 WARNING が表示されます。1000ms はほとんどの API に適した初期値です。",
+    "b.cfg.timeout": "応答がこの値を超えると 🔴 FAILED が表示されます。警告閾値の 3〜5 倍に設定することを推奨します。",
+    "b.cfg.enabled": "継続的に監視するために有効のままにしてください。",
+    "b.tip": "VPN 内部の API を監視する場合は、VPN に接続した状態でチェックを実行してください。OpsMon はすべてのリクエストをデバイスから発行するため、ネットワーク環境が結果に直接影響します。",
+    "c.label": "シナリオ C · レイテンシモニター",
+    "c.title": "ネットワーク遅延の詳細診断",
+    "c.desc": "DNS 解決・TCP ハンドシェイク・TLS ネゴシエーション・サーバー応答（TTFB）のどこで遅延が発生しているかを正確に特定します。単純な ping を超えた詳細な分析で、調査すべきフェーズを明確にします。",
+    "c.h3": "設定手順",
+    "c.warn": "レイテンシの結果は現在のネットワーク環境によって異なります。Wi-Fi とモバイルデータの両方で比較することを推奨します。モバイルで DNS が高い場合は、キャリアの DNS が遅い可能性があります。デバイス設定でDNSリゾルバーの変更を検討してください。",
+    "c.cfg.url": "任意の HTTPS エンドポイント。ベースライン比較のために安定した常時オンラインのホストを使用することを推奨します。",
+    "c.cfg.warn": "応答がこの値を超えると 🟡 WARNING が表示されます。LAN ターゲットには低く、海外ホストには高く調整してください。",
+    "c.cfg.timeout": "この時間内に応答がない場合 🔴 FAILED となります。タイムアウトしたリクエストは P50/P90 の計算から除外されます。",
+    "c.cfg.enabled": "継続的なベースライン追跡のために有効のままにしてください。",
+    "c.interpret.title": "📊 フェーズ別タイミングの解釈方法",
+    "c.dns.high": "DNS リゾルバーが遅い、または過負荷",
+    "c.dns.action": "デバイス設定で 1.1.1.1 または 8.8.8.8 に切り替える",
+    "c.tcp.high": "ネットワークルーティングやサーバーが遠い/ビジー",
+    "c.tcp.action": "ネットワーク品質を確認；グローバルユーザー向けに CDN を検討",
+    "c.tls.high": "証明書のネゴシエーションが遅い（古い暗号化方式または遠いサーバー）",
+    "c.tls.action": "サーバーが TLS 1.3 をサポートしているか確認；暗号化スイートを最適化",
+    "c.ttfb.high": "サーバーの処理が遅い（アプリ、DB、高負荷計算）",
+    "c.ttfb.action": "バックエンドをプロファイル；キャッシュを追加；DB クエリ時間を確認",
+    "c.tip": "P50 は「典型的な」ユーザー体験、P90 は最も遅いユーザーが体験する値です。P90 が P50 より大幅に高い場合はジッターが高い状態です——速度ではなくネットワークの安定性を調査してください。",
+    "d.label": "シナリオ D · TLS 証明書モニター",
+    "d.title": "SSL 証明書の有効期限管理",
+    "d.desc": "TLS 証明書が期限切れになると、全訪問者の HTTPS 接続が即座に失敗します——ブラウザは「保護されていません」という警告を表示し、ほとんどのユーザーが離脱します。OpsMon は数週間前から警告を発し、更新を見逃さないようにします。",
+    "d.h3": "設定手順",
+    "d.warn": "ワイルドカード証明書（例：*.example.com）はすべてのサブドメインを同一の有効期限でカバーします。ワイルドカード証明書 1 枚につきモニター 1 つで済みますが、ルートドメインも別途監視することをお勧めします。",
+    "d.cfg.host": "https:// なしのホスト名のみを入力。重要なドメインはそれぞれ個別に追加してください。",
+    "d.cfg.port": "443 が標準 HTTPS ポートです。非標準構成のサーバーには 8443 やカスタムポートを使用してください。",
+    "d.cfg.warn": "残り ≤ 120 日で 🟡 WARNING が表示されます。特に 90 日有効の証明書（Let's Encrypt など）では、更新に十分な余裕ができます。",
+    "d.cfg.enabled": "OpsMon が毎回証明書を確認できるよう有効のままにしてください。",
+    "d.status.title": "🔒 証明書ステータスのリファレンス",
+    "d.status.ok": "有効",
+    "d.status.ok.desc": "証明書は有効で、設定した警告しきい値より多くの日数が残っています。",
+    "d.status.warn": "まもなく期限切れ",
+    "d.status.warn.desc": "設定した警告期間内に証明書が期限切れになります。今すぐ更新してください。",
+    "d.status.fail": "期限切れ / エラー",
+    "d.status.fail.desc": "証明書が期限切れ、自己署名（信頼されていない）、またはホストに接続できない状態です。",
+    "d.tip": "警告しきい値は、認証局の処理時間より少なくとも 30 日多く設定してください。Let's Encrypt（90 日証明書）の場合、120 日設定で更新サイクル 1 回分のバッファが確保できます。",
+    "table.config": "⚙️ 推奨設定",
+    "table.field": "フィールド", "table.value": "値", "table.notes": "説明",
+    "table.phase": "フェーズ", "table.high_means": "値が高い場合…", "table.action": "対処方法",
+    "table.status": "ステータス", "table.color": "インジケーター", "table.meaning": "意味",
+    "field.host": "ホスト (Host)", "field.port": "ポート (Port)", "field.url": "URL",
+    "field.warn_threshold": "警告しきい値 (ms)", "field.timeout": "タイムアウト (ms)",
+    "field.warn_days": "有効期限前の警告日数", "field.enabled": "有効 (Enabled)",
+    "tip.label": "ヒント：", "note.label": "注意：",
+    "footer.guide": "ユーザーガイド", "footer.privacy": "プライバシーポリシー", "footer.download": "Google Play でダウンロード"
   },
-  "ko": {
-    "hero_title": "OpsMon 활용 사례", "hero_desc": "인프라를 위한 전문적인 모니터링.", "hero_sub": "전체 가시성", "hero_p1": "TLS, TCP, 지연 시간, HTTP 알림을 한곳에서 관리.",
-    "label_a": "시나리오 A", "a_title": "메일 서버 (TCP 포트)", "a_sub": "포트 가용성", "a_p1": "smtp.gmail.com:465를 모니터링하여 메일 중단을 방지합니다.",
-    "label_b": "시나리오 B", "b_title": "API 상태 체크 (HTTP)", "b_sub": "상태 코드 확인", "b_p1": "사용자 정의 GET 엔드포인트가 2XX 응답을 반환하는지 확인합니다.",
-    "label_c": "시나리오 C", "c_title": "지연 시간 진단", "c_sub": "타이밍 세부 분석", "c_p1": "mail.yahoo.com을 분석하여 DNS, TCP, TLS 또는 TTFB의 지연을 파악합니다.",
-    "label_d": "시나리오 D", "d_title": "TLS 인증서 만료", "d_sub": "만료 알림", "d_p1": "yahoo.com과 같은 도메인에 대해 주황색 '만료 예정' 경고를 표시합니다.",
-    "rec_config": "권장 설정:"
+
+  ko: {
+    langLabel: "한국어",
+    "header.subtitle": "활용 사례 및 설정 가이드",
+    "hero.title": "<span>OpsMon</span> 실전 활용 가이드",
+    "hero.desc": "일반적인 인프라 모니터링 시나리오의 단계별 설정 방법과 정확한 구성 파라미터.",
+    "hero.back": "사용자 가이드로 돌아가기",
+    "nav.a": "📡 A · TCP 포트",
+    "nav.b": "🌐 B · HTTP 상태",
+    "nav.c": "⏱ C · 레이턴시",
+    "nav.d": "🔒 D · TLS 인증서",
+    "a.label": "시나리오 A · TCP 포트 모니터",
+    "a.title": "메일 서버 포트 가용성",
+    "a.desc": "메일 서버의 SMTP 및 IMAP 포트가 열려 있고 연결을 수락하는지 확인합니다. 포트가 '열려 있다'는 것은 서버가 수신 대기 중임을 의미하며, TCP 모니터링은 사용자에게 영향을 미치기 전에 인프라 수준의 장애를 감지합니다.",
+    "a.h3": "설정 방법",
+    "a.warn": "TCP 연결 성공은 포트가 열려 있음만을 확인합니다. 메일 프로토콜(SMTP/IMAP) 자체가 정상 작동하는지는 확인하지 않습니다. 애플리케이션 수준의 상태 확인에는 HTTP 모니터링을 사용하세요.",
+    "a.cfg.host": "Gmail SMTP 서버. 자체 메일 서버 호스트명으로 교체하세요.",
+    "a.cfg.port": "465 = SMTPS(발신), 993 = IMAPS(수신). 완전한 커버리지를 위해 둘 다 모니터링하세요.",
+    "a.cfg.enabled": "지속적인 점검을 위해 활성화 상태를 유지하세요.",
+    "a.tip": "포트 993(IMAP)에 대한 두 번째 모니터를 추가해 발신·수신 경로를 모두 커버하세요. 465가 실패하고 993이 정상이라면 문제는 SMTP 서비스에 있을 가능성이 높습니다.",
+    "b.label": "시나리오 B · HTTP 상태 모니터",
+    "b.title": "API 엔드포인트 상태 확인",
+    "b.desc": "REST API나 웹 서비스의 비정상 상태 코드를 모니터링합니다. TCP와 달리 HTTP 모니터링은 애플리케이션 계층이 올바르게 응답하는지 확인하여 4XX 오류, 5XX 서버 장애, 리다이렉트 오류를 감지합니다.",
+    "b.h3": "설정 방법",
+    "b.warn": "OpsMon은 리다이렉트를 자동으로 따릅니다. 엔드포인트가 301/302를 반환하면 최종 목적지까지 따라가 해당 상태 코드를 보고합니다. 최종 URL이 2XX를 반환하는지 확인하세요.",
+    "b.cfg.url": "가능하면 API 전용 헬스 체크 엔드포인트를 사용하세요. https://를 포함해야 합니다.",
+    "b.cfg.warn": "응답이 이 값을 초과하면 🟡 WARNING이 표시됩니다. 1000ms는 대부분의 API에 적합한 기본값입니다.",
+    "b.cfg.timeout": "응답이 이 값을 초과하면 🔴 FAILED가 표시됩니다. 경고 임계값의 3~5배로 설정하세요.",
+    "b.cfg.enabled": "지속적인 모니터링을 위해 활성화 상태를 유지하세요.",
+    "b.tip": "VPN 뒤에 있는 내부 API의 경우 VPN에 연결된 상태에서 점검을 실행하세요. OpsMon은 모든 요청을 디바이스에서 발송하므로 네트워크 환경이 결과에 직접 영향을 미칩니다.",
+    "c.label": "시나리오 C · 레이턴시 모니터",
+    "c.title": "네트워크 레이턴시 상세 진단",
+    "c.desc": "DNS 확인, TCP 핸드셰이크, TLS 협상, 서버 응답(TTFB) 등 연결 체인에서 정확히 어느 단계에서 지연이 발생하는지 파악합니다. 단순 ping을 넘어 어떤 단계를 조사해야 하는지 알려줍니다.",
+    "c.h3": "설정 방법",
+    "c.warn": "레이턴시 결과는 현재 네트워크 환경에 따라 달라집니다. Wi-Fi와 모바일 데이터 모두에서 비교해 보세요. 모바일에서 DNS 값이 높다면 통신사 DNS가 느린 것일 수 있으며, 디바이스 설정에서 DNS 리졸버 변경을 고려해 보세요.",
+    "c.cfg.url": "모든 HTTPS 엔드포인트 사용 가능. 기준선 비교를 위해 안정적으로 항상 온라인 상태인 호스트를 사용하세요.",
+    "c.cfg.warn": "응답이 이 값을 초과하면 🟡 WARNING이 표시됩니다. 기대 레이턴시에 따라 조정하세요.",
+    "c.cfg.timeout": "이 시간 내에 응답이 없으면 🔴 FAILED가 표시됩니다. 타임아웃된 요청은 P50/P90 계산에서 제외됩니다.",
+    "c.cfg.enabled": "지속적인 기준선 추적을 위해 활성화 상태를 유지하세요.",
+    "c.interpret.title": "📊 단계별 타이밍 해석 방법",
+    "c.dns.high": "DNS 리졸버가 느리거나 과부하 상태",
+    "c.dns.action": "디바이스 설정에서 1.1.1.1 또는 8.8.8.8로 전환",
+    "c.tcp.high": "네트워크 라우팅 또는 서버가 멀거나 바쁜 상태",
+    "c.tcp.action": "네트워크 품질 확인; 글로벌 사용자를 위한 CDN 도입 검토",
+    "c.tls.high": "인증서 협상이 느림(오래된 암호화 방식 또는 먼 서버)",
+    "c.tls.action": "서버가 TLS 1.3을 지원하는지 확인; 암호화 스위트 최적화",
+    "c.ttfb.high": "서버 처리가 느림(앱, DB, 많은 연산)",
+    "c.ttfb.action": "백엔드 프로파일링; 캐싱 추가; DB 쿼리 시간 확인",
+    "c.tip": "P50은 '일반적인' 사용자 경험이고, P90은 가장 느린 사용자가 경험하는 값입니다. P90이 P50보다 훨씬 높다면 지터가 높은 상태입니다 — 속도가 아닌 네트워크 안정성을 조사하세요.",
+    "d.label": "시나리오 D · TLS 인증서 모니터",
+    "d.title": "SSL 인증서 만료 추적",
+    "d.desc": "TLS 인증서가 만료되면 모든 방문자의 HTTPS 연결이 즉시 실패합니다 — 브라우저는 '안전하지 않음' 경고를 표시하고 대부분의 사용자가 이탈합니다. OpsMon은 만료일을 모니터링하고 몇 주 전에 미리 경고해 갱신을 놓치지 않게 합니다.",
+    "d.h3": "설정 방법",
+    "d.warn": "와일드카드 인증서(예: *.example.com)는 동일한 만료일로 모든 서브도메인을 커버합니다. 와일드카드 인증서 1개당 모니터 1개로 충분하지만, 루트 도메인도 별도로 모니터링하는 것이 좋습니다.",
+    "d.cfg.host": "https:// 없이 호스트명만 입력하세요. 중요한 도메인은 각각 개별적으로 추가하세요.",
+    "d.cfg.port": "443이 표준 HTTPS 포트입니다. 비표준 서버 구성의 경우 8443 또는 사용자 지정 포트를 사용하세요.",
+    "d.cfg.warn": "남은 일수 ≤ 120일이면 🟡 WARNING이 표시됩니다. 특히 90일 유효 인증서(예: Let's Encrypt)의 갱신에 충분한 여유를 줍니다.",
+    "d.cfg.enabled": "OpsMon이 매번 인증서를 확인할 수 있도록 활성화 상태를 유지하세요.",
+    "d.status.title": "🔒 인증서 상태 참조",
+    "d.status.ok": "유효",
+    "d.status.ok.desc": "인증서가 유효하며 설정한 경고 임계값보다 더 많은 일수가 남아 있습니다.",
+    "d.status.warn": "곧 만료",
+    "d.status.warn.desc": "설정한 경고 기간 내에 인증서가 만료됩니다. 지금 갱신하세요.",
+    "d.status.fail": "만료 / 오류",
+    "d.status.fail.desc": "인증서가 만료되었거나, 자체 서명(신뢰할 수 없음)이거나, 호스트에 접근할 수 없는 상태입니다.",
+    "d.tip": "경고 임계값을 인증 기관의 처리 시간보다 최소 30일 이상 여유 있게 설정하세요. Let's Encrypt(90일 인증서)의 경우 120일로 설정하면 갱신 주기 1회 분량의 버퍼가 확보됩니다.",
+    "table.config": "⚙️ 권장 구성",
+    "table.field": "필드", "table.value": "값", "table.notes": "설명",
+    "table.phase": "단계", "table.high_means": "높은 값의 의미…", "table.action": "조치 방법",
+    "table.status": "상태", "table.color": "표시등", "table.meaning": "의미",
+    "field.host": "호스트 (Host)", "field.port": "포트 (Port)", "field.url": "URL",
+    "field.warn_threshold": "경고 임계값 (ms)", "field.timeout": "타임아웃 (ms)",
+    "field.warn_days": "만료 전 경고 일수", "field.enabled": "활성화 (Enabled)",
+    "tip.label": "팁:", "note.label": "참고:",
+    "footer.guide": "사용자 가이드", "footer.privacy": "개인정보처리방침", "footer.download": "Google Play에서 다운로드"
   },
-  "de": {
-    "hero_title": "OpsMon Anwendungsfälle", "hero_desc": "Professionelles Monitoring für Ihre Infrastruktur.", "hero_sub": "Volle Sichtbarkeit", "hero_p1": "Verfolgen Sie TLS, TCP, Latenz und HTTP-Status an einem Ort.",
-    "label_a": "Szenario A", "a_title": "Mailserver (TCP-Port)", "a_sub": "Port-Verfügbarkeit", "a_p1": "Überwachen Sie smtp.gmail.com:465, um den Mailfluss sicherzustellen.",
-    "label_b": "Szenario B", "b_title": "API-Status (HTTP)", "b_sub": "Statuscode-Check", "b_p1": "Überwachen Sie GET-Endpunkte auf gesunde 2XX-Antworten.",
-    "label_c": "Szenario C", "c_title": "Latenz-Diagnose", "c_sub": "Zeitliche Aufschlüsselung", "c_p1": "Analysieren Sie mail.yahoo.com auf DNS, TCP, TLS oder TTFB-Verzögerungen.",
-    "label_d": "Szenario D", "d_title": "TLS-Zertifikatsablauf", "d_sub": "Ablaufwarnungen", "d_p1": "Erhalten Sie orangefarbene Warnungen für Domains wie yahoo.com.",
-    "rec_config": "Empfohlene Konfiguration:"
+
+  de: {
+    langLabel: "Deutsch",
+    "header.subtitle": "Anwendungsfälle &amp; Konfigurationsbeispiele",
+    "hero.title": "<span>OpsMon</span> in der Praxis",
+    "hero.desc": "Schritt-für-Schritt-Anleitungen für gängige Infrastruktur-Szenarien — mit genauen Konfigurationsparametern.",
+    "hero.back": "Zurück zum Benutzerhandbuch",
+    "nav.a": "📡 A · TCP-Port",
+    "nav.b": "🌐 B · HTTP-Status",
+    "nav.c": "⏱ C · Latenz",
+    "nav.d": "🔒 D · TLS-Zertifikat",
+    "a.label": "Szenario A · TCP-Port-Monitor",
+    "a.title": "Mailserver-Port-Verfügbarkeit",
+    "a.desc": "Überprüfen Sie, ob die SMTP- und IMAP-Ports Ihres Mailservers geöffnet sind und Verbindungen akzeptieren. Ein \"offener\" Port bedeutet, dass der Server lauscht — TCP-Monitoring erkennt Infrastrukturausfälle, bevor sie Ihre Nutzer betreffen.",
+    "a.h3": "Einrichtung",
+    "a.warn": "Eine erfolgreiche TCP-Verbindung bestätigt nur, dass der Port offen ist — nicht, dass das Mailprotokoll (SMTP/IMAP) korrekt funktioniert. Für Anwendungsschicht-Checks verwenden Sie bitte das HTTP-Monitoring.",
+    "a.cfg.host": "Gmail-SMTP-Server. Ersetzen Sie dies durch den Hostnamen Ihres eigenen Mailservers.",
+    "a.cfg.port": "465 = SMTPS (Versand), 993 = IMAPS (Empfang). Beide überwachen für vollständige Abdeckung.",
+    "a.cfg.enabled": "Aktiviert lassen, um kontinuierliche Prüfungen durchzuführen.",
+    "a.tip": "Fügen Sie einen zweiten Monitor für Port 993 (IMAP) hinzu, um sowohl ausgehende als auch eingehende Mail-Pfade abzudecken. Wenn 465 ausfällt, 993 aber funktioniert, liegt das Problem wahrscheinlich am SMTP-Dienst.",
+    "b.label": "Szenario B · HTTP-Status-Monitor",
+    "b.title": "API-Endpunkt-Gesundheitscheck",
+    "b.desc": "Überwachen Sie Ihre REST-API oder Ihren Webservice auf unerwartete Statuscodes. Im Gegensatz zu TCP prüft das HTTP-Monitoring, ob die Anwendungsschicht korrekt antwortet — und erkennt 4XX-Fehler, 5XX-Serverfehler und fehlerhafte Weiterleitungen.",
+    "b.h3": "Einrichtung",
+    "b.warn": "OpsMon folgt Weiterleitungen automatisch. Gibt Ihr Endpunkt 301/302 zurück, wird der Pfad bis zum endgültigen Ziel verfolgt und dessen Statuscode gemeldet. Stellen Sie sicher, dass die finale URL noch 2XX zurückgibt.",
+    "b.cfg.url": "Verwenden Sie nach Möglichkeit den dedizierten Health-Check-Endpunkt Ihrer API. Muss https:// enthalten.",
+    "b.cfg.warn": "🟡 WARNING wird angezeigt, wenn die Antwort diesen Wert überschreitet. 1000 ms ist ein vernünftiger Standardwert für die meisten APIs.",
+    "b.cfg.timeout": "🔴 FAILED wird angezeigt, wenn die Antwort diesen Wert überschreitet. Empfehlung: 3–5× Ihren Warnschwellwert.",
+    "b.cfg.enabled": "Aktiviert lassen, um kontinuierlich zu überwachen.",
+    "b.tip": "Für interne APIs hinter einem VPN führen Sie den Check im verbundenen Zustand durch. Da OpsMon alle Anfragen von Ihrem Gerät sendet, wirken sich Ihre Netzwerkbedingungen direkt auf die Ergebnisse aus.",
+    "c.label": "Szenario C · Latenz-Monitor",
+    "c.title": "Netzwerk-Latenz-Diagnose",
+    "c.desc": "Identifizieren Sie genau, wo Verzögerungen in der Verbindungskette auftreten — DNS-Auflösung, TCP-Handshake, TLS-Aushandlung oder Serverantwort (TTFB). Das geht über einfaches Pingen hinaus: Es zeigt Ihnen, welche Phase untersucht werden muss.",
+    "c.h3": "Einrichtung",
+    "c.warn": "Latenz-Ergebnisse variieren je nach aktuellem Netzwerkzustand. Vergleichen Sie die Messwerte sowohl über WLAN als auch über mobile Daten. Hohe DNS-Werte auf dem Mobilgerät können auf einen langsamen DNS-Resolver Ihres Mobilfunkanbieters hinweisen.",
+    "c.cfg.url": "Beliebiger HTTPS-Endpunkt. Verwenden Sie für Baseline-Vergleiche einen stabilen, dauerhaft erreichbaren Host.",
+    "c.cfg.warn": "🟡 WARNING, wenn die Antwort diesen Wert überschreitet. Für LAN-Ziele niedrig, für Hosts im Ausland höher einstellen.",
+    "c.cfg.timeout": "🔴 FAILED, wenn innerhalb dieses Zeitfensters keine Antwort eingeht. Timeout-Anfragen werden von der P50/P90-Berechnung ausgeschlossen.",
+    "c.cfg.enabled": "Aktiviert lassen für kontinuierliches Baseline-Tracking.",
+    "c.interpret.title": "📊 Phasen-Timings richtig interpretieren",
+    "c.dns.high": "DNS-Resolver ist langsam oder überlastet",
+    "c.dns.action": "In den Geräteeinstellungen zu 1.1.1.1 oder 8.8.8.8 wechseln",
+    "c.tcp.high": "Netzwerk-Routing oder Server ist weit entfernt/ausgelastet",
+    "c.tcp.action": "Netzwerkqualität prüfen; CDN für globale Nutzer erwägen",
+    "c.tls.high": "Zertifikatsaushandlung ist langsam (ältere Cipher-Suite oder entfernter Server)",
+    "c.tls.action": "Sicherstellen, dass der Server TLS 1.3 unterstützt; Cipher-Suite optimieren",
+    "c.ttfb.high": "Server-Verarbeitung ist langsam (App, DB, aufwendige Berechnungen)",
+    "c.ttfb.action": "Backend profilen; Caching hinzufügen; DB-Abfragezeiten prüfen",
+    "c.tip": "P50 ist Ihre \"typische\" Nutzererfahrung; P90 ist das, was die langsamsten Nutzer sehen. Wenn P90 deutlich höher als P50 ist, haben Sie hohen Jitter — untersuchen Sie die Netzwerkstabilität, nicht die reine Geschwindigkeit.",
+    "d.label": "Szenario D · TLS-Zertifikat-Monitor",
+    "d.title": "SSL-Zertifikats-Ablaufverfolgung",
+    "d.desc": "Ein abgelaufenes TLS-Zertifikat verursacht sofortige HTTPS-Ausfälle für alle Besucher — Browser zeigen beängstigende \"Nicht sicher\"-Warnungen und die meisten Nutzer verlassen die Seite. OpsMon überwacht Ablaufdaten und warnt Wochen im Voraus.",
+    "d.h3": "Einrichtung",
+    "d.warn": "Wildcard-Zertifikate (z. B. *.example.com) decken alle Subdomains mit einem gemeinsamen Ablaufdatum ab. Pro Wildcard-Zertifikat reicht ein Monitor — es empfiehlt sich jedoch, die Root-Domain separat zu überwachen.",
+    "d.cfg.host": "Nur Hostname eingeben, ohne https://. Jede kritische Domain separat hinzufügen.",
+    "d.cfg.port": "443 ist der Standard-HTTPS-Port. Bei nicht-standardmäßigen Servern 8443 oder einen benutzerdefinierten Port verwenden.",
+    "d.cfg.warn": "🟡 WARNING, wenn ≤ 120 Tage verbleiben. Gibt ausreichend Zeit zur Erneuerung, besonders bei 90-Tage-Zertifikaten (z. B. Let's Encrypt).",
+    "d.cfg.enabled": "Aktiviert lassen, damit OpsMon das Zertifikat bei jeder Prüfung überprüft.",
+    "d.status.title": "🔒 Zertifikatsstatus-Referenz",
+    "d.status.ok": "Gültig",
+    "d.status.ok.desc": "Das Zertifikat ist gültig und hat mehr Tage übrig als Ihr Warnschwellwert.",
+    "d.status.warn": "Läuft bald ab",
+    "d.status.warn.desc": "Das Zertifikat läuft innerhalb Ihres konfigurierten Warnfensters ab. Zeit zur Erneuerung.",
+    "d.status.fail": "Abgelaufen / Fehler",
+    "d.status.fail.desc": "Das Zertifikat ist abgelaufen, selbstsigniert (nicht vertrauenswürdig) oder der Host ist nicht erreichbar.",
+    "d.tip": "Setzen Sie den Warnschwellwert auf mindestens 30 Tage mehr als die Bearbeitungszeit Ihrer Zertifizierungsstelle. Bei Let's Encrypt (90-Tage-Zertifikate) bieten 120 Tage einen vollen Erneuerungszyklus als Puffer.",
+    "table.config": "⚙️ Empfohlene Konfiguration",
+    "table.field": "Feld", "table.value": "Wert", "table.notes": "Hinweise",
+    "table.phase": "Phase", "table.high_means": "Hoher Wert bedeutet…", "table.action": "Maßnahme",
+    "table.status": "Status", "table.color": "Indikator", "table.meaning": "Bedeutung",
+    "field.host": "Host", "field.port": "Port", "field.url": "URL",
+    "field.warn_threshold": "Warnschwellwert (ms)", "field.timeout": "Timeout (ms)",
+    "field.warn_days": "Warnung vor Ablauf (Tage)", "field.enabled": "Aktiviert (Enabled)",
+    "tip.label": "Tipp:", "note.label": "Hinweis:",
+    "footer.guide": "Benutzerhandbuch", "footer.privacy": "Datenschutzerklärung", "footer.download": "Bei Google Play herunterladen"
   }
 };
 
-function switchLanguage(lang) {
-  localStorage.setItem('user-lang', lang);
-  document.getElementById('langSelect').value = lang;
+// ─────────────────────────────────────────────
+//  i18n Engine
+// ─────────────────────────────────────────────
+const LANG_KEY = 'opsmon_lang';
+const SUPPORTED = ['en', 'zh-TW', 'zh-CN', 'ja', 'ko', 'de'];
+
+function detectBrowserLang() {
+  const langs = navigator.languages || [navigator.language || 'en'];
+  for (const l of langs) {
+    const code = l.toLowerCase();
+    if (code.startsWith('zh-tw') || code.startsWith('zh-hant')) return 'zh-TW';
+    if (code.startsWith('zh')) return 'zh-CN';
+    if (code.startsWith('ja')) return 'ja';
+    if (code.startsWith('ko')) return 'ko';
+    if (code.startsWith('de')) return 'de';
+    if (code.startsWith('en')) return 'en';
+  }
+  return 'en';
+}
+
+function getInitialLang() {
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && SUPPORTED.includes(saved)) return saved;
+  } catch(e) {}
+  return detectBrowserLang();
+}
+
+function applyLang(lang) {
+  if (!translations[lang]) lang = 'en';
+  const t = translations[lang];
+  document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+    if (t[key] !== undefined) el.innerHTML = t[key];
   });
+  document.querySelectorAll('.lang-option').forEach(opt => {
+    opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
+  });
+  document.getElementById('currentLangLabel').textContent = t['langLabel'] || lang;
+  try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
 }
-window.onload = () => { switchLanguage(localStorage.getItem('user-lang') || 'en'); };
+
+function setLang(lang) { applyLang(lang); closeDropdown(); }
+function toggleDropdown() { document.getElementById('langSwitcher').classList.toggle('open'); }
+function closeDropdown() { document.getElementById('langSwitcher').classList.remove('open'); }
+
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('langSwitcher').contains(e.target)) closeDropdown();
+});
+
+applyLang(getInitialLang());
 </script>
 </body>
 </html>
