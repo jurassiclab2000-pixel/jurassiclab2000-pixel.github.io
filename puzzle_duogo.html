@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puzzle DuoGo! — Slide & Swap Puzzle Game</title>
+  <meta name="description" content="Puzzle DuoGo! — Two puzzle modes, one great game. Slide or Swap your way through 300+ beautiful puzzles, or use your own photos. Free on Google Play." />
+  <meta name="author" content="JurassicLab" />
+  <meta name="keywords" content="puzzle game, slide puzzle, swap puzzle, photo puzzle, android puzzle, free puzzle game, brain game" />
+  <meta property="og:title" content="Puzzle DuoGo! — Slide & Swap Puzzle" />
+  <meta property="og:description" content="Two puzzle modes, 300+ built-in images, use your own photos. Free on Android." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:        #0d0b1a;
+      --bg2:       #13102a;
+      --surface:   #1c1830;
+      --surface2:  #241f3a;
+      --border:    rgba(124,111,224,0.18);
+      --accent:    #7c6fe0;
+      --accent2:   #a594f9;
+      --teal:      #3ec3ac;
+      --gold:      #f0b840;
+      --coral:     #f07860;
+      --white:     #ffffff;
+      --muted:     #8a85b0;
+      --text:      #e8e4ff;
+      --radius:    16px;
+      --max:       720px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LANG SWITCHER ─────────────────────────────── */
+    .lang-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,11,26,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 16px;
+      flex-wrap: wrap;
+    }
+    .lang-btn {
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 20px;
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover { color: var(--text); border-color: var(--border); }
+    .lang-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── SECTIONS ──────────────────────────────────── */
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+
+    /* ── HERO ──────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 72px 24px 56px;
+      max-width: var(--max);
+      margin: 0 auto;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(ellipse, rgba(124,111,224,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .app-icon {
+      width: 96px; height: 96px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #5a4fcf, #8b7cf8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px;
+      margin: 0 auto 20px;
+      box-shadow: 0 12px 40px rgba(124,111,224,0.35);
+    }
+    .app-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(36px, 8vw, 58px);
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--accent2); }
+    .hero p {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 32px;
+    }
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+    .badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(124,111,224,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,111,224,0.5); }
+
+    /* ── LAYOUT WRAPPER ────────────────────────────── */
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── FEATURES GRID ─────────────────────────────── */
+    .section { padding: 56px 0; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .section h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(26px, 5vw, 36px);
+      color: var(--white);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 36px;
+      max-width: 520px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 20px;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── MODE CARDS ────────────────────────────────── */
+    .mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 480px) { .mode-cards { grid-template-columns: 1fr; } }
+
+    .mode-card {
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.08;
+      border-radius: var(--radius);
+    }
+    .mode-card.swap { background: linear-gradient(135deg, #2a1f5a, #1c1830); border: 1px solid rgba(124,111,224,0.3); }
+    .mode-card.slide { background: linear-gradient(135deg, #0f2a38, #1c1830); border: 1px solid rgba(62,195,172,0.3); }
+    .mode-card .chip {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+    .mode-card.swap .chip { background: rgba(124,111,224,0.2); color: var(--accent2); }
+    .mode-card.slide .chip { background: rgba(62,195,172,0.2); color: var(--teal); }
+    .mode-card h3 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 22px;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .mode-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── DIVIDER ───────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 24px;
+    }
+
+    /* ── COLLECTIONS ───────────────────────────────── */
+    .collections-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .coll-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── FREE FEATURES ─────────────────────────────── */
+    .free-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .free-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .free-item-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .free-item h4 { font-size: 15px; font-weight: 800; color: var(--white); margin-bottom: 4px; }
+    .free-item p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── FOOTER ────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── SCREENSHOT GALLERY ────────────────────────── */
+    .gallery-section { padding: 56px 0; }
+    .screenshots-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 8px 0 20px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screenshots-scroll::-webkit-scrollbar { height: 4px; }
+    .screenshots-scroll::-webkit-scrollbar-track { background: transparent; }
+    .screenshots-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+    .screenshot-item {
+      flex-shrink: 0;
+      width: 180px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transition: transform 0.2s;
+    }
+    .screenshot-item:hover { transform: scale(1.03); }
+    .screenshot-item img { width: 100%; display: block; }
+
+    /* ── ANIMATIONS ────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fadeUp 0.5s ease both; }
+    .hero > *:nth-child(1) { animation-delay: 0.05s; }
+    .hero > *:nth-child(2) { animation-delay: 0.10s; }
+    .hero > *:nth-child(3) { animation-delay: 0.15s; }
+    .hero > *:nth-child(4) { animation-delay: 0.20s; }
+    .hero > *:nth-child(5) { animation-delay: 0.25s; }
+    .hero > *:nth-child(6) { animation-delay: 0.30s; }
+  </style>
+</head>
+<body>
+
+<!-- ── LANGUAGE BAR ──────────────────────────────── -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('en')">🇺🇸 English</button>
+  <button class="lang-btn" onclick="setLang('zh-TW')">🇹🇼 繁體中文</button>
+  <button class="lang-btn" onclick="setLang('zh-CN')">🇨🇳 简体中文</button>
+  <button class="lang-btn" onclick="setLang('ja')">🇯🇵 日本語</button>
+  <button class="lang-btn" onclick="setLang('ko')">🇰🇷 한국어</button>
+  <button class="lang-btn" onclick="setLang('de')">🇩🇪 Deutsch</button>
+  <button class="lang-btn" onclick="setLang('es')">🇪🇸 Español</button>
+  <button class="lang-btn" onclick="setLang('pt')">🇧🇷 Português</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     ENGLISH
+══════════════════════════════════════════════════ -->
+<div class="lang-section active" id="lang-en">
+
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>Two Modes.<br><span>One Great Game.</span></h1>
+    <p>Slide tiles into place or swap any two pieces — 300+ beautiful puzzles, your own photos, free hints included.</p>
+    <div class="badges">
+      <div class="badge">🆓 Free to Play</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ Puzzles</div>
+      <div class="badge">🌐 10 Languages</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">
+      ▶ Download on Google Play
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="container">
+
+    <div class="gallery-section">
+      <div class="section-label">Screenshots</div>
+      <h2 style="font-family:'Fredoka One',cursive;font-size:clamp(24px,4vw,32px);color:var(--white);margin-bottom:20px;">See It in Action</h2>
+      <div class="screenshots-scroll">
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/uFhu40EsXOJDAKGE0BqTNRerVFIRwDcIsxwxPCylh6YipVmkELX3lpZ5Jh4qP2tgubxBt6Jhdij8YBgQAMPV" alt="Screenshot 1" loading="lazy" /></div>
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/QcU1SeZfrzXDd5q4ZELj8RG47Przz0cpU7RWGA8_Hb2GwPOGrQXTtHpjuUj6LyCfkuI2N3Q9ES0rj3SsnE-gbww" alt="Screenshot 2" loading="lazy" /></div>
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/XTmPJmNFRCEvl9wITpgoc8guHr7wYwglHMWVU3vrCSBh6brfjXNDunARf_UDf5SVdABcpkjTdYcyt8qKoYzjoxY" alt="Screenshot 3" loading="lazy" /></div>
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/idqTSzQxTmPk9vv9eTj3RNIdvYsBgxOdrs5RzJ3Uv6H_OHLmGpZcMCHKpOYttDoxmxT3aH_uSZX6v72sk7csRQ" alt="Screenshot 4" loading="lazy" /></div>
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/gB3vQRRqDVkSNtO7T9bjcEEGsq9P95gzi2TGEUOxQ4lo9Z9U92xhvQeh84G1wxhavbinOzk13dExBpx9UFv5OfI" alt="Screenshot 5" loading="lazy" /></div>
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/Hh-VjAYy0Gc7fZ6XTqrEY_fZ_TE1EGgm5JBYSM7B2YgJzlXpr9R51BsKTbFWZw53Xrt4VDBqGi_nJibUZ8kksw" alt="Screenshot 6" loading="lazy" /></div>
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/849jkdUwd8QPGth8EGVBF-2Ds7lSqNJb4uJCLkl2iRni0MIN371bHWri6t71LJkZP8lpSeoEQyu7f9UMAf3n5A" alt="Screenshot 7" loading="lazy" /></div>
+        <div class="screenshot-item"><img src="https://play-lh.googleusercontent.com/w4YNG_QCnMmYot6zc8MXsGQ2_ayIQ8p1q8u4kdExmu-Y0ngFizZCpfgTrgoHD_hMBpbvhIeMNq20s6yXDue3ew" alt="Screenshot 8" loading="lazy" /></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">Game Modes</div>
+      <h2>Pick Your Style of Challenge</h2>
+      <p class="section-sub">Two completely different puzzle mechanics — both using the same beautiful images.</p>
+      <div class="mode-cards">
+        <div class="mode-card swap">
+          <div class="chip">Swap Mode</div>
+          <h3>🔀 Swap Puzzle</h3>
+          <p>Tap any two tiles to swap their positions. Sharp eyes and quick thinking win here.</p>
+        </div>
+        <div class="mode-card slide">
+          <div class="chip">Slide Mode</div>
+          <h3>⬅️ Slide Puzzle</h3>
+          <p>Slide tiles into the empty space, classic style. Train your spatial reasoning one move at a time.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">Features</div>
+      <h2>Everything You Need, Nothing You Don't</h2>
+      <p class="section-sub">Built to be simple, beautiful, and genuinely fun.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📸</div>
+          <h3>Your Own Photos</h3>
+          <p>Turn any photo from your camera or gallery into a puzzle instantly. Pets, travel, memories — all fair game.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💡</div>
+          <h3>Free Hints</h3>
+          <p>Stuck? Use a hint to reveal the next move. Always free — no watch-an-ad nonsense.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>Auto-Complete</h3>
+          <p>Let the app solve it for you when you're truly stuck. No strings attached, completely free.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎉</div>
+          <h3>Celebrate Every Win</h3>
+          <p>Confetti rains down every time you complete a puzzle. Earn up to 3 stars based on your moves and time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📤</div>
+          <h3>Share Your Result</h3>
+          <p>Beat a puzzle? Share your score with friends and challenge them to do better.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Adjustable Difficulty</h3>
+          <p>Choose from 3×3 up to 6×6 grids. Easy for kids, brutal for experts.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">Built-in Collections</div>
+      <h2>300+ Beautiful Puzzles Across 10 Themes</h2>
+      <p class="section-sub">New content added regularly — always something fresh to solve.</p>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 Dogs</div>
+        <div class="coll-tag">🐱 Cats</div>
+        <div class="coll-tag">🐾 Cute Animals</div>
+        <div class="coll-tag">🦁 Wild Animals</div>
+        <div class="coll-tag">🐧 Ocean Animals</div>
+        <div class="coll-tag">🗼 Landmarks</div>
+        <div class="coll-tag">🌿 Nature</div>
+        <div class="coll-tag">🏔 National Parks</div>
+        <div class="coll-tag">🏙 Cities</div>
+        <div class="coll-tag">🍰 Cozy Food</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">100% Free</div>
+      <h2>No Tricks. No Paywalls.</h2>
+      <p class="section-sub">The features that matter are always free.</p>
+      <div class="free-list">
+        <div class="free-item">
+          <div class="free-item-icon">💡</div>
+          <div>
+            <h4>Hints — Always Free</h4>
+            <p>Get a nudge in the right direction without watching an ad or spending anything.</p>
+          </div>
+        </div>
+        <div class="free-item">
+          <div class="free-item-icon">✨</div>
+          <div>
+            <h4>Auto-Complete — Always Free</h4>
+            <p>Let the app finish the puzzle for you, no purchase required.</p>
+          </div>
+        </div>
+        <div class="free-item">
+          <div class="free-item-icon">📸</div>
+          <div>
+            <h4>Custom Photos — Always Free</h4>
+            <p>Use your own photos from camera or gallery without any limitation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 JurassicLab &nbsp;·&nbsp;
+    <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">Download on Google Play</a>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     繁體中文
+══════════════════════════════════════════════════ -->
+<div class="lang-section" id="lang-zh-TW">
+
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>兩種模式。<br><span>一款好遊戲。</span></h1>
+    <p>滑動拼圖或交換任意兩塊——300+ 精美圖庫、使用自己的照片、免費提示功能一次擁有。</p>
+    <div class="badges">
+      <div class="badge">🆓 免費暢玩</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ 關卡</div>
+      <div class="badge">🌐 10 種語言</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">
+      ▶ 前往 Google Play 下載
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="container">
+
+    <div class="section">
+      <div class="section-label">遊戲模式</div>
+      <h2>選擇你的挑戰方式</h2>
+      <p class="section-sub">兩種截然不同的拼圖玩法——同樣精美的圖片，完全不同的體驗。</p>
+      <div class="mode-cards">
+        <div class="mode-card swap">
+          <div class="chip">交換模式</div>
+          <h3>🔀 交換拼圖</h3>
+          <p>點選任意兩塊交換位置，考驗眼力與判斷力。</p>
+        </div>
+        <div class="mode-card slide">
+          <div class="chip">滑動模式</div>
+          <h3>⬅️ 滑動拼圖</h3>
+          <p>將拼塊滑入空格，經典玩法訓練空間邏輯思維。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">功能特色</div>
+      <h2>你需要的都在這裡</h2>
+      <p class="section-sub">簡單、好看、真的好玩。</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📸</div>
+          <h3>使用自己的照片</h3>
+          <p>從相機或相簿選取任何照片，瞬間變成拼圖。寵物、旅遊、回憶，通通可以。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💡</div>
+          <h3>免費提示</h3>
+          <p>卡關了？使用提示看下一步該怎麼走，完全免費，不需要看廣告。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>自動完成</h3>
+          <p>真的解不出來？讓 App 幫你完成，不需付費，隨時可用。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎉</div>
+          <h3>慶祝每一次勝利</h3>
+          <p>完成拼圖時彩帶滿天飛！根據步數和時間最多獲得 3 顆星。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📤</div>
+          <h3>分享成績</h3>
+          <p>解完拼圖？把成績分享給朋友，看看誰更厲害！</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>可調整難度</h3>
+          <p>從 3×3 到 6×6，小朋友輕鬆上手，高手也能感受挑戰。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">內建圖庫</div>
+      <h2>10 大主題，300+ 精美拼圖</h2>
+      <p class="section-sub">定期新增內容，永遠有新關卡等你挑戰。</p>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 狗狗</div>
+        <div class="coll-tag">🐱 貓咪</div>
+        <div class="coll-tag">🐾 可愛動物</div>
+        <div class="coll-tag">🦁 野生動物</div>
+        <div class="coll-tag">🐧 海洋生物</div>
+        <div class="coll-tag">🗼 世界地標</div>
+        <div class="coll-tag">🌿 大自然</div>
+        <div class="coll-tag">🏔 國家公園</div>
+        <div class="coll-tag">🏙 城市風景</div>
+        <div class="coll-tag">🍰 療癒美食</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">完全免費</div>
+      <h2>沒有套路，沒有付費牆。</h2>
+      <p class="section-sub">重要功能永遠免費。</p>
+      <div class="free-list">
+        <div class="free-item">
+          <div class="free-item-icon">💡</div>
+          <div>
+            <h4>提示功能 — 永遠免費</h4>
+            <p>卡關了就用提示，不需要看廣告，不需要花錢。</p>
+          </div>
+        </div>
+        <div class="free-item">
+          <div class="free-item-icon">✨</div>
+          <div>
+            <h4>自動完成 — 永遠免費</h4>
+            <p>讓 App 幫你解出拼圖，完全免費，隨時可用。</p>
+          </div>
+        </div>
+        <div class="free-item">
+          <div class="free-item-icon">📸</div>
+          <div>
+            <h4>自訂照片 — 永遠免費</h4>
+            <p>相機或相簿的照片無限使用，不受任何限制。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 JurassicLab &nbsp;·&nbsp;
+    <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">前往 Google Play 下載</a>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     简体中文
+══════════════════════════════════════════════════ -->
+<div class="lang-section" id="lang-zh-CN">
+
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>两种模式。<br><span>一款好游戏。</span></h1>
+    <p>滑动拼图或交换任意两块——300+ 精美图库、使用自己的照片、免费提示功能一次拥有。</p>
+    <div class="badges">
+      <div class="badge">🆓 免费畅玩</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ 关卡</div>
+      <div class="badge">🌐 10 种语言</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">
+      ▶ 前往 Google Play 下载
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="container">
+    <div class="section">
+      <div class="section-label">游戏模式</div>
+      <h2>选择你的挑战方式</h2>
+      <p class="section-sub">两种截然不同的拼图玩法——同样精美的图片，完全不同的体验。</p>
+      <div class="mode-cards">
+        <div class="mode-card swap">
+          <div class="chip">交换模式</div>
+          <h3>🔀 交换拼图</h3>
+          <p>点选任意两块交换位置，考验眼力与判断力。</p>
+        </div>
+        <div class="mode-card slide">
+          <div class="chip">滑动模式</div>
+          <h3>⬅️ 滑动拼图</h3>
+          <p>将拼块滑入空格，经典玩法训练空间逻辑思维。</p>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">功能特色</div>
+      <h2>你需要的都在这里</h2>
+      <p class="section-sub">简单、好看、真的好玩。</p>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📸</div><h3>使用自己的照片</h3><p>从相机或相册选取任何照片，瞬间变成拼图。</p></div>
+        <div class="feature-card"><div class="feature-icon">💡</div><h3>免费提示</h3><p>卡关了？使用提示看下一步，完全免费，不需要看广告。</p></div>
+        <div class="feature-card"><div class="feature-icon">✨</div><h3>自动完成</h3><p>真的解不出来？让 App 帮你完成，不需付费。</p></div>
+        <div class="feature-card"><div class="feature-icon">🎉</div><h3>庆祝每一次胜利</h3><p>完成拼图时彩带满天飞！最多获得 3 颗星。</p></div>
+        <div class="feature-card"><div class="feature-icon">📤</div><h3>分享成绩</h3><p>把成绩分享给朋友，看看谁更厉害！</p></div>
+        <div class="feature-card"><div class="feature-icon">🎯</div><h3>可调整难度</h3><p>从 3×3 到 6×6，老少皆宜。</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">内置图库</div>
+      <h2>10 大主题，300+ 精美拼图</h2>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 狗狗</div><div class="coll-tag">🐱 猫咪</div><div class="coll-tag">🐾 可爱动物</div><div class="coll-tag">🦁 野生动物</div><div class="coll-tag">🐧 海洋生物</div><div class="coll-tag">🗼 世界地标</div><div class="coll-tag">🌿 大自然</div><div class="coll-tag">🏔 国家公园</div><div class="coll-tag">🏙 城市风景</div><div class="coll-tag">🍰 治愈美食</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">完全免费</div>
+      <h2>没有套路，没有付费墙。</h2>
+      <div class="free-list">
+        <div class="free-item"><div class="free-item-icon">💡</div><div><h4>提示功能 — 永远免费</h4><p>卡关了就用提示，不需要看广告，不需要花钱。</p></div></div>
+        <div class="free-item"><div class="free-item-icon">✨</div><div><h4>自动完成 — 永远免费</h4><p>让 App 帮你解出拼图，完全免费。</p></div></div>
+        <div class="free-item"><div class="free-item-icon">📸</div><div><h4>自定义照片 — 永远免费</h4><p>相机或相册的照片无限使用，不受任何限制。</p></div></div>
+      </div>
+    </div>
+  </div>
+  <footer>© 2026 JurassicLab &nbsp;·&nbsp;<a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">前往 Google Play 下载</a></footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     日本語
+══════════════════════════════════════════════════ -->
+<div class="lang-section" id="lang-ja">
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>2つのモード。<br><span>1つの最高ゲーム。</span></h1>
+    <p>タイルをスライドするか任意の2枚を入れ替えて — 300以上の美しいパズル、自分の写真も使える、ヒントは無料。</p>
+    <div class="badges">
+      <div class="badge">🆓 無料プレイ</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ パズル</div>
+      <div class="badge">🌐 10言語対応</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">▶ Google Play でダウンロード</a>
+  </div>
+  <div class="divider"></div>
+  <div class="container">
+    <div class="section">
+      <div class="section-label">ゲームモード</div>
+      <h2>あなたのスタイルで挑戦</h2>
+      <div class="mode-cards">
+        <div class="mode-card swap"><div class="chip">スワップモード</div><h3>🔀 スワップパズル</h3><p>任意の2枚を選んで入れ替え。観察力と判断力が勝負。</p></div>
+        <div class="mode-card slide"><div class="chip">スライドモード</div><h3>⬅️ スライドパズル</h3><p>タイルを空きスペースにスライド。定番スタイルで脳を鍛えよう。</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">特徴</div>
+      <h2>必要なものが全て揃っている</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📸</div><h3>自分の写真でプレイ</h3><p>カメラやギャラリーの写真を瞬時にパズルに変換。</p></div>
+        <div class="feature-card"><div class="feature-icon">💡</div><h3>無料ヒント</h3><p>詰まったら広告なしで無料ヒントを使おう。</p></div>
+        <div class="feature-card"><div class="feature-icon">✨</div><h3>オートコンプリート</h3><p>自動でパズルを解いてくれる機能も完全無料。</p></div>
+        <div class="feature-card"><div class="feature-icon">🎉</div><h3>クリアを祝おう</h3><p>パズル完成時に紙吹雪が舞う！最大3スター獲得。</p></div>
+        <div class="feature-card"><div class="feature-icon">📤</div><h3>結果をシェア</h3><p>友達にスコアをシェアして競い合おう！</p></div>
+        <div class="feature-card"><div class="feature-icon">🎯</div><h3>難易度調整</h3><p>3×3〜6×6まで選択可能。</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">内蔵コレクション</div>
+      <h2>10テーマ、300以上のパズル</h2>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 犬</div><div class="coll-tag">🐱 猫</div><div class="coll-tag">🐾 かわいい動物</div><div class="coll-tag">🦁 野生動物</div><div class="coll-tag">🐧 海の生き物</div><div class="coll-tag">🗼 世界の名所</div><div class="coll-tag">🌿 自然</div><div class="coll-tag">🏔 国立公園</div><div class="coll-tag">🏙 都市</div><div class="coll-tag">🍰 コージーフード</div>
+      </div>
+    </div>
+  </div>
+  <footer>© 2026 JurassicLab &nbsp;·&nbsp;<a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">Google Play でダウンロード</a></footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     한국어
+══════════════════════════════════════════════════ -->
+<div class="lang-section" id="lang-ko">
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>두 가지 모드.<br><span>최고의 퍼즐 게임.</span></h1>
+    <p>타일을 밀거나 두 조각을 교환하세요 — 300개 이상의 아름다운 퍼즐, 내 사진 사용 가능, 힌트 무료 제공.</p>
+    <div class="badges">
+      <div class="badge">🆓 무료 플레이</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ 퍼즐</div>
+      <div class="badge">🌐 10개 언어</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">▶ Google Play에서 다운로드</a>
+  </div>
+  <div class="divider"></div>
+  <div class="container">
+    <div class="section">
+      <div class="section-label">게임 모드</div>
+      <h2>나만의 도전 방식을 선택하세요</h2>
+      <div class="mode-cards">
+        <div class="mode-card swap"><div class="chip">스왑 모드</div><h3>🔀 스왑 퍼즐</h3><p>두 타일을 선택해 위치를 교환하세요. 관찰력과 판단력이 핵심.</p></div>
+        <div class="mode-card slide"><div class="chip">슬라이드 모드</div><h3>⬅️ 슬라이드 퍼즐</h3><p>빈 공간으로 타일을 밀어 맞추는 클래식 방식.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">기능</div>
+      <h2>필요한 모든 것이 여기 있어요</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📸</div><h3>내 사진으로 퍼즐</h3><p>카메라나 갤러리에서 사진을 선택해 즉시 퍼즐로 변환.</p></div>
+        <div class="feature-card"><div class="feature-icon">💡</div><h3>무료 힌트</h3><p>막혔을 때 광고 없이 무료로 힌트를 사용하세요.</p></div>
+        <div class="feature-card"><div class="feature-icon">✨</div><h3>자동 완성</h3><p>앱이 퍼즐을 대신 풀어줘요. 완전 무료.</p></div>
+        <div class="feature-card"><div class="feature-icon">🎉</div><h3>승리를 축하해요</h3><p>퍼즐 완성 시 색종이 폭죽! 최대 별 3개 획득.</p></div>
+        <div class="feature-card"><div class="feature-icon">📤</div><h3>결과 공유</h3><p>친구에게 점수를 공유하고 경쟁해보세요!</p></div>
+        <div class="feature-card"><div class="feature-icon">🎯</div><h3>난이도 조절</h3><p>3×3부터 6×6까지 선택 가능.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">내장 컬렉션</div>
+      <h2>10가지 테마, 300개 이상의 퍼즐</h2>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 강아지</div><div class="coll-tag">🐱 고양이</div><div class="coll-tag">🐾 귀여운 동물</div><div class="coll-tag">🦁 야생동물</div><div class="coll-tag">🐧 해양생물</div><div class="coll-tag">🗼 세계 명소</div><div class="coll-tag">🌿 자연</div><div class="coll-tag">🏔 국립공원</div><div class="coll-tag">🏙 도시</div><div class="coll-tag">🍰 코지 푸드</div>
+      </div>
+    </div>
+  </div>
+  <footer>© 2026 JurassicLab &nbsp;·&nbsp;<a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">Google Play에서 다운로드</a></footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Deutsch
+══════════════════════════════════════════════════ -->
+<div class="lang-section" id="lang-de">
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>Zwei Modi.<br><span>Ein tolles Spiel.</span></h1>
+    <p>Schiebe Teile an ihren Platz oder tausche zwei beliebige — 300+ schöne Puzzle, eigene Fotos, kostenlose Hinweise inklusive.</p>
+    <div class="badges">
+      <div class="badge">🆓 Kostenlos</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ Puzzle</div>
+      <div class="badge">🌐 10 Sprachen</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">▶ Bei Google Play herunterladen</a>
+  </div>
+  <div class="divider"></div>
+  <div class="container">
+    <div class="section">
+      <div class="section-label">Spielmodi</div>
+      <h2>Wähle deinen Herausforderungsstil</h2>
+      <div class="mode-cards">
+        <div class="mode-card swap"><div class="chip">Swap-Modus</div><h3>🔀 Swap-Puzzle</h3><p>Tippe auf zwei Teile, um sie zu tauschen. Schnelles Denken gewinnt.</p></div>
+        <div class="mode-card slide"><div class="chip">Slide-Modus</div><h3>⬅️ Schiebe-Puzzle</h3><p>Schiebe Teile in die leere Position — der Klassiker fürs räumliche Denken.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">Funktionen</div>
+      <h2>Alles was du brauchst</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📸</div><h3>Eigene Fotos</h3><p>Verwandle jedes Foto aus deiner Galerie sofort in ein Puzzle.</p></div>
+        <div class="feature-card"><div class="feature-icon">💡</div><h3>Kostenlose Hinweise</h3><p>Feststeckend? Nutze einen Hinweis — komplett kostenlos, ohne Werbung.</p></div>
+        <div class="feature-card"><div class="feature-icon">✨</div><h3>Auto-Vervollständigung</h3><p>Lass die App das Puzzle für dich lösen — komplett gratis.</p></div>
+        <div class="feature-card"><div class="feature-icon">🎉</div><h3>Jeden Sieg feiern</h3><p>Konfetti regnet bei jedem abgeschlossenen Puzzle! Bis zu 3 Sterne.</p></div>
+        <div class="feature-card"><div class="feature-icon">📤</div><h3>Ergebnis teilen</h3><p>Teile deinen Score mit Freunden und fordere sie heraus!</p></div>
+        <div class="feature-card"><div class="feature-icon">🎯</div><h3>Schwierigkeitsgrad</h3><p>Von 3×3 bis 6×6 — für Anfänger und Profis.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">Sammlungen</div>
+      <h2>10 Themen, 300+ Puzzle</h2>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 Hunde</div><div class="coll-tag">🐱 Katzen</div><div class="coll-tag">🐾 Süße Tiere</div><div class="coll-tag">🦁 Wildtiere</div><div class="coll-tag">🐧 Meerestiere</div><div class="coll-tag">🗼 Sehenswürdigkeiten</div><div class="coll-tag">🌿 Natur</div><div class="coll-tag">🏔 Nationalparks</div><div class="coll-tag">🏙 Städte</div><div class="coll-tag">🍰 Gemütliches Essen</div>
+      </div>
+    </div>
+  </div>
+  <footer>© 2026 JurassicLab &nbsp;·&nbsp;<a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">Bei Google Play herunterladen</a></footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Español
+══════════════════════════════════════════════════ -->
+<div class="lang-section" id="lang-es">
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>Dos modos.<br><span>Un gran juego.</span></h1>
+    <p>Desliza piezas o intercambia dos cualesquiera — 300+ puzzles hermosos, usa tus fotos, pistas gratuitas incluidas.</p>
+    <div class="badges">
+      <div class="badge">🆓 Gratis</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ Puzzles</div>
+      <div class="badge">🌐 10 Idiomas</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">▶ Descargar en Google Play</a>
+  </div>
+  <div class="divider"></div>
+  <div class="container">
+    <div class="section">
+      <div class="section-label">Modos de juego</div>
+      <h2>Elige tu estilo de desafío</h2>
+      <div class="mode-cards">
+        <div class="mode-card swap"><div class="chip">Modo Intercambio</div><h3>🔀 Puzzle de Intercambio</h3><p>Toca dos piezas para intercambiarlas. Ojo rápido y buen juicio ganan.</p></div>
+        <div class="mode-card slide"><div class="chip">Modo Deslizamiento</div><h3>⬅️ Puzzle Deslizante</h3><p>Desliza piezas al espacio vacío, estilo clásico.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">Características</div>
+      <h2>Todo lo que necesitas</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📸</div><h3>Tus propias fotos</h3><p>Convierte cualquier foto de tu galería en un puzzle al instante.</p></div>
+        <div class="feature-card"><div class="feature-icon">💡</div><h3>Pistas gratis</h3><p>¿Atascado? Usa una pista sin ver anuncios ni pagar nada.</p></div>
+        <div class="feature-card"><div class="feature-icon">✨</div><h3>Autocompletar</h3><p>Deja que la app resuelva el puzzle por ti. Completamente gratis.</p></div>
+        <div class="feature-card"><div class="feature-icon">🎉</div><h3>Celebra cada victoria</h3><p>¡Lluvia de confeti al completar! Gana hasta 3 estrellas.</p></div>
+        <div class="feature-card"><div class="feature-icon">📤</div><h3>Comparte tu resultado</h3><p>Comparte tu puntuación y reta a tus amigos.</p></div>
+        <div class="feature-card"><div class="feature-icon">🎯</div><h3>Dificultad ajustable</h3><p>De 3×3 a 6×6 — para todos los niveles.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">Colecciones</div>
+      <h2>10 temas, 300+ puzzles</h2>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 Perros</div><div class="coll-tag">🐱 Gatos</div><div class="coll-tag">🐾 Animales tiernos</div><div class="coll-tag">🦁 Animales salvajes</div><div class="coll-tag">🐧 Animales marinos</div><div class="coll-tag">🗼 Lugares emblemáticos</div><div class="coll-tag">🌿 Naturaleza</div><div class="coll-tag">🏔 Parques nacionales</div><div class="coll-tag">🏙 Ciudades</div><div class="coll-tag">🍰 Comida acogedora</div>
+      </div>
+    </div>
+  </div>
+  <footer>© 2026 JurassicLab &nbsp;·&nbsp;<a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">Descargar en Google Play</a></footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Português
+══════════════════════════════════════════════════ -->
+<div class="lang-section" id="lang-pt">
+  <div class="hero">
+    <div class="app-icon">🧩</div>
+    <div class="app-label">Puzzle DuoGo!</div>
+    <h1>Dois modos.<br><span>Um ótimo jogo.</span></h1>
+    <p>Deslize peças ou troque duas quaisquer — 300+ puzzles lindos, use suas fotos, dicas gratuitas incluídas.</p>
+    <div class="badges">
+      <div class="badge">🆓 Grátis</div>
+      <div class="badge">📱 Android</div>
+      <div class="badge">🧩 300+ Puzzles</div>
+      <div class="badge">🌐 10 Idiomas</div>
+    </div>
+    <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">▶ Baixar no Google Play</a>
+  </div>
+  <div class="divider"></div>
+  <div class="container">
+    <div class="section">
+      <div class="section-label">Modos de jogo</div>
+      <h2>Escolha seu estilo de desafio</h2>
+      <div class="mode-cards">
+        <div class="mode-card swap"><div class="chip">Modo Troca</div><h3>🔀 Puzzle de Troca</h3><p>Toque em duas peças para trocá-las. Olho rápido vence.</p></div>
+        <div class="mode-card slide"><div class="chip">Modo Deslize</div><h3>⬅️ Puzzle Deslizante</h3><p>Deslize peças para o espaço vazio, estilo clássico.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">Recursos</div>
+      <h2>Tudo que você precisa</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📸</div><h3>Suas próprias fotos</h3><p>Transforme qualquer foto da galeria em puzzle instantaneamente.</p></div>
+        <div class="feature-card"><div class="feature-icon">💡</div><h3>Dicas gratuitas</h3><p>Travado? Use uma dica sem ver anúncios ou pagar nada.</p></div>
+        <div class="feature-card"><div class="feature-icon">✨</div><h3>Autocompletar</h3><p>Deixe o app resolver o puzzle por você. Completamente grátis.</p></div>
+        <div class="feature-card"><div class="feature-icon">🎉</div><h3>Celebre cada vitória</h3><p>Chuva de confete ao completar! Ganhe até 3 estrelas.</p></div>
+        <div class="feature-card"><div class="feature-icon">📤</div><h3>Compartilhe seu resultado</h3><p>Compartilhe sua pontuação e desafie seus amigos.</p></div>
+        <div class="feature-card"><div class="feature-icon">🎯</div><h3>Dificuldade ajustável</h3><p>De 3×3 a 6×6 — para todos os níveis.</p></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">Coleções</div>
+      <h2>10 temas, 300+ puzzles</h2>
+      <div class="collections-list">
+        <div class="coll-tag">🐶 Cachorros</div><div class="coll-tag">🐱 Gatos</div><div class="coll-tag">🐾 Animais fofos</div><div class="coll-tag">🦁 Animais selvagens</div><div class="coll-tag">🐧 Animais marinhos</div><div class="coll-tag">🗼 Pontos turísticos</div><div class="coll-tag">🌿 Natureza</div><div class="coll-tag">🏔 Parques nacionais</div><div class="coll-tag">🏙 Cidades</div><div class="coll-tag">🍰 Comida aconchegante</div>
+      </div>
+    </div>
+  </div>
+  <footer>© 2026 JurassicLab &nbsp;·&nbsp;<a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank">Baixar no Google Play</a></footer>
+</div>
+
+<script>
+  const SCREENSHOTS = [
+    "https://play-lh.googleusercontent.com/uFhu40EsXOJDAKGE0BqTNRerVFIRwDcIsxwxPCylh6YipVmkELX3lpZ5Jh4qP2tgubxBt6Jhdij8YBgQAMPV",
+    "https://play-lh.googleusercontent.com/QcU1SeZfrzXDd5q4ZELj8RG47Przz0cpU7RWGA8_Hb2GwPOGrQXTtHpjuUj6LyCfkuI2N3Q9ES0rj3SsnE-gbww",
+    "https://play-lh.googleusercontent.com/XTmPJmNFRCEvl9wITpgoc8guHr7wYwglHMWVU3vrCSBh6brfjXNDunARf_UDf5SVdABcpkjTdYcyt8qKoYzjoxY",
+    "https://play-lh.googleusercontent.com/idqTSzQxTmPk9vv9eTj3RNIdvYsBgxOdrs5RzJ3Uv6H_OHLmGpZcMCHKpOYttDoxmxT3aH_uSZX6v72sk7csRQ",
+    "https://play-lh.googleusercontent.com/gB3vQRRqDVkSNtO7T9bjcEEGsq9P95gzi2TGEUOxQ4lo9Z9U92xhvQeh84G1wxhavbinOzk13dExBpx9UFv5OfI",
+    "https://play-lh.googleusercontent.com/Hh-VjAYy0Gc7fZ6XTqrEY_fZ_TE1EGgm5JBYSM7B2YgJzlXpr9R51BsKTbFWZw53Xrt4VDBqGi_nJibUZ8kksw",
+    "https://play-lh.googleusercontent.com/849jkdUwd8QPGth8EGVBF-2Ds7lSqNJb4uJCLkl2iRni0MIN371bHWri6t71LJkZP8lpSeoEQyu7f9UMAf3n5A",
+    "https://play-lh.googleusercontent.com/w4YNG_QCnMmYot6zc8MXsGQ2_ayIQ8p1q8u4kdExmu-Y0ngFizZCpfgTrgoHD_hMBpbvhIeMNq20s6yXDue3ew",
+  ];
+
+  const GALLERY_LABELS = {
+    'zh-TW': '實際截圖', 'zh-CN': '实际截图', 'ja': 'スクリーンショット',
+    'ko': '스크린샷', 'de': 'Screenshots', 'es': 'Capturas de pantalla', 'pt': 'Capturas de tela'
+  };
+  const GALLERY_TITLES = {
+    'zh-TW': '實際遊戲畫面', 'zh-CN': '实际游戏画面', 'ja': 'ゲーム画面',
+    'ko': '게임 화면', 'de': 'Das Spiel in Aktion', 'es': 'El juego en acción', 'pt': 'O jogo em ação'
+  };
+
+  function buildGallery(lang) {
+    const label = GALLERY_LABELS[lang] || 'Screenshots';
+    const title = GALLERY_TITLES[lang] || 'See It in Action';
+    const items = SCREENSHOTS.map(url =>
+      `<div class="screenshot-item"><img src="${url}" alt="Screenshot" loading="lazy" /></div>`
+    ).join('');
+    return `
+      <div class="gallery-section">
+        <div class="section-label">${label}</div>
+        <h2 style="font-family:'Fredoka One',cursive;font-size:clamp(24px,4vw,32px);color:var(--white);margin-bottom:20px;">${title}</h2>
+        <div class="screenshots-scroll">${items}</div>
+      </div>
+      <div class="divider"></div>
+    `;
+  }
+
+  // Inject gallery into all non-English sections (English already has it hardcoded)
+  ['zh-TW','zh-CN','ja','ko','de','es','pt'].forEach(lang => {
+    const section = document.getElementById('lang-' + lang);
+    if (!section) return;
+    const container = section.querySelector('.container');
+    if (!container) return;
+    container.insertAdjacentHTML('afterbegin', buildGallery(lang));
+  });
+
+  function setLang(lang) {
+    document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('lang-' + lang).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
