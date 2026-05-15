@@ -11,3 +11,7 @@
 
 ### Puzzle DuoGo!
 * [Puzzle DuoGo! Overview](https://jurassiclab2000-pixel.github.io/puzzle_duogo.html)
+
+### OmniOracle
+* [OmniOracle - Your AI Divination](https://jurassiclab2000-pixel.github.io/omnioracle_ai_divination.html)
+
