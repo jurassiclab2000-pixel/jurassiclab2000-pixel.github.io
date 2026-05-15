@@ -8,3 +8,6 @@
 * [OpsMon User Guide](https://jurassiclab2000-pixel.github.io/opsmon_guide.html)
 * [OpsMon Privacy Policy](https://jurassiclab2000-pixel.github.io/opsmon_privacy_policy.html)
 * [OpsMon Solutions / Use cases](https://jurassiclab2000-pixel.github.io/opsmon_solutions.html)
+
+### Puzzle DuoGo!
+* [Puzzle DuoGo! Overview](https://jurassiclab2000-pixel.github.io/puzzle_duogo.html)
