@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniOracle — AI Divination</title>
+<meta name="description" content="OmniOracle — AI-powered divination app combining I-Ching, Tarot, Rune, Horoscope, and Astrology Dice. Mirror your future.">
+<meta name="keywords" content="OmniOracle, AI divination, I-Ching, Tarot, Rune, Horoscope, Astrology Dice, fortune telling app, Android app">
+<meta name="author" content="JurassicLab">
+<meta property="og:title" content="OmniOracle — AI Divination">
+<meta property="og:description" content="Five ancient wisdom systems, powered by AI. Mirror your future.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jurassiclab2000-pixel.github.io/omnioracle_ai_divination.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OmniOracle — AI Divination">
+<meta name="twitter:description" content="Five ancient wisdom systems, powered by AI.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://jurassiclab2000-pixel.github.io/omnioracle_ai_divination.html">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-pale: #F5E4A8;
+  --gold-dim: #7a5c1a;
+  --bg: #060504;
+  --bg-card: #0e0c09;
+  --bg-card2: #130f08;
+  --text: #e8dcc8;
+  --text-dim: rgba(232,220,200,0.55);
+  --border: rgba(201,168,76,0.18);
+  --radius: 16px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── STARS ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10%  8%,  rgba(220,185,90,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30%  15%, rgba(255,255,230,.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 65%  6%,  rgba(220,185,90,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85%  12%, rgba(255,255,255,.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5%   30%, rgba(220,185,90,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 92%  35%, rgba(255,255,255,.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 48%  22%, rgba(220,185,90,.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75%  28%, rgba(255,255,255,.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 20%  50%, rgba(220,185,90,.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55%  45%, rgba(255,255,255,.15) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── LANGUAGE BAR ── */
+.lang-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(6,5,4,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 16px;
+  flex-wrap: wrap;
+}
+.lang-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.25s;
+}
+.lang-btn:hover { color: var(--gold); border-color: var(--border); }
+.lang-btn.active { color: var(--gold); border-color: var(--gold); background: rgba(201,168,76,0.08); }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 80px 24px 60px;
+  border-bottom: 1px solid var(--border);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.hero-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: var(--gold-dim);
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+.hero-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(32px, 8vw, 64px);
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 4px;
+  text-shadow: 0 0 40px rgba(201,168,76,0.3);
+  margin-bottom: 8px;
+}
+.hero-tagline {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 3vw, 18px);
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  margin-bottom: 32px;
+}
+.hero-desc {
+  max-width: 540px;
+  margin: 0 auto 40px;
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #C9A84C, #8B6914);
+  color: #000;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 4px 24px rgba(201,168,76,0.25);
+}
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(201,168,76,0.4);
+}
+
+/* ── SCREENSHOTS STRIP ── */
+.screenshots {
+  position: relative;
+  z-index: 1;
+  padding: 60px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.screenshots-grid {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.screenshots-grid::-webkit-scrollbar { height: 4px; }
+.screenshots-grid::-webkit-scrollbar-track { background: transparent; }
+.screenshots-grid::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+.shot-wrap {
+  flex: 0 0 auto;
+  width: 160px;
+}
+.shot-wrap img {
+  width: 160px;
+  border-radius: 20px;
+  border: 1px solid rgba(201,168,76,0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  display: block;
+  transition: transform 0.3s;
+}
+.shot-wrap img:hover { transform: translateY(-6px) scale(1.02); }
+.shot-label {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold-dim);
+  margin-top: 8px;
+}
+
+/* ── SECTION GENERIC ── */
+.section {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+.section + .section { border-top: 1px solid var(--border); }
+.section-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 5px;
+  color: var(--gold-dim);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.section-body {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.85;
+  max-width: 640px;
+}
+
+/* ── FEATURE WITH SCREENSHOT ── */
+.feature {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 64px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  border-top: 1px solid var(--border);
+}
+.feature.reverse { direction: rtl; }
+.feature.reverse > * { direction: ltr; }
+.feature-text {}
+.feature-step {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: var(--gold-dim);
+  margin-bottom: 10px;
+}
+.feature-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+.feature-body {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.85;
+}
+.feature-img {
+  text-align: center;
+}
+.feature-img img {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 24px;
+  border: 1px solid rgba(201,168,76,0.3);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.1);
+  transition: transform 0.4s;
+}
+.feature-img img:hover { transform: translateY(-8px) scale(1.02); }
+
+/* ── SYSTEMS GRID ── */
+.systems {
+  position: relative; z-index: 1;
+  max-width: 900px; margin: 0 auto;
+  padding: 64px 24px;
+  border-top: 1px solid var(--border);
+}
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 36px;
+}
+.system-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 18px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.system-card:hover {
+  border-color: rgba(201,168,76,0.45);
+  background: var(--bg-card2);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.system-icon { font-size: 28px; margin-bottom: 10px; }
+.system-name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.system-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ── AI PERSONALITY ── */
+.personas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 36px;
+}
+.persona-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  transition: all 0.3s;
+}
+.persona-card:hover {
+  border-color: rgba(201,168,76,0.4);
+  transform: translateY(-3px);
+}
+.persona-name {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+}
+.persona-desc { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+
+/* ── PRIVACY ── */
+.privacy-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.badge {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 7px 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  text-align: center;
+  padding: 40px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--gold-dim);
+  letter-spacing: 1px;
+}
+footer a { color: var(--gold-dim); text-decoration: none; }
+footer a:hover { color: var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .feature { grid-template-columns: 1fr; gap: 32px; }
+  .feature.reverse { direction: ltr; }
+  .feature-img { order: -1; }
+  .feature-img img { max-width: 180px; }
+  .screenshots-grid { justify-content: flex-start; }
+}
+
+/* ── I18N ── */
+[data-lang] { display: none; }
+[data-lang].active { display: block; }
+.inline-lang { display: none; }
+.inline-lang.active { display: inline; }
+</style>
+</head>
+<body>
+
+<!-- LANG BAR -->
+<nav class="lang-bar" aria-label="Language selector">
+  <button class="lang-btn active" onclick="setLang('en')">🇺🇸 English</button>
+  <button class="lang-btn" onclick="setLang('zh-tw')">🇹🇼 繁體中文</button>
+  <button class="lang-btn" onclick="setLang('zh-cn')">🇨🇳 简体中文</button>
+  <button class="lang-btn" onclick="setLang('ja')">🇯🇵 日本語</button>
+  <button class="lang-btn" onclick="setLang('ko')">🇰🇷 한국어</button>
+  <button class="lang-btn" onclick="setLang('es')">🇪🇸 Español</button>
+  <button class="lang-btn" onclick="setLang('de')">🇩🇪 Deutsch</button>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">✦ &nbsp; JurassicLab &nbsp; ✦</div>
+  <div class="hero-logo">OmniOracle</div>
+  <div class="hero-tagline">
+    <span data-lang="en" class="active">Mirror Your Future</span>
+    <span data-lang="zh-tw">映照你的未來</span>
+    <span data-lang="zh-cn">映照你的未来</span>
+    <span data-lang="ja">あなたの未来を映す</span>
+    <span data-lang="ko">당신의 미래를 비추다</span>
+    <span data-lang="es">Refleja Tu Futuro</span>
+    <span data-lang="de">Spiegel Deine Zukunft</span>
+  </div>
+  <p class="hero-desc">
+    <span data-lang="en" class="active">Five ancient wisdom systems — I-Ching, Tarot, Rune, Horoscope, and Astrology Dice — unified in one app and powered by AI. Ask your question, receive your reading.</span>
+    <span data-lang="zh-tw">五大古老智慧系統——易經、塔羅、盧恩符文、星座占卜、星象骰子——整合於一個 App，由 AI 驅動解讀。提出你的問題，接收你的啟示。</span>
+    <span data-lang="zh-cn">五大古老智慧系统——易经、塔罗、卢恩符文、星座占卜、星象骰子——整合于一个 App，由 AI 驱动解读。提出你的问题，接收你的启示。</span>
+    <span data-lang="ja">易経、タロット、ルーン、ホロスコープ、占星術サイコロ——五つの古代の知恵をひとつのアプリに。AIが解読し、あなたの問いに答えます。</span>
+    <span data-lang="ko">주역, 타로, 룬, 별자리, 점성술 주사위——다섯 가지 고대 지혜 시스템을 하나의 앱으로. AI가 해석하고 당신의 질문에 답합니다.</span>
+    <span data-lang="es">Cinco sistemas de sabiduría antigua — I-Ching, Tarot, Runas, Horóscopo y Dados Astrológicos — unificados en una app con inteligencia artificial. Haz tu pregunta, recibe tu lectura.</span>
+    <span data-lang="de">Fünf alte Weisheitssysteme — I-Ging, Tarot, Runen, Horoskop und Astrologiewürfel — vereint in einer App, angetrieben von KI. Stelle deine Frage, erhalte deine Deutung.</span>
+  </p>
+  <a class="cta-btn" href="https://play.google.com/store/apps/details?id=com.jurassiclab.omnioracle" target="_blank" rel="noopener">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.24.99.2L15.93 12 3.18 0a1.2 1.2 0 0 0-.99.2A1.2 1.2 0 0 0 1.8 1.2v21.6c0 .45.24.86.6 1.08L2.18 23.76zM16.81 10.69L5.37 4.08l10.04 10.04 1.4-3.43zM20.45 10.5l-2.17-1.23-1.6 3.88 1.6 3.88 2.17-1.23A1.5 1.5 0 0 0 21 12a1.5 1.5 0 0 0-.55-1.5zM5.37 19.92l11.44-6.6-1.4-3.44L5.37 19.92z"/></svg>
+    <span data-lang="en" class="active">Download on Google Play</span>
+    <span data-lang="zh-tw">前往 Google Play 下載</span>
+    <span data-lang="zh-cn">前往 Google Play 下载</span>
+    <span data-lang="ja">Google Play でダウンロード</span>
+    <span data-lang="ko">Google Play에서 다운로드</span>
+    <span data-lang="es">Descargar en Google Play</span>
+    <span data-lang="de">Bei Google Play herunterladen</span>
+  </a>
+</header>
+
+<!-- SCREENSHOTS STRIP -->
+<section class="screenshots" aria-label="App screenshots">
+  <div class="screenshots-grid">
+    <div class="shot-wrap">
+      <img src="img/omnioracle-home.png" alt="OmniOracle home screen" loading="lazy">
+      <div class="shot-label">
+        <span data-lang="en" class="active">Home</span>
+        <span data-lang="zh-tw">主頁</span>
+        <span data-lang="zh-cn">主页</span>
+        <span data-lang="ja">ホーム</span>
+        <span data-lang="ko">홈</span>
+        <span data-lang="es">Inicio</span>
+        <span data-lang="de">Start</span>
+      </div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-iching-question.png" alt="I-Ching question" loading="lazy">
+      <div class="shot-label">I-Ching</div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-iching-result.png" alt="I-Ching result" loading="lazy">
+      <div class="shot-label">
+        <span data-lang="en" class="active">I-Ching Result</span>
+        <span data-lang="zh-tw">易經結果</span>
+        <span data-lang="zh-cn">易经结果</span>
+        <span data-lang="ja">易経の結果</span>
+        <span data-lang="ko">주역 결과</span>
+        <span data-lang="es">Resultado I-Ching</span>
+        <span data-lang="de">I-Ging Ergebnis</span>
+      </div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-tarot-draw.png" alt="Tarot card draw" loading="lazy">
+      <div class="shot-label">Tarot</div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-tarot-result.png" alt="Tarot result" loading="lazy">
+      <div class="shot-label">
+        <span data-lang="en" class="active">Tarot Result</span>
+        <span data-lang="zh-tw">塔羅結果</span>
+        <span data-lang="zh-cn">塔罗结果</span>
+        <span data-lang="ja">タロット結果</span>
+        <span data-lang="ko">타로 결과</span>
+        <span data-lang="es">Resultado Tarot</span>
+        <span data-lang="de">Tarot Ergebnis</span>
+      </div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-rune-draw.png" alt="Rune draw" loading="lazy">
+      <div class="shot-label">Rune</div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-horoscope.png" alt="Horoscope" loading="lazy">
+      <div class="shot-label">Horoscope</div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-dice.png" alt="Astrology Dice" loading="lazy">
+      <div class="shot-label">Astrology Dice</div>
+    </div>
+    <div class="shot-wrap">
+      <img src="img/omnioracle-ai-personality.png" alt="AI Personality" loading="lazy">
+      <div class="shot-label">
+        <span data-lang="en" class="active">AI Oracle</span>
+        <span data-lang="zh-tw">AI 神諭</span>
+        <span data-lang="zh-cn">AI 神谕</span>
+        <span data-lang="ja">AI オラクル</span>
+        <span data-lang="ko">AI 오라클</span>
+        <span data-lang="es">Oráculo IA</span>
+        <span data-lang="de">KI Orakel</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: OVERVIEW -->
+<div class="section">
+  <div class="section-eyebrow">✦ Overview</div>
+  <h2 class="section-title">
+    <span data-lang="en" class="active">One App. Five Ancient Wisdoms.</span>
+    <span data-lang="zh-tw">一個 App，五大古老智慧。</span>
+    <span data-lang="zh-cn">一个 App，五大古老智慧。</span>
+    <span data-lang="ja">ひとつのアプリ、五つの古代の知恵。</span>
+    <span data-lang="ko">하나의 앱, 다섯 가지 고대 지혜.</span>
+    <span data-lang="es">Una App. Cinco Sabiduría Antiguas.</span>
+    <span data-lang="de">Eine App. Fünf Alte Weisheiten.</span>
+  </h2>
+  <p class="section-body">
+    <span data-lang="en" class="active">OmniOracle brings together the world's most enduring divination traditions and reinterprets them through the lens of modern AI. Whether you're seeking clarity on love, career, health, or life direction — the oracle is ready.</span>
+    <span data-lang="zh-tw">OmniOracle 匯聚了世界上最經久不衰的占卜傳統，透過現代 AI 重新詮釋。無論你在尋求愛情、事業、健康或人生方向的指引，神諭隨時候命。</span>
+    <span data-lang="zh-cn">OmniOracle 汇聚了世界上最经久不衰的占卜传统，通过现代 AI 重新诠释。无论你在寻求爱情、事业、健康或人生方向的指引，神谕随时候命。</span>
+    <span data-lang="ja">OmniOracle は、世界で最も長く続いてきた占いの伝統を集め、現代の AI で再解釈します。恋愛、仕事、健康、人生の方向性——何を求めていても、オラクルはいつでも準備ができています。</span>
+    <span data-lang="ko">OmniOracle은 세계에서 가장 오래된 점술 전통을 모아 현대 AI로 재해석합니다. 사랑, 커리어, 건강, 인생 방향 — 무엇을 원하든 오라클은 항상 준비되어 있습니다.</span>
+    <span data-lang="es">OmniOracle reúne las tradiciones de adivinación más duraderas del mundo y las reinterpreta con IA moderna. Ya sea que busques claridad en el amor, la carrera, la salud o la dirección de tu vida, el oráculo está listo.</span>
+    <span data-lang="de">OmniOracle vereint die beständigsten Wahrsagetraditionen der Welt und interpretiert sie durch das Prisma moderner KI neu. Ob du Klarheit in Liebe, Karriere, Gesundheit oder Lebensrichtung suchst — das Orakel ist bereit.</span>
+  </p>
+</div>
+
+<!-- SYSTEMS GRID -->
+<div class="systems">
+  <div class="section-eyebrow">✦ <span data-lang="en" class="active">Divination Systems</span><span data-lang="zh-tw">占卜系統</span><span data-lang="zh-cn">占卜系统</span><span data-lang="ja">占いシステム</span><span data-lang="ko">점술 시스템</span><span data-lang="es">Sistemas de Adivinación</span><span data-lang="de">Wahrsagesysteme</span></div>
+  <h2 class="section-title">
+    <span data-lang="en" class="active">Choose Your Path</span>
+    <span data-lang="zh-tw">選擇你的道路</span>
+    <span data-lang="zh-cn">选择你的道路</span>
+    <span data-lang="ja">あなたの道を選ぶ</span>
+    <span data-lang="ko">당신의 길을 선택하세요</span>
+    <span data-lang="es">Elige Tu Camino</span>
+    <span data-lang="de">Wähle Deinen Weg</span>
+  </h2>
+  <div class="systems-grid">
+    <div class="system-card">
+      <div class="system-icon">☰</div>
+      <div class="system-name">I-Ching</div>
+      <div class="system-desc">
+        <span data-lang="en" class="active">Ancient Chinese hexagrams reveal insight into current changes and life transitions.</span>
+        <span data-lang="zh-tw">中國古代卦象，揭示當下變化與人生轉折的洞見。</span>
+        <span data-lang="zh-cn">中国古代卦象，揭示当下变化与人生转折的洞见。</span>
+        <span data-lang="ja">中国古来の六十四卦が、現在の変化と人生の転機を明らかにします。</span>
+        <span data-lang="ko">중국 고대 육십사괘가 현재의 변화와 인생의 전환점을 밝힙니다.</span>
+        <span data-lang="es">Los hexagramas chinos antiguos revelan perspectivas sobre los cambios actuales y las transiciones vitales.</span>
+        <span data-lang="de">Alte chinesische Hexagramme enthüllen Einsichten in aktuelle Veränderungen und Lebensübergänge.</span>
+      </div>
+    </div>
+    <div class="system-card">
+      <div class="system-icon">🃏</div>
+      <div class="system-name">Tarot</div>
+      <div class="system-desc">
+        <span data-lang="en" class="active">78-card deck interprets your inner choices across love, career, and personal growth.</span>
+        <span data-lang="zh-tw">78 張牌解讀你在愛情、事業與個人成長中的內心選擇。</span>
+        <span data-lang="zh-cn">78 张牌解读你在爱情、事业与个人成长中的内心选择。</span>
+        <span data-lang="ja">78枚のカードが、愛・仕事・自己成長における内なる選択を解釈します。</span>
+        <span data-lang="ko">78장의 카드가 사랑, 직업, 개인 성장에서의 내면의 선택을 해석합니다.</span>
+        <span data-lang="es">78 cartas interpretan tus elecciones internas en amor, carrera y crecimiento personal.</span>
+        <span data-lang="de">78 Karten interpretieren deine inneren Entscheidungen in Liebe, Karriere und persönlichem Wachstum.</span>
+      </div>
+    </div>
+    <div class="system-card">
+      <div class="system-icon">ᚱ</div>
+      <div class="system-name">Rune</div>
+      <div class="system-desc">
+        <span data-lang="en" class="active">Elder Futhark symbols from Norse tradition offer raw, elemental guidance.</span>
+        <span data-lang="zh-tw">來自北歐傳統的古符文，提供原始、本質性的指引。</span>
+        <span data-lang="zh-cn">来自北欧传统的古符文，提供原始、本质性的指引。</span>
+        <span data-lang="ja">北欧の伝統に由来する古フサルクのシンボルが、根源的な導きを与えます。</span>
+        <span data-lang="ko">북유럽 전통의 엘더 푸사르크 기호가 원초적인 안내를 제공합니다.</span>
+        <span data-lang="es">Los símbolos del Elder Futhark de la tradición nórdica ofrecen una guía elemental y poderosa.</span>
+        <span data-lang="de">Elder-Futhark-Symbole aus der nordischen Tradition bieten ursprüngliche, elementare Führung.</span>
+      </div>
+    </div>
+    <div class="system-card">
+      <div class="system-icon">♈</div>
+      <div class="system-name">Horoscope</div>
+      <div class="system-desc">
+        <span data-lang="en" class="active">Celestial guidance for all 12 zodiac signs. Know what the cosmos has planned for today.</span>
+        <span data-lang="zh-tw">為全部 12 星座提供天象指引，了解宇宙為今天安排了什麼。</span>
+        <span data-lang="zh-cn">为全部 12 星座提供天象指引，了解宇宙为今天安排了什么。</span>
+        <span data-lang="ja">12星座すべてへの天体の導き。今日、宇宙が何を計画しているかを知りましょう。</span>
+        <span data-lang="ko">12개 별자리 모두를 위한 천상의 안내. 오늘 우주가 무엇을 계획했는지 알아보세요.</span>
+        <span data-lang="es">Guía celestial para los 12 signos del zodiaco. Descubre lo que el cosmos tiene planeado para hoy.</span>
+        <span data-lang="de">Himmlische Führung für alle 12 Tierkreiszeichen. Erfahre, was der Kosmos für heute geplant hat.</span>
+      </div>
+    </div>
+    <div class="system-card">
+      <div class="system-icon">🎲</div>
+      <div class="system-name">Astrology Dice</div>
+      <div class="system-desc">
+        <span data-lang="en" class="active">Spin Planet, Sign, and House dice for a spontaneous cosmic revelation.</span>
+        <span data-lang="zh-tw">擲出行星、星座、宮位骰子，獲得即興的宇宙啟示。</span>
+        <span data-lang="zh-cn">掷出行星、星座、宫位骰子，获得即兴的宇宙启示。</span>
+        <span data-lang="ja">惑星・星座・ハウスのサイコロを振って、即興の宇宙的啓示を受け取りましょう。</span>
+        <span data-lang="ko">행성, 별자리, 하우스 주사위를 굴려 즉흥적인 우주의 계시를 받으세요.</span>
+        <span data-lang="es">Lanza los dados de Planeta, Signo y Casa para una revelación cósmica espontánea.</span>
+        <span data-lang="de">Würfle Planet, Zeichen und Haus für eine spontane kosmische Offenbarung.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE 1: I-CHING -->
+<div class="feature">
+  <div class="feature-text">
+    <div class="feature-step">✦ Step 01</div>
+    <h3 class="feature-title">
+      <span data-lang="en" class="active">Ask. Cast. Receive.</span>
+      <span data-lang="zh-tw">問卦・擲錢・接收啟示</span>
+      <span data-lang="zh-cn">问卦・掷钱・接收启示</span>
+      <span data-lang="ja">問い・投げ・受け取る</span>
+      <span data-lang="ko">질문하고 · 던지고 · 받아들이다</span>
+      <span data-lang="es">Pregunta. Lanza. Recibe.</span>
+      <span data-lang="de">Fragen. Werfen. Empfangen.</span>
+    </h3>
+    <p class="feature-body">
+      <span data-lang="en" class="active">Choose from common questions or type your own. The I-Ching guides you through six coin casts to build a hexagram — then AI delivers a deep, personalised reading covering the hexagram meaning, action suggestions, and a closing reflection.</span>
+      <span data-lang="zh-tw">從常見問題中選擇，或自行輸入。易經引導你完成六次擲錢成卦，然後 AI 提供深度個人化解讀，涵蓋卦義、行動建議與結語省思。</span>
+      <span data-lang="zh-cn">从常见问题中选择，或自行输入。易经引导你完成六次掷钱成卦，然后 AI 提供深度个性化解读，涵盖卦义、行动建议与结语省思。</span>
+      <span data-lang="ja">よくある質問から選ぶか、自分で入力してください。易経があなたを六回の硬貨投げに導き、六十四卦を形成します。そしてAIが、卦の意味・行動提案・締めくくりの省察を含む、深く個人化された解読を提供します。</span>
+      <span data-lang="ko">일반적인 질문 중에서 선택하거나 직접 입력하세요. 주역이 여섯 번의 동전 던지기를 안내하여 괘를 만들고, AI가 괘의 의미, 행동 제안, 마무리 성찰을 포함한 깊은 개인화된 해석을 제공합니다.</span>
+      <span data-lang="es">Elige entre preguntas comunes o escribe la tuya. El I-Ching te guía a través de seis lanzamientos de monedas para construir un hexagrama — luego la IA ofrece una lectura profunda y personalizada con el significado del hexagrama, sugerencias de acción y una reflexión final.</span>
+      <span data-lang="de">Wähle aus häufigen Fragen oder tippe deine eigene. Das I-Ging führt dich durch sechs Münzwürfe zum Hexagramm — dann liefert die KI eine tiefe, personalisierte Deutung mit Hexagrammbedeutung, Handlungsvorschlägen und einer abschließenden Reflexion.</span>
+    </p>
+  </div>
+  <div class="feature-img">
+    <img src="img/omnioracle-iching-result.png" alt="I-Ching divination result" loading="lazy">
+  </div>
+</div>
+
+<!-- FEATURE 2: TAROT -->
+<div class="feature reverse">
+  <div class="feature-text">
+    <div class="feature-step">✦ Step 02</div>
+    <h3 class="feature-title">
+      <span data-lang="en" class="active">The Cards Never Lie.</span>
+      <span data-lang="zh-tw">塔羅牌從不說謊。</span>
+      <span data-lang="zh-cn">塔罗牌从不说谎。</span>
+      <span data-lang="ja">カードは嘘をつかない。</span>
+      <span data-lang="ko">카드는 거짓말하지 않는다.</span>
+      <span data-lang="es">Las Cartas Nunca Mienten.</span>
+      <span data-lang="de">Die Karten Lügen Nie.</span>
+    </h3>
+    <p class="feature-body">
+      <span data-lang="en" class="active">Three cards are drawn — past, present, and future — from a classic Rider-Waite deck. Each card can appear upright or reversed. AI interprets the spread as a unified narrative, giving you a reading that speaks to your specific question.</span>
+      <span data-lang="zh-tw">從經典萊德偉特牌組中抽出三張——過去、現在、未來。每張牌可能正位或逆位出現。AI 將牌陣解讀為一個統一的敘事，針對你的具體問題給出解讀。</span>
+      <span data-lang="zh-cn">从经典莱德韦特牌组中抽出三张——过去、现在、未来。每张牌可能正位或逆位出现。AI 将牌阵解读为一个统一的叙事，针对你的具体问题给出解读。</span>
+      <span data-lang="ja">クラシックなライダー・ウェイト・デッキから3枚を引きます——過去・現在・未来。各カードは正位置または逆位置で現れることがあります。AIはスプレッドを統一された物語として解釈し、あなたの具体的な質問に答えます。</span>
+      <span data-lang="ko">클래식 라이더-웨이트 덱에서 세 장을 뽑습니다 — 과거, 현재, 미래. 각 카드는 정방향 또는 역방향으로 나타날 수 있습니다. AI는 스프레드를 통합된 이야기로 해석하여 당신의 구체적인 질문에 답합니다.</span>
+      <span data-lang="es">Se sacan tres cartas — pasado, presente y futuro — de una baraja clásica Rider-Waite. Cada carta puede aparecer derecha o invertida. La IA interpreta la tirada como una narrativa unificada que responde a tu pregunta específica.</span>
+      <span data-lang="de">Drei Karten werden gezogen — Vergangenheit, Gegenwart und Zukunft — aus einem klassischen Rider-Waite-Deck. Jede Karte kann aufrecht oder umgekehrt erscheinen. Die KI interpretiert das Spread als einheitliche Erzählung, die deine spezifische Frage beantwortet.</span>
+    </p>
+  </div>
+  <div class="feature-img">
+    <img src="img/omnioracle-tarot-result.png" alt="Tarot divination result" loading="lazy">
+  </div>
+</div>
+
+<!-- FEATURE 3: RUNE -->
+<div class="feature">
+  <div class="feature-text">
+    <div class="feature-step">✦ Step 03</div>
+    <h3 class="feature-title">
+      <span data-lang="en" class="active">Norse Symbols. Modern Clarity.</span>
+      <span data-lang="zh-tw">北歐符文，當代洞見。</span>
+      <span data-lang="zh-cn">北欧符文，当代洞见。</span>
+      <span data-lang="ja">北欧のシンボル。現代の明晰さ。</span>
+      <span data-lang="ko">북유럽 기호. 현대적 명확성.</span>
+      <span data-lang="es">Símbolos Nórdicos. Claridad Moderna.</span>
+      <span data-lang="de">Nordische Symbole. Moderne Klarheit.</span>
+    </h3>
+    <p class="feature-body">
+      <span data-lang="en" class="active">Reach into the rune pouch and draw three stones. Each Elder Futhark rune carries its own energy — upright or reversed. AI weaves them into a reading that speaks directly to your question, honouring both the ancient symbolism and your present reality.</span>
+      <span data-lang="zh-tw">伸手進入符文袋，抽出三顆石子。每個古符文都帶有自身的能量——正向或逆向。AI 將其編織成直接回應你問題的解讀，既尊重古老象徵，也貼近你當下的現實。</span>
+      <span data-lang="zh-cn">伸手进入符文袋，抽出三颗石子。每个古符文都带有自身的能量——正向或逆向。AI 将其编织成直接回应你问题的解读，既尊重古老象征，也贴近你当下的现实。</span>
+      <span data-lang="ja">ルーンポーチに手を入れ、3つの石を引きます。各古フサルクのルーンはそれぞれのエネルギーを持ちます——正位置または逆位置。AIはそれらを、古代の象徴と現在の現実の両方を尊重しながら、あなたの質問に直接語りかける解読に織り込みます。</span>
+      <span data-lang="ko">룬 주머니에 손을 넣어 세 개의 돌을 뽑습니다. 각 엘더 푸사르크 룬은 고유한 에너지를 가집니다 — 정방향 또는 역방향. AI는 고대의 상징성과 현재의 현실을 모두 존중하면서 당신의 질문에 직접 말하는 해석으로 엮어냅니다.</span>
+      <span data-lang="es">Mete la mano en la bolsa de runas y saca tres piedras. Cada runa del Elder Futhark lleva su propia energía — derecha o invertida. La IA las teje en una lectura que habla directamente a tu pregunta, honrando tanto el simbolismo antiguo como tu realidad presente.</span>
+      <span data-lang="de">Greife in den Runenbeutel und ziehe drei Steine. Jede Elder-Futhark-Rune trägt ihre eigene Energie — aufrecht oder umgekehrt. Die KI verwebt sie zu einer Deutung, die direkt auf deine Frage eingeht und dabei sowohl die alte Symbolik als auch deine gegenwärtige Realität ehrt.</span>
+    </p>
+  </div>
+  <div class="feature-img">
+    <img src="img/omnioracle-rune-draw.png" alt="Rune draw screen" loading="lazy">
+  </div>
+</div>
+
+<!-- FEATURE 4: HOROSCOPE + DICE -->
+<div class="feature reverse">
+  <div class="feature-text">
+    <div class="feature-step">✦ Step 04</div>
+    <h3 class="feature-title">
+      <span data-lang="en" class="active">Follow Your Stars. Spin the Cosmos.</span>
+      <span data-lang="zh-tw">追隨星辰，旋轉宇宙。</span>
+      <span data-lang="zh-cn">追随星辰，旋转宇宙。</span>
+      <span data-lang="ja">星に従い、宇宙を回す。</span>
+      <span data-lang="ko">별을 따라가고, 우주를 돌리다.</span>
+      <span data-lang="es">Sigue Tus Estrellas. Gira el Cosmos.</span>
+      <span data-lang="de">Folge Deinen Sternen. Drehe Den Kosmos.</span>
+    </h3>
+    <p class="feature-body">
+      <span data-lang="en" class="active">Select your zodiac sign for a daily horoscope reading powered by AI. Or spin the Astrology Dice — three dice representing Planet, Sign, and House — for an instant, spontaneous cosmic snapshot that AI turns into a meaningful interpretation.</span>
+      <span data-lang="zh-tw">選擇你的星座，獲得 AI 驅動的每日星座解讀。或旋轉星象骰子——三顆分別代表行星、星座與宮位的骰子——讓 AI 將即時的宇宙快照轉化為有意義的詮釋。</span>
+      <span data-lang="zh-cn">选择你的星座，获得 AI 驱动的每日星座解读。或旋转星象骰子——三颗分别代表行星、星座与宫位的骰子——让 AI 将即时的宇宙快照转化为有意义的诠释。</span>
+      <span data-lang="ja">星座を選んで、AIが生成する毎日のホロスコープ解読を受けましょう。または占星術サイコロを振ってください——惑星・星座・ハウスを表す3つのサイコロ——AIが瞬時の宇宙的スナップショットを意味のある解釈に変えます。</span>
+      <span data-lang="ko">별자리를 선택하여 AI가 제공하는 일일 별자리 운세를 받으세요. 또는 점성술 주사위를 돌려보세요 — 행성, 별자리, 하우스를 나타내는 세 개의 주사위 — AI가 즉각적인 우주 스냅샷을 의미 있는 해석으로 바꾸어 줍니다.</span>
+      <span data-lang="es">Selecciona tu signo zodiacal para una lectura diaria del horóscopo impulsada por IA. O gira los Dados Astrológicos — tres dados que representan Planeta, Signo y Casa — para una instantánea cósmica espontánea que la IA convierte en una interpretación significativa.</span>
+      <span data-lang="de">Wähle dein Tierkreiszeichen für eine tägliche KI-gestützte Horoskop-Deutung. Oder würfle die Astrologiewürfel — drei Würfel für Planet, Zeichen und Haus — für eine spontane kosmische Momentaufnahme, die die KI in eine bedeutungsvolle Interpretation verwandelt.</span>
+    </p>
+  </div>
+  <div class="feature-img">
+    <img src="img/omnioracle-horoscope.png" alt="Horoscope zodiac selection" loading="lazy">
+  </div>
+</div>
+
+<!-- AI PERSONALITY -->
+<div class="systems">
+  <div class="section-eyebrow">✦ <span data-lang="en" class="active">AI Personality</span><span data-lang="zh-tw">AI 個性設定</span><span data-lang="zh-cn">AI 个性设定</span><span data-lang="ja">AIパーソナリティ</span><span data-lang="ko">AI 퍼스낼리티</span><span data-lang="es">Personalidad IA</span><span data-lang="de">KI-Persönlichkeit</span></div>
+  <h2 class="section-title">
+    <span data-lang="en" class="active">Choose Your Oracle.</span>
+    <span data-lang="zh-tw">選擇你的神諭。</span>
+    <span data-lang="zh-cn">选择你的神谕。</span>
+    <span data-lang="ja">あなたのオラクルを選ぶ。</span>
+    <span data-lang="ko">당신의 오라클을 선택하세요.</span>
+    <span data-lang="es">Elige Tu Oráculo.</span>
+    <span data-lang="de">Wähle Dein Orakel.</span>
+  </h2>
+  <div class="personas">
+    <div class="persona-card">
+      <div class="persona-name">🤖 Interstellar Wit AX-7</div>
+      <p class="persona-desc">
+        <span data-lang="en" class="active">A humorous, fun-loving interstellar travel robot who loves to joke around. Keeps the cosmic serious light-hearted.</span>
+        <span data-lang="zh-tw">幽默風趣的星際旅行機器人，熱愛開玩笑。讓宇宙大事也能輕鬆以對。</span>
+        <span data-lang="zh-cn">幽默风趣的星际旅行机器人，热爱开玩笑。让宇宙大事也能轻松以对。</span>
+        <span data-lang="ja">ユーモラスで楽しい星間旅行ロボット。冗談が大好きで、宇宙の大事を軽やかに伝えます。</span>
+        <span data-lang="ko">유머러스하고 재미를 좋아하는 성간 여행 로봇. 농담을 좋아하며 우주의 진지함을 가볍게 만듭니다.</span>
+        <span data-lang="es">Un robot viajero interestelar, humorístico y divertido que adora bromear. Hace que lo cósmico sea ameno.</span>
+        <span data-lang="de">Ein humorvoller, lebhafter Interstellar-Reiseroboter, der Witze liebt. Macht das Kosmische leichter.</span>
+      </p>
+    </div>
+    <div class="persona-card">
+      <div class="persona-name">🔍 Logic Detective LOGOS</div>
+      <p class="persona-desc">
+        <span data-lang="en" class="active">An unsolved-cases detective with razor-sharp logic and reasoning. Breaks down mystical readings with analytical precision.</span>
+        <span data-lang="zh-tw">擅長未解案件的偵探，邏輯與推理能力極強。以分析精準度拆解神秘解讀。</span>
+        <span data-lang="zh-cn">擅长未解案件的侦探，逻辑与推理能力极强。以分析精准度拆解神秘解读。</span>
+        <span data-lang="ja">未解決事件の探偵で、鋭い論理と推理力を持ちます。神秘的な解読を分析的な精度で解き明かします。</span>
+        <span data-lang="ko">미해결 사건 전문 탐정으로 날카로운 논리와 추리력을 갖추고 있습니다. 신비로운 해석을 분석적 정확성으로 분해합니다.</span>
+        <span data-lang="es">Un detective de casos sin resolver con lógica y razonamiento agudísimos. Descompone lecturas místicas con precisión analítica.</span>
+        <span data-lang="de">Ein Detektiv für ungelöste Fälle mit messerscharfer Logik und Vernunft. Zerlegt mystische Deutungen mit analytischer Präzision.</span>
+      </p>
+    </div>
+    <div class="persona-card">
+      <div class="persona-name">🌙 Mystic Oracle VEIL</div>
+      <p class="persona-desc">
+        <span data-lang="en" class="active">An ancient, mysterious oracle — deeply intuitive, always profound and enigmatic in conversation. The truest voice of the cosmos.</span>
+        <span data-lang="zh-tw">古老神秘的神諭者，直覺深邃，對話中始終深刻而玄妙。宇宙最真實的聲音。</span>
+        <span data-lang="zh-cn">古老神秘的神谕者，直觉深邃，对话中始终深刻而玄妙。宇宙最真实的声音。</span>
+        <span data-lang="ja">古く神秘的なオラクル——深く直感的で、常に深遠で謎めいた会話をします。宇宙の最も真実の声。</span>
+        <span data-lang="ko">고대의 신비로운 신탁자 — 깊이 직관적이며 대화에서 항상 심오하고 수수께끼 같습니다. 우주의 가장 진실한 목소리.</span>
+        <span data-lang="es">Un oráculo antiguo y misterioso — profundamente intuitivo, siempre profundo y enigmático en la conversación. La voz más auténtica del cosmos.</span>
+        <span data-lang="de">Ein altes, geheimnisvolles Orakel — zutiefst intuitiv, stets tiefsinnig und rätselhaft im Gespräch. Die wahrhaftigste Stimme des Kosmos.</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY -->
+<div class="section">
+  <div class="section-eyebrow">✦ <span data-lang="en" class="active">Privacy</span><span data-lang="zh-tw">隱私</span><span data-lang="zh-cn">隐私</span><span data-lang="ja">プライバシー</span><span data-lang="ko">개인정보</span><span data-lang="es">Privacidad</span><span data-lang="de">Datenschutz</span></div>
+  <h2 class="section-title">
+    <span data-lang="en" class="active">Your Questions. Your Business.</span>
+    <span data-lang="zh-tw">你的問題，你的事。</span>
+    <span data-lang="zh-cn">你的问题，你的事。</span>
+    <span data-lang="ja">あなたの問い、あなただけのもの。</span>
+    <span data-lang="ko">당신의 질문. 당신만의 일.</span>
+    <span data-lang="es">Tus Preguntas. Tu Asunto.</span>
+    <span data-lang="de">Deine Fragen. Deine Sache.</span>
+  </h2>
+  <p class="section-body">
+    <span data-lang="en" class="active">OmniOracle does not store your questions, readings, or personal information on any server. Readings are generated in the moment and remain private. Ad serving is provided by Google AdMob in accordance with Google's privacy policy.</span>
+    <span data-lang="zh-tw">OmniOracle 不會在任何伺服器上儲存你的問題、解讀或個人資訊。解讀在當下生成並保持私密。廣告服務由 Google AdMob 提供，遵循 Google 的隱私政策。</span>
+    <span data-lang="zh-cn">OmniOracle 不会在任何服务器上存储你的问题、解读或个人信息。解读在当下生成并保持私密。广告服务由 Google AdMob 提供，遵循 Google 的隐私政策。</span>
+    <span data-lang="ja">OmniOracle はあなたの質問、解読、個人情報をいかなるサーバーにも保存しません。解読はその場で生成され、プライベートに保たれます。広告サービスはGoogle のプライバシーポリシーに従い、Google AdMob によって提供されます。</span>
+    <span data-lang="ko">OmniOracle은 당신의 질문, 해석 또는 개인 정보를 어떤 서버에도 저장하지 않습니다. 해석은 그 순간에 생성되고 비공개로 유지됩니다. 광고 서비스는 Google의 개인정보 보호정책에 따라 Google AdMob에서 제공됩니다.</span>
+    <span data-lang="es">OmniOracle no almacena tus preguntas, lecturas ni información personal en ningún servidor. Las lecturas se generan en el momento y permanecen privadas. La publicidad es proporcionada por Google AdMob conforme a la política de privacidad de Google.</span>
+    <span data-lang="de">OmniOracle speichert deine Fragen, Deutungen oder persönlichen Daten auf keinem Server. Deutungen werden im Moment generiert und bleiben privat. Werbung wird von Google AdMob gemäß der Datenschutzrichtlinie von Google bereitgestellt.</span>
+  </p>
+  <div class="privacy-badges">
+    <span class="badge">🔒 <span data-lang="en" class="active">No account required</span><span data-lang="zh-tw">無需帳號</span><span data-lang="zh-cn">无需帐号</span><span data-lang="ja">アカウント不要</span><span data-lang="ko">계정 불필요</span><span data-lang="es">Sin cuenta</span><span data-lang="de">Kein Konto</span></span>
+    <span class="badge">☁️ <span data-lang="en" class="active">No cloud storage</span><span data-lang="zh-tw">無雲端儲存</span><span data-lang="zh-cn">无云端存储</span><span data-lang="ja">クラウド保存なし</span><span data-lang="ko">클라우드 저장 없음</span><span data-lang="es">Sin almacenamiento en nube</span><span data-lang="de">Kein Cloud-Speicher</span></span>
+    <span class="badge">📊 <span data-lang="en" class="active">No analytics</span><span data-lang="zh-tw">無數據追蹤</span><span data-lang="zh-cn">无数据追踪</span><span data-lang="ja">分析なし</span><span data-lang="ko">분석 없음</span><span data-lang="es">Sin analítica</span><span data-lang="de">Keine Analyse</span></span>
+    <span class="badge">📱 <span data-lang="en" class="active">No data leaving your device</span><span data-lang="zh-tw">資料不離開你的設備</span><span data-lang="zh-cn">数据不离开你的设备</span><span data-lang="ja">データはデバイスから出ない</span><span data-lang="ko">기기를 떠나지 않는 데이터</span><span data-lang="es">Datos que no salen de tu dispositivo</span><span data-lang="de">Keine Daten verlassen dein Gerät</span></span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 JurassicLab &nbsp;·&nbsp;
+    <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.omnioracle" target="_blank" rel="noopener">
+      <span data-lang="en" class="active">Download on Google Play</span><span data-lang="zh-tw">Google Play 下載</span><span data-lang="zh-cn">Google Play 下载</span><span data-lang="ja">Google Play</span><span data-lang="ko">Google Play</span><span data-lang="es">Google Play</span><span data-lang="de">Google Play</span>
+    </a>
+    &nbsp;·&nbsp;
+    <a href="https://jurassiclab2000-pixel.github.io/omnioracle_privacy_policy.html">
+      <span data-lang="en" class="active">Privacy Policy</span><span data-lang="zh-tw">隱私政策</span><span data-lang="zh-cn">隐私政策</span><span data-lang="ja">プライバシーポリシー</span><span data-lang="ko">개인정보 처리방침</span><span data-lang="es">Política de Privacidad</span><span data-lang="de">Datenschutzrichtlinie</span>
+    </a>
+  </p>
+</footer>
+
+<script>
+function setLang(lang) {
+  // update buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  // update content
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-lang') === lang);
+  });
+  document.documentElement.lang = lang;
+}
+</script>
+</body>
+</html>
