@@ -15,3 +15,5 @@
 ### OmniOracle
 * [OmniOracle - Your AI Divination](https://jurassiclab2000-pixel.github.io/omnioracle_ai.html)
 
+### MathAge
+* [MathAge Privacy Policy](https://jurassiclab2000-pixel.github.io/mathage_privacy_policy.html)
