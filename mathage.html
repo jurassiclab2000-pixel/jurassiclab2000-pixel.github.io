@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathAge — 數學益智遊戲集</title>
+  <meta name="description" content="MathAge 整合四款益智數學遊戲：Cross Math、Math Cage、Num Rush、Magic Square，訓練邏輯與心算能力。" />
+  <meta name="keywords" content="MathAge, 數學遊戲, 益智遊戲, Cross Math, Math Cage, Num Rush, Magic Square, 腦力訓練, Android" />
+  <meta property="og:title" content="MathAge — 數學益智遊戲集" />
+  <meta property="og:description" content="四款經典數學益智遊戲，挑戰你的邏輯與心算極限。" />
+  <meta property="og:type" content="website" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f4f2fb;
+      --surface: #ffffff;
+      --surface2: #ede9f8;
+      --primary: #6c4fc2;
+      --primary-light: #9b7fe0;
+      --primary-dark: #4a2fa0;
+      --accent-cross: #6c4fc2;
+      --accent-cage: #4a90d9;
+      --accent-rush: #3daa6b;
+      --accent-magic: #e07a3f;
+      --text: #1a1232;
+      --text-muted: #6b6380;
+      --border: #ddd8f0;
+      --gem: #a78bfa;
+      --radius: 18px;
+      --radius-sm: 10px;
+      --shadow: 0 4px 24px rgba(108,79,194,0.10);
+      --shadow-lg: 0 8px 40px rgba(108,79,194,0.16);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Space Grotesk', 'Nunito', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── Language bar ── */
+    .lang-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 0.85rem;
+    }
+    .lang-bar a {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 3px 10px;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .lang-bar a:hover { background: var(--surface2); color: var(--primary); }
+    .lang-bar a.active {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── Nav ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(108,79,194,0.07);
+    }
+    .nav-logo {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+    .nav-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+    }
+    .nav-title span { color: var(--primary); }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+      color: #fff;
+      padding: 72px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(2.4rem, 7vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: #fde68a;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      opacity: 0.88;
+      margin-bottom: 36px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .hero-pill {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 30px;
+      padding: 6px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 40px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
+
+    /* ── Section ── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+
+    .section-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.02rem;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+
+    /* ── Game cards (horizontal) ── */
+    .game-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 48px;
+      overflow: hidden;
+    }
+    .game-card-inner {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 420px;
+    }
+    .game-card-inner.reverse { direction: rtl; }
+    .game-card-inner.reverse > * { direction: ltr; }
+
+    .game-screenshot {
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      min-height: 420px;
+    }
+    .game-screenshot img {
+      width: 100%;
+      max-width: 180px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(108,79,194,0.18);
+      display: block;
+    }
+    .game-info {
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .game-tag {
+      display: inline-block;
+      border-radius: 6px;
+      padding: 3px 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      width: fit-content;
+    }
+    .tag-cross { background: #ede9f8; color: var(--accent-cross); }
+    .tag-cage  { background: #dbeeff; color: var(--accent-cage); }
+    .tag-rush  { background: #d4f5e5; color: var(--accent-rush); }
+    .tag-magic { background: #fdeede; color: var(--accent-magic); }
+
+    .game-info h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .game-info p {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      margin-bottom: 20px;
+    }
+    .game-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .game-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.94rem;
+      color: var(--text);
+    }
+    .game-features li::before {
+      content: '✦';
+      color: var(--primary-light);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Win screen ── */
+    .win-section {
+      background: linear-gradient(135deg, #f0ebff 0%, #e6f0ff 100%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 0;
+      overflow: hidden;
+      margin-bottom: 48px;
+    }
+    .win-inner {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 380px;
+    }
+    .win-screenshot {
+      background: linear-gradient(160deg, #ddd5f7 0%, #c7d9f5 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 16px;
+    }
+    .win-screenshot img {
+      width: 100%; max-width: 180px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(108,79,194,0.2);
+    }
+    .win-info {
+      padding: 40px 36px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .win-info h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.75rem; font-weight: 800; margin-bottom: 12px;
+    }
+    .win-info p { color: var(--text-muted); font-size: 0.98rem; margin-bottom: 16px; }
+
+    /* ── Cosmos ── */
+    .cosmos-section {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 0;
+      overflow: hidden;
+      margin-bottom: 48px;
+      box-shadow: var(--shadow-lg);
+    }
+    .cosmos-inner {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      min-height: 380px;
+    }
+    .cosmos-info {
+      padding: 48px 44px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .cosmos-eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 12px;
+    }
+    .cosmos-info h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.9rem; font-weight: 900; margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .cosmos-info p { opacity: 0.88; font-size: 0.98rem; margin-bottom: 20px; }
+    .cosmos-gems {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .cosmos-gem {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .cosmos-screenshot {
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 20px;
+      background: rgba(0,0,0,0.12);
+    }
+    .cosmos-screenshot img {
+      width: 100%; max-width: 190px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    /* ── Feature grid ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 20px;
+      margin-top: 32px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .feature-card p { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--primary); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .game-card-inner,
+      .game-card-inner.reverse,
+      .win-inner,
+      .cosmos-inner {
+        grid-template-columns: 1fr;
+        direction: ltr;
+      }
+      .game-screenshot,
+      .win-screenshot,
+      .cosmos-screenshot {
+        min-height: 260px;
+        padding: 28px 24px;
+      }
+      .game-screenshot img,
+      .win-screenshot img,
+      .cosmos-screenshot img {
+        max-width: 150px;
+      }
+      .cosmos-info { padding: 36px 24px; }
+      .game-info, .win-info { padding: 28px 24px; }
+      nav { padding: 12px 16px; }
+      .hero { padding: 52px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Language bar -->
+<div class="lang-bar">
+  <a href="#" class="active">🇹🇼 繁體中文</a>
+  <a href="#">🇺🇸 English</a>
+  <a href="#">🇨🇳 简体中文</a>
+  <a href="#">🇯🇵 日本語</a>
+  <a href="#">🇰🇷 한국어</a>
+</div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">Σ</div>
+  <div class="nav-title">Math<span>Age</span></div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">🧮 數學益智遊戲集</div>
+  <h1>解鎖你的<em>數學腦</em></h1>
+  <p class="hero-sub">四款經典數學益智遊戲，一個 App 搞定。挑戰邏輯、心算與速度極限。</p>
+  <div class="hero-pills">
+    <span class="hero-pill">🔲 Cross Math</span>
+    <span class="hero-pill">🧩 Math Cage</span>
+    <span class="hero-pill">⚡ Num Rush</span>
+    <span class="hero-pill">✨ Magic Square</span>
+  </div>
+  <a class="hero-cta" href="https://play.google.com/store" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.83 1-.83 1.5-.5l15 8.5-15 8.5c-.5.33-1.5.33-1.5-.5z"/></svg>
+    Google Play 下載
+  </a>
+</div>
+
+<!-- Games section -->
+<div class="section">
+  <div class="section-eyebrow">四款遊戲模式</div>
+  <div class="section-title">每一款都是獨特的腦力挑戰</div>
+  <p class="section-desc">從邏輯填格到極速心算，MathAge 囊括四種截然不同的數學挑戰，適合各年齡層。</p>
+
+  <!-- Cross Math -->
+  <div class="game-card">
+    <div class="game-card-inner">
+      <div class="game-screenshot">
+        <img src="img/mathage_crossmath.jpeg" alt="Cross Math 遊戲畫面" />
+      </div>
+      <div class="game-info">
+        <span class="game-tag tag-cross">Game 01</span>
+        <h2>Cross Math</h2>
+        <p>結合填字與算術的終極挑戰。每一行、每一列都藏著等式，在空格中填入正確的數字，讓所有算式同時成立。</p>
+        <ul class="game-features">
+          <li>多方向等式同時推理，考驗純粹邏輯力</li>
+          <li>從給定的數字選項中挑出正確答案</li>
+          <li>難度循序漸進，從入門到高手都適合</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Math Cage -->
+  <div class="game-card">
+    <div class="game-card-inner reverse">
+      <div class="game-screenshot">
+        <img src="img/mathage_mathcage.jpeg" alt="Math Cage 遊戲畫面" />
+      </div>
+      <div class="game-info">
+        <span class="game-tag tag-cage">Game 02</span>
+        <h2>Math Cage</h2>
+        <p>策略性數字挑戰。在 N×N 格中，每行每列只能各出現一次 1 到 N 的數字，每個「籠子」也必須符合指定運算結果。</p>
+        <ul class="game-features">
+          <li>類 KenKen 規則，結合數獨與四則運算</li>
+          <li>不同顏色的籠子標示不同運算條件</li>
+          <li>支援 3×3 至更大尺寸，挑戰持續升級</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Num Rush -->
+  <div class="game-card">
+    <div class="game-card-inner">
+      <div class="game-screenshot">
+        <img src="img/mathage_numrush.jpeg" alt="Num Rush 遊戲畫面" />
+      </div>
+      <div class="game-info">
+        <span class="game-tag tag-rush">Game 03</span>
+        <h2>Num Rush</h2>
+        <p>和時間賽跑！從多個數字中快速找出兩個相加等於目標數的組合。速度越快，分數越高。你的大腦夠快嗎？</p>
+        <ul class="game-features">
+          <li>即時計時，考驗反應速度與心算能力</li>
+          <li>答題記錄即時顯示，清楚看到每次的對錯</li>
+          <li>隨難度提升，目標數字與選項更加複雜</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Magic Square -->
+  <div class="game-card">
+    <div class="game-card-inner reverse">
+      <div class="game-screenshot">
+        <img src="img/mathage_magicsquare.jpeg" alt="Magic Square 遊戲畫面" />
+      </div>
+      <div class="game-info">
+        <span class="game-tag tag-magic">Game 04</span>
+        <h2>Magic Square</h2>
+        <p>千年古老謎題，以全新姿態重生。將數字填入方格，使每一行、每一列以及兩條對角線的總和，全部相等。</p>
+        <ul class="game-features">
+          <li>每行、每列、每條對角線總和皆相同</li>
+          <li>行列旁即時顯示目前加總，輔助推理</li>
+          <li>提供 3×3、4×4 等多種尺寸挑戰</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Win / Result screen -->
+<div class="section" style="padding-top: 0;">
+  <div class="section-eyebrow">過關體驗</div>
+  <div class="section-title">破關後的成就感</div>
+  <p class="section-desc">每次完成關卡，都能看到你的最佳時間紀錄，並獲得寶石獎勵。</p>
+
+  <div class="win-section">
+    <div class="win-inner">
+      <div class="win-screenshot">
+        <img src="img/mathage_result.jpeg" alt="過關畫面" />
+      </div>
+      <div class="win-info">
+        <span class="game-tag tag-cross" style="margin-bottom:14px;">過關結算</span>
+        <h2>你的最佳成績，一眼看清</h2>
+        <p>過關後立即顯示你的今日最佳、本週最佳與史上最佳時間，清楚追蹤你的進步軌跡。</p>
+        <p>每次過關都能獲得 💎 寶石獎勵，累積用來填滿 Math Cosmos 中的數學符號！</p>
+        <ul class="game-features">
+          <li>三層時間排行：今日 / 本週 / 歷史最佳</li>
+          <li>新紀錄即時標記「NEW」，突破時刻值得慶祝</li>
+          <li>獲得寶石，前往 Math Cosmos 探索更多</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Math Cosmos -->
+<div class="section" style="padding-top: 0;">
+  <div class="section-eyebrow">長期成就系統</div>
+  <div class="section-title">Math Cosmos</div>
+  <p class="section-desc">持續破關、持續收集，打造屬於你的數學宇宙。</p>
+
+  <div class="cosmos-section">
+    <div class="cosmos-inner">
+      <div class="cosmos-info">
+        <div class="cosmos-eyebrow">✦ Math Cosmos</div>
+        <h2>用寶石，填滿數學符號的傳說</h2>
+        <p>每完成一個關卡，即可獲得 💎 寶石。累積的寶石能逐漸填滿 Math Cosmos 中各個數學符號——從「加法橋」到「減法之刃」，每個符號背後都藏著一段故事等你發掘。</p>
+        <div class="cosmos-gems">
+          <span class="cosmos-gem">➕ Bridge of Creation</span>
+          <span class="cosmos-gem">➖ Blade of Simplicity</span>
+          <span class="cosmos-gem">✕ Gate of Dimensions</span>
+          <span class="cosmos-gem">÷ Scale of Fairness</span>
+          <span class="cosmos-gem">＝ Mirror of Truth</span>
+        </div>
+      </div>
+      <div class="cosmos-screenshot">
+        <img src="img/mathage_cosmos.jpeg" alt="Math Cosmos 畫面" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Why MathAge -->
+<div class="section" style="padding-top: 0;">
+  <div class="section-eyebrow">為什麼選擇 MathAge？</div>
+  <div class="section-title">訓練大腦，就該這樣玩</div>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <h3>全方位腦力訓練</h3>
+      <p>邏輯推理、心算速度、空間感知，四款遊戲各攻一個面向。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>循序漸進的難度</h3>
+      <p>從「簡單」到「困難」，系統自動調整，隨你成長而成長。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <h3>簡潔直覺的介面</h3>
+      <p>無干擾設計，沉浸在解謎的當下，清晰流暢的操作體驗。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏱️</div>
+      <h3>隨時隨地都能玩</h3>
+      <p>五分鐘碎片時間或長時間挑戰，由你決定。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💎</div>
+      <h3>長期成就收集</h3>
+      <p>累積寶石、解鎖 Math Cosmos 符號，給你持續挑戰的動力。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <h3>個人最佳紀錄</h3>
+      <p>今日、本週、歷史最佳時間，清楚看見你的每一次進步。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>© 2026 JurassicLab &nbsp;·&nbsp; <a href="#">隱私政策</a> &nbsp;·&nbsp; <a href="https://play.google.com/store" target="_blank" rel="noopener">Google Play 下載</a></p>
+</footer>
+
+</body>
+</html>
