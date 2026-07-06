@@ -308,6 +308,7 @@
 <div class="lang-bar">
   <button onclick="setLang('zh')" id="btn-zh" class="active">🇹🇼 繁體中文</button>
   <button onclick="setLang('en')" id="btn-en">🇺🇸 English</button>
+  <button onclick="setLang('zh_cn')" id="btn-zh_cn">🇨🇳 简体中文</button>
   <button onclick="setLang('ja')" id="btn-ja">🇯🇵 日本語</button>
   <button onclick="setLang('ko')" id="btn-ko">🇰🇷 한국어</button>
 </div>
@@ -632,7 +633,65 @@ const i18n = {
 
     footer_privacy: "Privacy Policy",
   },
+  
+  zh_cn: {
+    hero_badge: "🧮 数学益智游戏集",
+    hero_h1: "解锁你的<em>数学脑</em>",  
+    hero_sub: "四款经典数学益智游戏，一个 App 搞定。挑战逻辑、心算与速度极限。",
+    cta_download: "Google Play 下载",
 
+    games_eyebrow: "四款游戏模式",
+    games_title: "每一款都是独特的脑力挑战",
+    games_desc: "从逻辑填格到极速心算，MathAge 囊括四种截然不同的数学挑战，适合各年龄层。",
+
+    cross_desc: "结合填字与算术的终极挑战。每一行、每一列都藏着等式，在空格中填入正确的数字，让所有算式同时成立。",
+    cross_f1: "多方向等式同时推理，考验纯粹逻辑力",
+    cross_f2: "从给定的数字选项中挑出正确答案",
+    cross_f3: "难度循序渐进，从入门到高手都适合",
+
+    cage_desc: "策略性数字挑战。在 N×N 格中，每行每列只能各出现一次 1 到 N 的数字，每个「笼子」也必须符合指定运算结果。",
+    cage_f1: "类 KenKen 规则，结合数独与四则运算",
+    cage_f2: "不同颜色的笼子标示不同运算条件",
+    cage_f3: "支持 3×3 至更大尺寸，挑战持续升级",
+
+    rush_desc: "和时间赛跑！从多个数字中快速找出两个相加等于目标数的组合。速度越快，分数越高。你的大脑够快吗？",
+    rush_f1: "实时计时，考验反应速度与心算能力",
+    rush_f2: "答题记录实时显示，清楚看到每次的对错",
+    rush_f3: "随难度提升，目标数字与选项更加复杂",
+
+    magic_desc: "千年古老谜题，以全新姿态重生。将数字填入方格，使每一行、每一列以及两条对角线的总和，全部相等。",
+    magic_f1: "每行、每列、每条对角线总和皆相同",
+    magic_f2: "行列旁实时显示目前加总，辅助推理",
+    magic_f3: "提供 3×3、4×4 等多种尺寸挑战",
+
+    win_eyebrow: "过关体验",
+    win_title: "破关后的成就感",
+    win_desc: "每次完成关卡，都能看到你的最佳时间记录，并获得宝石奖励。",
+    win_tag: "过关结算",
+    win_h2: "你的最佳成绩，一眼看清",
+    win_p1: "过关后立即显示你的今日最佳、本周最佳与史上最佳时间，清楚追踪你的进步轨迹。",
+    win_p2: "每次过关都能获得 💎 宝石奖励，累积用来填满 Math Cosmos 中的数学符号！",
+    win_f1: "三层时间排行：今日 / 本周 / 历史最佳",
+    win_f2: "新纪录实时标记「NEW」，突破时刻值得庆祝",
+    win_f3: "获得宝石，前往 Math Cosmos 探索更多",
+
+    cosmos_eyebrow: "长期成就系统",
+    cosmos_desc: "持续破关、持续收集，打造属于你的数学宇宙。",
+    cosmos_h2: "用宝石，填满数学符号的传说",
+    cosmos_p: "每完成一个关卡，即可获得 💎 宝石。累积的宝石能逐渐填满 Math Cosmos 中各个数学符号——从「加法桥」到「减法之刃」，每个符号背后都藏着一段故事等你发掘。",
+
+    why_eyebrow: "为什么选择 MathAge？",
+    why_title: "训练大脑，就该这样玩",
+    feat1_h: "全方位脑力训练", feat1_p: "逻辑推理、心算速度、空间感知，四款游戏各攻一个面向。",
+    feat2_h: "循序渐进的难度", feat2_p: "从「简单」到「困难」，系统自动调整，随你成长而成长。",
+    feat3_h: "简洁直觉的界面", feat3_p: "无干扰设计，沉浸在解谜的当下，清晰流畅的操作体验。",
+    feat4_h: "随时随地都能玩", feat4_p: "五分钟碎片时间或长时间挑战，由你决定。",
+    feat5_h: "长期成就收集",   feat5_p: "累积宝石、解锁 Math Cosmos 符号，给你持续挑战的动力。",
+    feat6_h: "个人最佳记录",   feat6_p: "今日、本周、历史最佳时间，清楚看见你的每一次进步。",
+
+    footer_privacy: "隐私政策",
+  },
+  
   ja: {
     hero_badge: "🧮 数学パズルゲーム集",
     hero_h1: "あなたの<em>数学脳</em>を解放しよう",
@@ -783,6 +842,8 @@ function setLang(lang) {
     lang = 'ja';
   } else if (browserLang.startsWith('ko')) {
     lang = 'ko';
+  } else if (browserLang.startsWith('zh-CN') || browserLang.startsWith('zh-Hans')) {
+    lang = 'zh_cn';
   } else if (browserLang.startsWith('en')) {
     lang = 'en';
   }
