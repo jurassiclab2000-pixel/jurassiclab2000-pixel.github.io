@@ -1,5 +1,8 @@
 # jurassiclab2000-pixel.github.io
 
+## Jurassic Lab App page
+* [Jurassic Lab](https://jurassiclab2000-pixel.github.io/)
+  
 ## app-ads.txt
 * [app-adx.txt](https://jurassiclab2000-pixel.github.io/app-ads.txt)
 
