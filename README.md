@@ -7,6 +7,10 @@
 * [app-adx.txt](https://jurassiclab2000-pixel.github.io/app-ads.txt)
 
 ## Apps
+### Wifi Metric
+* [Wifi Metric Private Policy](https://jurassiclab2000-pixel.github.io/WiFiMetric-privacy-policy/)
+* [Wifi Metric](https://jurassiclab2000-pixel.github.io/wifimetric.html)
+
 ### OpsMon
 * [OpsMon User Guide](https://jurassiclab2000-pixel.github.io/opsmon_guide.html)
 * [OpsMon Privacy Policy](https://jurassiclab2000-pixel.github.io/opsmon_privacy_policy.html)
