@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WiFi Metric – Analyzer & Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #21262d;
+      --accent:    #58a6ff;
+      --accent2:   #3fb950;
+      --warn:      #f0883e;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --mono:      'IBM Plex Mono', monospace;
+      --sans:      'IBM Plex Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* ── LANG TOGGLE ── */
+    #lang-bar {
+      position: fixed;
+      top: 0; right: 0; left: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 10px 24px;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+    #lang-bar span {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .08em;
+    }
+    .lang-btn {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 4px 14px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: .04em;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(88,166,255,.08);
+    }
+
+    /* ── LAYOUT ── */
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      padding: 110px 0 64px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(88,166,255,.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .app-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 20px;
+      margin: 0 auto 24px;
+      display: block;
+      box-shadow: 0 0 0 1px var(--border), 0 8px 32px rgba(0,0,0,.5);
+    }
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: var(--mono);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+    h1 span { color: var(--accent); }
+    .hero-sub {
+      margin: 18px auto 0;
+      max-width: 540px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .hero-cta {
+      margin-top: 36px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 28px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #0d1117;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-decoration: none;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-primary:hover { opacity: .85; transform: translateY(-1px); }
+    .btn-primary svg { flex-shrink: 0; }
+
+    /* ── SIGNAL METER (decorative hero element) ── */
+    .signal-demo {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      margin: 40px auto 0;
+      height: 48px;
+    }
+    .signal-demo span {
+      display: block;
+      width: 6px;
+      border-radius: 2px;
+      background: var(--accent2);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    .signal-demo span:nth-child(1) { height: 18%; animation-delay: 0s; }
+    .signal-demo span:nth-child(2) { height: 35%; animation-delay: .1s; }
+    .signal-demo span:nth-child(3) { height: 55%; animation-delay: .2s; }
+    .signal-demo span:nth-child(4) { height: 75%; animation-delay: .3s; }
+    .signal-demo span:nth-child(5) { height: 95%; animation-delay: .4s; }
+    .signal-demo span:nth-child(6) { height: 75%; animation-delay: .5s; background: var(--warn); }
+    .signal-demo span:nth-child(7) { height: 40%; animation-delay: .6s; background: var(--warn); }
+    .signal-demo span:nth-child(8) { height: 20%; animation-delay: .7s; background: var(--warn); }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: .35; }
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 72px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    section:last-of-type { border-bottom: none; }
+
+    h2 {
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    h2 .tag {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: .1em;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 3px;
+      padding: 1px 6px;
+      vertical-align: middle;
+      margin-left: 10px;
+      opacity: .8;
+      position: relative;
+      top: -3px;
+    }
+    .section-intro {
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 620px;
+    }
+
+    /* ── FEATURE GRID ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px;
+      transition: border-color .2s;
+    }
+    .feature-card:hover { border-color: rgba(88,166,255,.4); }
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-family: var(--mono);
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+      letter-spacing: .04em;
+    }
+    .feature-card p {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── SCREENSHOTS ── */
+    .screenshots-section h2 { margin-bottom: 8px; }
+    .screen-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 600px) {
+      .screen-pair { grid-template-columns: 1fr; }
+    }
+    .screen-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .screen-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .screen-caption {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .screen-caption h4 {
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: .04em;
+    }
+    .screen-caption p {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    /* ── TECH SPECS ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .875rem;
+    }
+    .spec-table tr {
+      border-bottom: 1px solid var(--border);
+    }
+    .spec-table tr:last-child { border-bottom: none; }
+    .spec-table td {
+      padding: 12px 8px;
+      vertical-align: top;
+    }
+    .spec-table td:first-child {
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--muted);
+      width: 38%;
+      letter-spacing: .04em;
+    }
+    .spec-table td:last-child {
+      color: var(--text);
+    }
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .72rem;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin: 2px 4px 2px 0;
+      border: 1px solid;
+    }
+    .badge-green { color: var(--accent2); border-color: var(--accent2); background: rgba(63,185,80,.08); }
+    .badge-blue  { color: var(--accent);  border-color: var(--accent);  background: rgba(88,166,255,.08); }
+    .badge-warn  { color: var(--warn);    border-color: var(--warn);    background: rgba(240,136,62,.08); }
+
+    /* ── PERMISSIONS ── */
+    .perm-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .perm-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: .875rem;
+    }
+    .perm-list li span:first-child {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .perm-list li b {
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 40px 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── LANG VISIBILITY ── */
+    [data-lang] { display: none; }
+    .lang-en [data-lang="en"] { display: block; }
+    .lang-zh [data-lang="zh"] { display: block; }
+    /* inline spans */
+    span[data-lang] { display: none; }
+    .lang-en span[data-lang="en"] { display: inline; }
+    .lang-zh span[data-lang="zh"] { display: inline; }
+
+    /* ── MISC ── */
+    .dbm-chip {
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--accent2);
+      background: rgba(63,185,80,.1);
+      border: 1px solid rgba(63,185,80,.3);
+      border-radius: 4px;
+      padding: 2px 8px;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body class="lang-en">
+
+<!-- ── LANG BAR ── -->
+<div id="lang-bar">
+  <span>LANG /</span>
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="wrap">
+    <img
+      class="app-icon"
+      src="https://play-lh.googleusercontent.com/KgqA5CQXL0d7-_9q8FZkgNaLt5dz6xdvzHR8sE3hj6OhQ8q6mrOZlAGqJ1VJ4b9DDs=s180"
+      alt="WiFi Metric icon"
+      onerror="this.style.display='none'"
+    />
+
+    <p class="eyebrow">Android · WiFi 4 / 5 / 6 · 2.4 GHz / 5 GHz</p>
+
+    <h1>
+      <span data-lang="en">WiFi <span>Metric</span></span>
+      <span data-lang="zh">WiFi <span>Metric</span></span>
+    </h1>
+
+    <p class="hero-sub">
+      <span data-lang="en">Professional WiFi Analyzer to scan nearby networks with Map &amp; List View. Real dBm data, not just signal bars.</span>
+      <span data-lang="zh">專業 WiFi 分析工具，提供 List 清單與 Map 地圖雙檢視，顯示真實 dBm 數值，不只是訊號格數。</span>
+    </p>
+
+    <div class="hero-cta">
+      <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.jurassiclab.wifimetric" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+        <span data-lang="en">Get it on Google Play</span>
+        <span data-lang="zh">前往 Google Play 下載</span>
+      </a>
+    </div>
+
+    <div class="signal-demo" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section>
+  <div class="wrap">
+    <h2>
+      <span data-lang="en">Key Features</span>
+      <span data-lang="zh">核心功能</span>
+    </h2>
+    <p class="section-intro">
+      <span data-lang="en">Everything a network engineer or power user needs to diagnose and optimize wireless coverage — in your pocket.</span>
+      <span data-lang="zh">網路工程師與進階使用者所需的一切無線診斷工具，隨身攜帶。</span>
+    </p>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">📡</div>
+        <h3><span data-lang="en">WiFi Scanner</span><span data-lang="zh">WiFi 掃描器</span></h3>
+        <p>
+          <span data-lang="en">Instantly detect all nearby access points and hidden networks. Updates in real time with every scan.</span>
+          <span data-lang="zh">即時偵測附近所有 AP（包含隱藏網路），每次掃描後立即更新清單。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📶</div>
+        <h3><span data-lang="en">Signal Strength Meter</span><span data-lang="zh">訊號強度計</span></h3>
+        <p>
+          <span data-lang="en">Real-time RSSI monitoring in dBm — the true measure of signal power, beyond misleading icon bars.</span>
+          <span data-lang="zh">以 dBm 顯示真實 RSSI，擺脫系統訊號格誤導，掌握實際訊號強度。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <h3><span data-lang="en">Map View</span><span data-lang="zh">地圖視圖</span></h3>
+        <p>
+          <span data-lang="en">Visualize AP distribution spatially within a configurable radius (5 m · 10 m · 30 m · 50 m+).</span>
+          <span data-lang="zh">以圓形或方形地圖呈現 AP 空間分布，半徑可選 5m、10m、30m、50m+。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🏷️</div>
+        <h3><span data-lang="en">Technical Metadata</span><span data-lang="zh">技術詳細資訊</span></h3>
+        <p>
+          <span data-lang="en">Tap any network to reveal SSID, BSSID, channel frequency, channel width, encryption type, and estimated distance.</span>
+          <span data-lang="zh">點擊任意網路可查看 SSID、BSSID、頻道、頻寬、加密方式及估算距離。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3><span data-lang="en">Security Info</span><span data-lang="zh">安全性資訊</span></h3>
+        <p>
+          <span data-lang="en">Quickly identify open vs. protected networks (WPA2/AES, WPA3). Know which networks are safe before connecting.</span>
+          <span data-lang="zh">快速辨別開放與加密網路（WPA2/AES、WPA3），連線前先確認安全性。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3><span data-lang="en">List View & Comparison</span><span data-lang="zh">清單視圖與比較</span></h3>
+        <p>
+          <span data-lang="en">Compare multiple SSIDs side-by-side, sorted by signal strength. Ideal for channel interference analysis.</span>
+          <span data-lang="zh">多 SSID 並排比較，依訊號強度排序，快速識別頻道干擾問題。</span>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SCREENSHOTS ── -->
+<section class="screenshots-section">
+  <div class="wrap">
+    <h2>
+      <span data-lang="en">Screenshots</span>
+      <span data-lang="zh">畫面截圖</span>
+    </h2>
+    <p class="section-intro">
+      <span data-lang="en">Two views, one powerful tool — List for data density, Map for spatial awareness.</span>
+      <span data-lang="zh">兩種視圖，一個強大工具 — List 清單提供資料密度，Map 地圖呈現空間感知。</span>
+    </p>
+
+    <!-- Row 1: List Views -->
+    <div class="screen-pair">
+      <div class="screen-item">
+        <img src="wifimetric_list.jpeg" alt="List View – network scan" loading="lazy" />
+        <div class="screen-caption">
+          <h4><span data-lang="en">List View — Network Scan</span><span data-lang="zh">清單視圖 — 網路掃描</span></h4>
+          <p>
+            <span data-lang="en">All nearby APs sorted by signal strength. Color-coded RSSI bars (green / orange) show signal quality at a glance.</span>
+            <span data-lang="zh">依訊號強度排序所有鄰近 AP，RSSI 色條（綠色／橘色）讓訊號品質一目了然。</span>
+          </p>
+        </div>
+      </div>
+      <div class="screen-item">
+        <img src="wifimetric_list_detail.jpeg" alt="List View – expanded detail" loading="lazy" />
+        <div class="screen-caption">
+          <h4><span data-lang="en">List View — Expanded Detail</span><span data-lang="zh">清單視圖 — 展開詳細資訊</span></h4>
+          <p>
+            <span data-lang="en">Tap a network to expand full metadata: BSSID, frequency, channel center, capabilities, Passpoint, and 802.11mc support.</span>
+            <span data-lang="zh">點擊網路展開完整資訊：BSSID、頻率、中心頻道、Capabilities、Passpoint 及 802.11mc 支援。</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Map Views -->
+    <div class="screen-pair">
+      <div class="screen-item">
+        <img src="wifimetric_map_radial.jpeg" alt="Map View – radial" loading="lazy" />
+        <div class="screen-caption">
+          <h4><span data-lang="en">Map View — Radial Layout</span><span data-lang="zh">地圖視圖 — 圓形佈局</span></h4>
+          <p>
+            <span data-lang="en">APs plotted on a circular map centered on your device. Proximity rings reflect estimated distance in meters.</span>
+            <span data-lang="zh">以裝置為中心的圓形地圖，AP 位置依估算距離（公尺）分布於同心圓上。</span>
+          </p>
+        </div>
+      </div>
+      <div class="screen-item">
+        <img src="wifimetric_map_area.jpeg" alt="Map View – rectangular" loading="lazy" />
+        <div class="screen-caption">
+          <h4><span data-lang="en">Map View — Area Layout</span><span data-lang="zh">地圖視圖 — 區域佈局</span></h4>
+          <p>
+            <span data-lang="en">Rectangular area layout showing the relative positions of all detected APs — useful for floor-plan mapping.</span>
+            <span data-lang="zh">矩形區域佈局，顯示所有偵測 AP 的相對位置，適用於平面圖規劃場景。</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TECHNICAL SPECS ── -->
+<section>
+  <div class="wrap">
+    <h2>
+      <span data-lang="en">Technical Specs</span><span data-lang="zh">技術規格</span>
+      <span class="tag">RAW DATA</span>
+    </h2>
+    <p class="section-intro">
+      <span data-lang="en">Everything the app exposes per access point, straight from the Android WiFi scanning APIs.</span>
+      <span data-lang="zh">App 對每個 AP 所呈現的所有資訊，直接來自 Android WiFi 掃描 API。</span>
+    </p>
+
+    <table class="spec-table">
+      <tr>
+        <td>SSID</td>
+        <td>
+          <span data-lang="en">Network name (human-readable identifier)</span>
+          <span data-lang="zh">網路名稱（人類可讀識別碼）</span>
+        </td>
+      </tr>
+      <tr>
+        <td>BSSID</td>
+        <td>
+          <span data-lang="en">MAC address of the access point (e.g. <code>80:03:84:6c:89:70</code>)</span>
+          <span data-lang="zh">AP 的 MAC 位址（例如 <code>80:03:84:6c:89:70</code>）</span>
+        </td>
+      </tr>
+      <tr>
+        <td>RSSI</td>
+        <td>
+          <span data-lang="en">Signal power in dBm</span>
+          <span data-lang="zh">訊號強度，單位 dBm</span>
+          <br>
+          <span class="badge badge-green">≥ −50 dBm Excellent</span>
+          <span class="badge badge-blue">−50 ~ −70 dBm Good</span>
+          <span class="badge badge-warn">&lt; −70 dBm Weak</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Frequency / Channel</td>
+        <td>
+          <span data-lang="en">Operating frequency in MHz and derived 802.11 channel number</span>
+          <span data-lang="zh">工作頻率（MHz）及對應的 802.11 頻道編號</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Channel Width</td>
+        <td>20 MHz / 40 MHz / 80 MHz / 160 MHz</td>
+      </tr>
+      <tr>
+        <td>Center 0 / Center 1</td>
+        <td>
+          <span data-lang="en">Primary and secondary center frequency segments for wide channels</span>
+          <span data-lang="zh">寬頻道的主要與次要中心頻率區段</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Capabilities</td>
+        <td>
+          <span data-lang="en">Encryption &amp; auth protocols: Open / WPA2-AES / WPA3-SAE …</span>
+          <span data-lang="zh">加密與驗證協定：Open / WPA2-AES / WPA3-SAE …</span>
+        </td>
+      </tr>
+      <tr>
+        <td>WiFi Generation</td>
+        <td>Wi-Fi 4 (802.11n) · Wi-Fi 5 (802.11ac) · Wi-Fi 6 (802.11ax)</td>
+      </tr>
+      <tr>
+        <td>Distance (est.)</td>
+        <td>
+          <span data-lang="en">Estimated distance in meters derived from RSSI and frequency via free-space path loss model</span>
+          <span data-lang="zh">以 RSSI 與頻率透過自由空間路徑損耗模型估算的距離（公尺）</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Vendor / OUI</td>
+        <td>
+          <span data-lang="en">AP manufacturer resolved from BSSID OUI lookup</span>
+          <span data-lang="zh">從 BSSID OUI 查詢解析的 AP 製造商</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Passpoint</td>
+        <td>
+          <span data-lang="en">Hotspot 2.0 / Passpoint support flag</span>
+          <span data-lang="zh">Hotspot 2.0 / Passpoint 支援旗標</span>
+        </td>
+      </tr>
+      <tr>
+        <td>802.11mc</td>
+        <td>
+          <span data-lang="en">Fine Timing Measurement (FTM) support — enables more accurate ranging</span>
+          <span data-lang="zh">精細時序測量（FTM）支援，可提升測距精度</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- ── PERMISSIONS ── -->
+<section>
+  <div class="wrap">
+    <h2>
+      <span data-lang="en">Permissions &amp; Privacy</span>
+      <span data-lang="zh">權限與隱私</span>
+    </h2>
+    <p class="section-intro">
+      <span data-lang="en">WiFi Metric requires two system permissions. Here's exactly why — no hidden data collection.</span>
+      <span data-lang="zh">WiFi Metric 需要兩項系統權限。以下說明確切原因，不含隱藏資料蒐集。</span>
+    </p>
+
+    <ul class="perm-list">
+      <li>
+        <span>📍</span>
+        <div>
+          <b>ACCESS_FINE_LOCATION</b>
+          <span data-lang="en">Android requires location permission for any app that scans Wi-Fi networks (since Android 9). WiFi Metric uses this solely to enable the scan API — your physical location is never stored or transmitted.</span>
+          <span data-lang="zh">Android 9 起，所有執行 WiFi 掃描的 App 都必須持有定位權限。WiFi Metric 僅用此權限呼叫掃描 API，不儲存或傳輸您的實際位置。</span>
+        </div>
+      </li>
+      <li>
+        <span>📶</span>
+        <div>
+          <b>ACCESS_WIFI_STATE / CHANGE_WIFI_STATE</b>
+          <span data-lang="en">Needed to read scan results and trigger manual rescans on demand.</span>
+          <span data-lang="zh">用於讀取掃描結果並在使用者需要時觸發手動重新掃描。</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section style="text-align:center; padding: 80px 0; border-bottom:none;">
+  <div class="wrap">
+    <p class="eyebrow">Android · Free Download</p>
+    <h2 style="font-size:1.8rem; margin-bottom:16px;">
+      <span data-lang="en">Take control of your wireless network.</span>
+      <span data-lang="zh">掌握你的無線網路。</span>
+    </h2>
+    <p style="color:var(--muted); margin-bottom:36px;">
+      <span data-lang="en">Download WiFi Metric and get real signal data in seconds.</span>
+      <span data-lang="zh">立即下載 WiFi Metric，幾秒內取得真實訊號數據。</span>
+    </p>
+    <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.jurassiclab.wifimetric" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+      <span data-lang="en">Google Play</span>
+      <span data-lang="zh">Google Play 下載</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>
+      WiFi Metric &copy; <span id="yr"></span> JurassicLab &nbsp;·&nbsp;
+      <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.wifimetric" target="_blank" rel="noopener">Google Play</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+    document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+    localStorage.setItem('wm_lang', lang);
+  }
+
+  // Restore saved preference
+  const saved = localStorage.getItem('wm_lang');
+  if (saved) setLang(saved);
+</script>
+</body>
+</html>
