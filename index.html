@@ -1,145 +1,473 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurassic Lab - Android Apps</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: #f4f7f6;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-        h1 {
-            color: #2c3e50;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        .app-container {
-            display: grid;
-            gap: 20px;
-        }
-        .app-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .app-card:hover {
-            transform: translateY(-5px);
-        }
-        .app-info h2 {
-            margin: 0 0 8px 0;
-            font-size: 1.5rem;
-        }
-        /* 讓 App 名稱連結的顏色與原本的藍色一致，並拿掉下底線 */
-        .app-info h2 a {
-            color: #2980b9;
-            text-decoration: none;
-        }
-        .app-info h2 a:hover {
-            text-decoration: underline;
-        }
-        .app-info p {
-            margin: 0;
-            color: #666;
-            font-size: 0.95rem;
-        }
-        .download-btn {
-            background-color: #3d5afe;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            margin-left: 15px;
-        }
-        .download-btn:hover {
-            background-color: #304ffe;
-        }
-        footer {
-            margin-top: 60px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #95a5a6;
-        }
-        a.footer-link {
-            color: #95a5a6;
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jurassic Lab – Android Apps</title>
+  <meta name="description" content="Jurassic Lab crafts simple and powerful Android apps for developers, power users, and curious minds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --surface2: #1c2128;
+      --border:   #21262d;
+      --accent:   #58a6ff;
+      --green:    #3fb950;
+      --orange:   #f0883e;
+      --purple:   #bc8cff;
+      --pink:     #f778ba;
+      --yellow:   #e3b341;
+      --text:     #e6edf3;
+      --muted:    #8b949e;
+      --mono:     'IBM Plex Mono', monospace;
+      --sans:     'IBM Plex Sans', sans-serif;
+      --radius:   12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── HEADER ── */
+    header {
+      padding: 72px 24px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-cover {
+      position: absolute;
+      inset: 0;
+      background-image: url('img/jurassic-lab-cover.png');
+      background-size: cover;
+      background-position: center top;
+      opacity: .18;
+      pointer-events: none;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, transparent 40%, var(--bg) 100%),
+        radial-gradient(ellipse 60% 40% at 50% -10%, rgba(88,166,255,.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    header > *:not(.header-cover) { position: relative; z-index: 1; }
+    .lab-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .lab-logo-img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: block;
+      filter: drop-shadow(0 0 12px rgba(88,200,180,.35));
+    }
+    .lab-name {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    header h1 {
+      font-family: var(--mono);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 600;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    header h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    header p {
+      margin: 16px auto 0;
+      max-width: 480px;
+      color: var(--muted);
+      font-size: .95rem;
+      font-weight: 300;
+    }
+
+    /* ── GRID ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── APP CARD ── */
+    .app-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative;
+    }
+    .app-card:hover {
+      border-color: var(--card-accent, var(--accent));
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    }
+    .card-top {
+      padding: 24px 24px 20px;
+      flex: 1;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .app-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+    .app-icon-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-title-group { min-width: 0; }
+    .card-title {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .07em;
+      padding: 2px 7px;
+      border-radius: 3px;
+      border: 1px solid;
+      margin-top: 4px;
+      color: var(--card-accent, var(--accent));
+      border-color: var(--card-accent, var(--accent));
+      background: rgba(88,166,255,.06);
+    }
+    .card-desc {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .card-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .pill {
+      font-family: var(--mono);
+      font-size: .7rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      letter-spacing: .03em;
+    }
+
+    /* ── CARD FOOTER ── */
+    .card-footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-guide {
+      flex: 1;
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--muted);
+      background: transparent;
+      transition: border-color .2s, color .2s, background .2s;
+      letter-spacing: .04em;
+    }
+    .btn-guide:hover {
+      border-color: var(--card-accent, var(--accent));
+      color: var(--card-accent, var(--accent));
+      background: rgba(88,166,255,.06);
+    }
+    .btn-play {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      background: var(--card-accent, var(--accent));
+      color: #0d1117;
+      transition: opacity .2s;
+      white-space: nowrap;
+    }
+    .btn-play:hover { opacity: .82; }
+    .btn-play svg { flex-shrink: 0; }
+
+    /* ── ACCENT BAR on hover ── */
+    .app-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-accent, var(--accent));
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .app-card:hover::after { opacity: 1; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px 48px;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    footer a:hover { text-decoration: underline; }
+    .footer-inner { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+    @media (max-width: 480px) {
+      header { padding: 52px 20px 44px; }
+      .apps-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>Jurassic Lab</h1>
-        <p class="subtitle">Crafting simple and powerful Android experiences.</p>
-    </header>
+<header>
+  <div class="header-cover" aria-hidden="true"></div>
+  <div class="lab-logo">
+    <img class="lab-logo-img" src="img/jurassic-lab-avatar-small.png" alt="Jurassic Lab logo" />
+    <span class="lab-name">Jurassic Lab</span>
+  </div>
+  <h1>Simple. Powerful.<br><em>Android Apps.</em></h1>
+  <p>Crafting tools for developers, power users, and curious minds — lightweight, privacy-first, no fluff.</p>
+</header>
 
-    <div class="app-container">
-        <div class="app-card">
-            <div class="app-info">
-                <h2><a href="https://jurassiclab2000-pixel.github.io/puzzle_duogo.html" target="_blank">Puzzle DuoGo</a></h2>
-                <p>Swap & Slide: The ultimate puzzle challenge.</p>
-            </div>
-            <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" class="download-btn" target="_blank">Google Play</a>
-        </div>
+<main>
+  <div class="apps-grid">
 
-        <div class="app-card">
-            <div class="app-info">
-                <h2><a href="https://jurassiclab2000-pixel.github.io/omnioracle_ai.html" target="_blank">OmniOracle</a></h2>
-                <p>Explore your destiny with AI-powered divination.</p>
-            </div>
-            <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.omnioracle" class="download-btn" target="_blank">Google Play</a>
+    <!-- OpsMon -->
+    <div class="app-card" style="--card-accent: #3fb950;">
+      <div class="card-top">
+        <div class="card-header">
+          <div class="app-icon-wrap">
+            <img
+              src="https://play-lh.googleusercontent.com/CrFSMTNJBNa1JYD0mLi9HqNH_oJ1qIHmWOKFtv9-J2CYQ1y2r_xKXNOGqJrS8kXImg=s180"
+              alt="OpsMon icon"
+              onerror="this.style.display='none'; this.parentElement.textContent='🖥️'"
+            />
+          </div>
+          <div class="card-title-group">
+            <div class="card-title">OpsMon</div>
+            <span class="card-tag" style="--card-accent:#3fb950; background:rgba(63,185,80,.06);">DevOps · Monitoring</span>
+          </div>
         </div>
-
-        <div class="app-card">
-            <div class="app-info">
-                <h2><a href="https://jurassiclab2000-pixel.github.io/wifimetric.html" target="_blank">Wifi Metric</a></h2>
-                <p>Analyze and optimize your network signal strength.</p>
-            </div>
-            <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.wifimetric" class="download-btn" target="_blank">Google Play</a>
+        <p class="card-desc">SSL certificate, TCP port, HTTP endpoint, and latency monitoring — 100% on-device. No cloud, no account, no agent required.</p>
+        <div class="card-pills">
+          <span class="pill">TLS / HTTPS</span>
+          <span class="pill">TCP Port</span>
+          <span class="pill">HTTP Status</span>
+          <span class="pill">Latency</span>
         </div>
-
-        <div class="app-card">
-            <div class="app-info">
-                <h2><a href="https://jurassiclab2000-pixel.github.io/opsmon_guide.html" target="_blank">OpsMon</a></h2>
-                <p>DevOps SSL, host, and service monitoring tool.</p>
-            </div>
-            <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.opsmon" class="download-btn" target="_blank">Google Play</a>
-        </div>
-
-        <div class="app-card">
-            <div class="app-info">
-                <h2><a href="https://jurassiclab2000-pixel.github.io/mathage.html" target="_blank">Math Age</a></h2>
-                <p>Fun math games and logic puzzles.</p>
-            </div>
-            <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.mathage" class="download-btn" target="_blank">Google Play</a>
-        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-guide" href="https://jurassiclab2000-pixel.github.io/opsmon_guide.html">User Guide →</a>
+        <a class="btn-play" style="background:#3fb950;" href="https://play.google.com/store/apps/details?id=com.jurassiclab.opsmon" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+          Play
+        </a>
+      </div>
     </div>
 
-    <footer>
-        <p>&copy; 2026 Jurassic Lab. All rights reserved.</p>
-        <p><a href="app-ads.txt" class="footer-link">app-ads.txt</a></p>
-    </footer>
+    <!-- WiFi Metric -->
+    <div class="app-card" style="--card-accent: #58a6ff;">
+      <div class="card-top">
+        <div class="card-header">
+          <div class="app-icon-wrap">
+            <img
+              src="https://play-lh.googleusercontent.com/KgqA5CQXL0d7-_9q8FZkgNaLt5dz6xdvzHR8sE3hj6OhQ8q6mrOZlAGqJ1VJ4b9DDs=s180"
+              alt="WiFi Metric icon"
+              onerror="this.style.display='none'; this.parentElement.textContent='📶'"
+            />
+          </div>
+          <div class="card-title-group">
+            <div class="card-title">WiFi Metric</div>
+            <span class="card-tag">Network · Analyzer</span>
+          </div>
+        </div>
+        <p class="card-desc">Professional WiFi analyzer with real dBm signal readings, List &amp; Map view, BSSID metadata, vendor lookup, and estimated AP distance.</p>
+        <div class="card-pills">
+          <span class="pill">RSSI / dBm</span>
+          <span class="pill">Map View</span>
+          <span class="pill">Wi-Fi 6</span>
+          <span class="pill">WPA3</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-guide" href="https://jurassiclab2000-pixel.github.io/wifimetric.html">User Guide →</a>
+        <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.jurassiclab.wifimetric" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+          Play
+        </a>
+      </div>
+    </div>
+
+    <!-- OmniOracle -->
+    <div class="app-card" style="--card-accent: #bc8cff;">
+      <div class="card-top">
+        <div class="card-header">
+          <div class="app-icon-wrap">
+            <img
+              src="https://play-lh.googleusercontent.com/RhFa3YNZJj6BsajSVIxBsPDiHrCRmQ4T6bsMerF_sJ0uLHNJF-tF6DEVLkKCLHBOhQ=s180"
+              alt="OmniOracle icon"
+              onerror="this.style.display='none'; this.parentElement.textContent='🔮'"
+            />
+          </div>
+          <div class="card-title-group">
+            <div class="card-title">OmniOracle</div>
+            <span class="card-tag" style="--card-accent:#bc8cff; background:rgba(188,140,255,.06);">AI · Divination</span>
+          </div>
+        </div>
+        <p class="card-desc">Explore your destiny with AI-powered divination. Ancient wisdom meets modern intelligence — I Ching, Tarot, and more.</p>
+        <div class="card-pills">
+          <span class="pill">I Ching</span>
+          <span class="pill">Tarot</span>
+          <span class="pill">AI-Powered</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-guide" href="https://jurassiclab2000-pixel.github.io/omnioracle_ai.html">User Guide →</a>
+        <a class="btn-play" style="background:#bc8cff;" href="https://play.google.com/store/apps/details?id=com.jurassiclab.omnioracle" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+          Play
+        </a>
+      </div>
+    </div>
+
+    <!-- Puzzle DuoGo -->
+    <div class="app-card" style="--card-accent: #f0883e;">
+      <div class="card-top">
+        <div class="card-header">
+          <div class="app-icon-wrap">
+            <img
+              src="https://play-lh.googleusercontent.com/Mc8wXQ6KRXDMk5UKCFqwUYvCpovdHFIbTPpTxPMVJX0LnVGmjAUQQ0fYdAiW1Y7YvQ=s180"
+              alt="Puzzle DuoGo icon"
+              onerror="this.style.display='none'; this.parentElement.textContent='🧩'"
+            />
+          </div>
+          <div class="card-title-group">
+            <div class="card-title">Puzzle DuoGo</div>
+            <span class="card-tag" style="--card-accent:#f0883e; background:rgba(240,136,62,.06);">Puzzle · Game</span>
+          </div>
+        </div>
+        <p class="card-desc">Swap &amp; Slide: the ultimate puzzle challenge. Intuitive mechanics, satisfying progression, and brain-bending levels for all ages.</p>
+        <div class="card-pills">
+          <span class="pill">Swap &amp; Slide</span>
+          <span class="pill">Brain Puzzle</span>
+          <span class="pill">All Ages</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-guide" href="https://jurassiclab2000-pixel.github.io/puzzle_duogo.html">User Guide →</a>
+        <a class="btn-play" style="background:#f0883e;" href="https://play.google.com/store/apps/details?id=com.jurassiclab.puzzleduogo" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+          Play
+        </a>
+      </div>
+    </div>
+
+    <!-- Math Age -->
+    <div class="app-card" style="--card-accent: #e3b341;">
+      <div class="card-top">
+        <div class="card-header">
+          <div class="app-icon-wrap">
+            <img
+              src="https://play-lh.googleusercontent.com/T5JpzQpMi2ixCN85n7sKvKrPJMp95RxCpHQ8fBGXkv4kIFNklMJbRJV3P-kLIz7ftw=s180"
+              alt="Math Age icon"
+              onerror="this.style.display='none'; this.parentElement.textContent='🧮'"
+            />
+          </div>
+          <div class="card-title-group">
+            <div class="card-title">Math Age</div>
+            <span class="card-tag" style="--card-accent:#e3b341; background:rgba(227,179,65,.06);">Math · Education</span>
+          </div>
+        </div>
+        <p class="card-desc">Fun math games and logic puzzles that sharpen your mental arithmetic. Great for kids, students, and anyone who loves a good number challenge.</p>
+        <div class="card-pills">
+          <span class="pill">Mental Math</span>
+          <span class="pill">Logic Puzzles</span>
+          <span class="pill">Education</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-guide" href="https://jurassiclab2000-pixel.github.io/mathage.html">User Guide →</a>
+        <a class="btn-play" style="background:#e3b341;" href="https://play.google.com/store/apps/details?id=com.jurassiclab.mathage" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+          Play
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <img src="img/jurassic-lab-avatar-small.png" alt="Jurassic Lab" style="width:32px;height:32px;border-radius:50%;opacity:.7;" />
+    <span>© 2026 Jurassic Lab. All rights reserved.</span>
+    <a href="https://jurassiclab2000-pixel.github.io/app-ads.txt">app-ads.txt</a>
+  </div>
+</footer>
 
 </body>
 </html>
