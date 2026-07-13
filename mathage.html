@@ -20,6 +20,7 @@
       --accent-cage: #4a90d9;
       --accent-rush: #3daa6b;
       --accent-magic: #e07a3f;
+      --accent-make: #d1477a;
       --text: #1a1232;
       --text-muted: #6b6380;
       --border: #ddd8f0;
@@ -199,6 +200,7 @@
     .tag-cage  { background: #dbeeff; color: var(--accent-cage); }
     .tag-rush  { background: #d4f5e5; color: var(--accent-rush); }
     .tag-magic { background: #fdeede; color: var(--accent-magic); }
+    .tag-make  { background: #fbe1ea; color: var(--accent-make); }
 
     .game-info h2 {
       font-family: 'Nunito', sans-serif;
@@ -329,6 +331,7 @@
     <span class="hero-pill">🧩 Math Cage</span>
     <span class="hero-pill">⚡ Num Rush</span>
     <span class="hero-pill">✨ Magic Square</span>
+    <span class="hero-pill">🎯 Make It 24</span>
   </div>
   <a class="hero-cta" href="https://play.google.com/store/apps/details?id=com.jurassiclab.mathage" target="_blank" rel="noopener">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.83 1-.83 1.5-.5l15 8.5-15 8.5c-.5.33-1.5.33-1.5-.5z"/></svg>
@@ -413,6 +416,25 @@
           <li data-i18n="magic_f1"></li>
           <li data-i18n="magic_f2"></li>
           <li data-i18n="magic_f3"></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Make It 24 -->
+  <div class="game-card">
+    <div class="game-card-inner">
+      <div class="game-screenshot">
+        <img src="img/mathage_make24.jpeg" alt="Make It 24" />
+      </div>
+      <div class="game-info">
+        <span class="game-tag tag-make">Game 05</span>
+        <h2>Make It 24</h2>
+        <p data-i18n="make24_desc"></p>
+        <ul class="game-features">
+          <li data-i18n="make24_f1"></li>
+          <li data-i18n="make24_f2"></li>
+          <li data-i18n="make24_f3"></li>
         </ul>
       </div>
     </div>
@@ -521,12 +543,12 @@ const i18n = {
   zh: {
     hero_badge: "🧮 數學益智遊戲集",
     hero_h1: "解鎖你的<em>數學腦</em>",
-    hero_sub: "四款經典數學益智遊戲，一個 App 搞定。挑戰邏輯、心算與速度極限。",
+    hero_sub: "五款經典數學益智遊戲，一個 App 搞定。挑戰邏輯、心算與速度極限。",
     cta_download: "Google Play 下載",
 
-    games_eyebrow: "四款遊戲模式",
+    games_eyebrow: "五款遊戲模式",
     games_title: "每一款都是獨特的腦力挑戰",
-    games_desc: "從邏輯填格到極速心算，MathAge 囊括四種截然不同的數學挑戰，適合各年齡層。",
+    games_desc: "從邏輯填格到極速心算，MathAge 囊括五種截然不同的數學挑戰，適合各年齡層。",
 
     cross_desc: "結合填字與算術的終極挑戰。每一行、每一列都藏著等式，在空格中填入正確的數字，讓所有算式同時成立。",
     cross_f1: "多方向等式同時推理，考驗純粹邏輯力",
@@ -548,6 +570,11 @@ const i18n = {
     magic_f2: "行列旁即時顯示目前加總，輔助推理",
     magic_f3: "提供 3×3、4×4 等多種尺寸挑戰",
 
+    make24_desc: "經典 24 點玩法的全新演繹！運用四個數字與加減乘除四則運算，讓最終結果等於 24，訓練你的組合思考與運算彈性。",
+    make24_f1: "自由組合加減乘除，訓練靈活的數字直覺",
+    make24_f2: "卡關時可使用提示，找回思考方向",
+    make24_f3: "支援 Undo 與 Reset，隨時重新挑戰",
+
     win_eyebrow: "過關體驗",
     win_title: "破關後的成就感",
     win_desc: "每次完成關卡，都能看到你的最佳時間紀錄，並獲得寶石獎勵。",
@@ -566,7 +593,7 @@ const i18n = {
 
     why_eyebrow: "為什麼選擇 MathAge？",
     why_title: "訓練大腦，就該這樣玩",
-    feat1_h: "全方位腦力訓練", feat1_p: "邏輯推理、心算速度、空間感知，四款遊戲各攻一個面向。",
+    feat1_h: "全方位腦力訓練", feat1_p: "邏輯推理、心算速度、空間感知，五款遊戲各攻一個面向。",
     feat2_h: "循序漸進的難度", feat2_p: "從「簡單」到「困難」，系統自動調整，隨你成長而成長。",
     feat3_h: "簡潔直覺的介面", feat3_p: "無干擾設計，沉浸在解謎的當下，清晰流暢的操作體驗。",
     feat4_h: "隨時隨地都能玩", feat4_p: "五分鐘碎片時間或長時間挑戰，由你決定。",
@@ -579,12 +606,12 @@ const i18n = {
   en: {
     hero_badge: "🧮 Math Puzzle Hub",
     hero_h1: "Unleash Your Inner<br><em>Math Wizard</em>",
-    hero_sub: "4 addictive math puzzles in one app. Challenge your logic, mental math, and speed.",
+    hero_sub: "5 addictive math puzzles in one app. Challenge your logic, mental math, and speed.",
     cta_download: "Download on Google Play",
 
-    games_eyebrow: "4 Game Modes",
+    games_eyebrow: "5 Game Modes",
     games_title: "A unique brain challenge in every mode",
-    games_desc: "From logic puzzles to speed math, MathAge packs four distinctly different challenges into one app — great for all ages.",
+    games_desc: "From logic puzzles to speed math, MathAge packs five distinctly different challenges into one app — great for all ages.",
 
     cross_desc: "The ultimate blend of crossword and arithmetic. Every row and column hides an equation — fill in the blanks so every formula holds true at the same time.",
     cross_f1: "Multi-directional equation solving — pure logic at work",
@@ -605,6 +632,11 @@ const i18n = {
     magic_f1: "Every row, column, and diagonal must match the target sum",
     magic_f2: "Running totals shown beside rows and columns to guide your thinking",
     magic_f3: "Multiple grid sizes including 3×3, 4×4, and larger",
+
+    make24_desc: "A fresh take on the classic 24-point game. Combine four numbers with addition, subtraction, multiplication, and division to reach exactly 24 — a true test of flexible number sense.",
+    make24_f1: "Freely combine +, −, ×, ÷ to train flexible number sense",
+    make24_f2: "Stuck? Use a hint to get back on track",
+    make24_f3: "Undo and Reset let you retry anytime",
 
     win_eyebrow: "Level Complete",
     win_title: "The satisfaction of clearing a puzzle",
@@ -637,12 +669,12 @@ const i18n = {
   zh_cn: {
     hero_badge: "🧮 数学益智游戏集",
     hero_h1: "解锁你的<em>数学脑</em>",  
-    hero_sub: "四款经典数学益智游戏，一个 App 搞定。挑战逻辑、心算与速度极限。",
+    hero_sub: "五款经典数学益智游戏，一个 App 搞定。挑战逻辑、心算与速度极限。",
     cta_download: "Google Play 下载",
 
-    games_eyebrow: "四款游戏模式",
+    games_eyebrow: "五款游戏模式",
     games_title: "每一款都是独特的脑力挑战",
-    games_desc: "从逻辑填格到极速心算，MathAge 囊括四种截然不同的数学挑战，适合各年龄层。",
+    games_desc: "从逻辑填格到极速心算，MathAge 囊括五种截然不同的数学挑战，适合各年龄层。",
 
     cross_desc: "结合填字与算术的终极挑战。每一行、每一列都藏着等式，在空格中填入正确的数字，让所有算式同时成立。",
     cross_f1: "多方向等式同时推理，考验纯粹逻辑力",
@@ -664,6 +696,11 @@ const i18n = {
     magic_f2: "行列旁实时显示目前加总，辅助推理",
     magic_f3: "提供 3×3、4×4 等多种尺寸挑战",
 
+    make24_desc: "经典 24 点玩法的全新演绎！运用四个数字与加减乘除四则运算，让最终结果等于 24，训练你的组合思考与运算弹性。",
+    make24_f1: "自由组合加减乘除，训练灵活的数字直觉",
+    make24_f2: "卡关时可使用提示，找回思考方向",
+    make24_f3: "支持 Undo 与 Reset，随时重新挑战",
+
     win_eyebrow: "过关体验",
     win_title: "破关后的成就感",
     win_desc: "每次完成关卡，都能看到你的最佳时间记录，并获得宝石奖励。",
@@ -682,7 +719,7 @@ const i18n = {
 
     why_eyebrow: "为什么选择 MathAge？",
     why_title: "训练大脑，就该这样玩",
-    feat1_h: "全方位脑力训练", feat1_p: "逻辑推理、心算速度、空间感知，四款游戏各攻一个面向。",
+    feat1_h: "全方位脑力训练", feat1_p: "逻辑推理、心算速度、空间感知，五款游戏各攻一个面向。",
     feat2_h: "循序渐进的难度", feat2_p: "从「简单」到「困难」，系统自动调整，随你成长而成长。",
     feat3_h: "简洁直觉的界面", feat3_p: "无干扰设计，沉浸在解谜的当下，清晰流畅的操作体验。",
     feat4_h: "随时随地都能玩", feat4_p: "五分钟碎片时间或长时间挑战，由你决定。",
@@ -695,12 +732,12 @@ const i18n = {
   ja: {
     hero_badge: "🧮 数学パズルゲーム集",
     hero_h1: "あなたの<em>数学脳</em>を解放しよう",
-    hero_sub: "4つの本格数学パズルを1つのアプリで。論理・暗算・スピードの限界に挑戦。",
+    hero_sub: "5つの本格数学パズルを1つのアプリで。論理・暗算・スピードの限界に挑戦。",
     cta_download: "Google Play でダウンロード",
 
-    games_eyebrow: "4つのゲームモード",
+    games_eyebrow: "5つのゲームモード",
     games_title: "それぞれが独自の脳トレチャレンジ",
-    games_desc: "論理パズルから高速暗算まで、MathAgeはあらゆる年齢層に向けた4つのユニークな数学挑戦を提供します。",
+    games_desc: "論理パズルから高速暗算まで、MathAgeはあらゆる年齢層に向けた5つのユニークな数学挑戦を提供します。",
 
     cross_desc: "クロスワードと算数を融合した究極のチャレンジ。すべての行と列に等式が隠されており、全てが成立するように空白を埋めましょう。",
     cross_f1: "複数方向の等式を同時に推理する純粋な論理力",
@@ -722,6 +759,11 @@ const i18n = {
     magic_f2: "行と列の横にリアルタイムの合計を表示",
     magic_f3: "3×3・4×4など複数サイズのグリッドに対応",
 
+    make24_desc: "クラシックな「24点」ゲームの新しい形。4つの数字と四則演算を組み合わせて、答えが24になるようにしましょう。柔軟な数的思考力が試されます。",
+    make24_f1: "四則演算を自由に組み合わせ、柔軟な数字感覚を鍛える",
+    make24_f2: "行き詰まったらヒントで方向性を確認",
+    make24_f3: "Undo と Reset でいつでも再挑戦可能",
+
     win_eyebrow: "クリア体験",
     win_title: "パズルをクリアした達成感",
     win_desc: "レベルをクリアするたびにベストタイムを確認し、ジェム報酬を獲得できます。",
@@ -740,7 +782,7 @@ const i18n = {
 
     why_eyebrow: "なぜMathAge？",
     why_title: "脳トレはこうあるべき",
-    feat1_h: "総合的な脳トレ",       feat1_p: "論理・暗算・空間認識力、4つのゲームがそれぞれ異なる能力を鍛えます。",
+    feat1_h: "総合的な脳トレ",       feat1_p: "論理・暗算・空間認識力、5つのゲームがそれぞれ異なる能力を鍛えます。",
     feat2_h: "段階的な難易度",       feat2_p: "簡単から難しいまで、あなたの成長に合わせて難易度が上がります。",
     feat3_h: "シンプルで直感的なUI", feat3_p: "余計な要素を排除したデザインで、パズルに集中できます。",
     feat4_h: "いつでもどこでも",     feat4_p: "5分の隙間時間でも、長時間のセッションでも、自分のペースで。",
@@ -753,12 +795,12 @@ const i18n = {
   ko: {
     hero_badge: "🧮 수학 퍼즐 게임 모음",
     hero_h1: "당신의 <em>수학 뇌</em>를 깨워라",
-    hero_sub: "4가지 중독성 강한 수학 퍼즐을 하나의 앱에서. 논리, 암산, 속도의 한계에 도전하세요.",
+    hero_sub: "5가지 중독성 강한 수학 퍼즐을 하나의 앱에서. 논리, 암산, 속도의 한계에 도전하세요.",
     cta_download: "Google Play에서 다운로드",
 
-    games_eyebrow: "4가지 게임 모드",
+    games_eyebrow: "5가지 게임 모드",
     games_title: "각기 다른 두뇌 챌린지",
-    games_desc: "논리 퍼즐부터 고속 암산까지, MathAge는 모든 연령대를 위한 4가지 독특한 수학 도전을 제공합니다.",
+    games_desc: "논리 퍼즐부터 고속 암산까지, MathAge는 모든 연령대를 위한 5가지 독특한 수학 도전을 제공합니다.",
 
     cross_desc: "크로스워드와 산수를 결합한 궁극의 도전. 모든 행과 열에 방정식이 숨겨져 있으며, 모든 식이 동시에 성립하도록 빈칸을 채우세요.",
     cross_f1: "다방향 방정식 추론으로 순수한 논리력 테스트",
@@ -780,6 +822,11 @@ const i18n = {
     magic_f2: "행과 열 옆에 현재 합계를 실시간으로 표시",
     magic_f3: "3×3, 4×4 등 다양한 크기의 그리드 제공",
 
+    make24_desc: "클래식 24 게임의 새로운 재해석! 네 개의 숫자와 사칙연산을 활용해 결과가 24가 되도록 만드세요. 유연한 숫자 감각을 훈련합니다.",
+    make24_f1: "사칙연산을 자유롭게 조합해 유연한 숫자 감각 훈련",
+    make24_f2: "막힐 때는 힌트로 방향을 다시 잡으세요",
+    make24_f3: "Undo와 Reset으로 언제든 다시 도전",
+
     win_eyebrow: "클리어 경험",
     win_title: "퍼즐을 클리어했을 때의 성취감",
     win_desc: "레벨을 완료할 때마다 최고 기록을 한눈에 확인하고 젬 보상을 획득하세요.",
@@ -798,7 +845,7 @@ const i18n = {
 
     why_eyebrow: "왜 MathAge인가요?",
     why_title: "두뇌 훈련, 이렇게 하세요",
-    feat1_h: "종합적인 두뇌 훈련", feat1_p: "논리, 암산 속도, 공간 인식 — 4가지 게임이 각각 다른 능력을 키웁니다.",
+    feat1_h: "종합적인 두뇌 훈련", feat1_p: "논리, 암산 속도, 공간 인식 — 5가지 게임이 각각 다른 능력을 키웁니다.",
     feat2_h: "점진적인 난이도",    feat2_p: "쉬움부터 어려움까지, 당신의 성장에 맞춰 도전이 계속됩니다.",
     feat3_h: "깔끔하고 직관적인 UI", feat3_p: "방해 요소 없는 디자인으로 퍼즐에만 집중할 수 있습니다.",
     feat4_h: "언제 어디서나",      feat4_p: "5분 짬을 이용하거나 긴 세션으로, 당신이 페이스를 결정하세요.",
