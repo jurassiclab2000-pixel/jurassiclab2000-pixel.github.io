@@ -26,3 +26,7 @@
 ### MathAge
 * [MathAge Privacy Policy](https://jurassiclab2000-pixel.github.io/mathage_privacy_policy.html)
 * [MathAge Overview](https://jurassiclab2000-pixel.github.io/mathage.html)
+
+### Outfit Memory
+* [Outfit Memory Privacy Policy](https://jurassiclab2000-pixel.github.io/outfitmemory_privacy_policy.html)
+
