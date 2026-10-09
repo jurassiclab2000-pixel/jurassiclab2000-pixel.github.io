@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Outfit Memory — Outfit Journal</title>
+  <meta name="description" content="Outfit Memory is a simple outfit journal. Snap what you wear and find any look again in seconds." />
+  <link rel="icon" href="img/outfitmemory-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2128;
+      --border: #21262d;
+      --accent: #f778ba;
+      --purple: #9f86e8;
+      --green: #8fb35a;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans JP', 'Hiragino Sans', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.75; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── LANGUAGE BAR ── */
+    .lang-bar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+      padding: 12px 16px;
+      background: rgba(13,17,23,.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-btn {
+      font-family: var(--sans); font-size: .8rem;
+      padding: 5px 12px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted); cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .lang-btn:hover { color: var(--text); border-color: var(--accent); }
+    .lang-btn.active { color: #0d1117; background: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center; padding: 72px 24px 56px; position: relative; overflow: hidden;
+      background: radial-gradient(ellipse 60% 50% at 50% -10%, rgba(247,119,186,.16) 0%, transparent 70%);
+    }
+    .hero-icon {
+      width: 96px; height: 96px; border-radius: 22px; display: block; margin: 0 auto 20px;
+      border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(247,119,186,.18);
+    }
+    .hero h1 { font-family: var(--mono); font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+    .hero .sub { margin-top: 12px; font-size: 1.1rem; color: var(--accent); font-weight: 600; }
+    .hero .desc { margin: 18px auto 0; max-width: 560px; color: var(--muted); font-size: .95rem; font-weight: 300; }
+    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 28px; }
+    .chip {
+      font-family: var(--mono); font-size: .75rem; padding: 6px 14px; border-radius: 20px;
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+      transition: border-color .2s, color .2s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-play {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 32px;
+      padding: 12px 24px; border-radius: 8px; background: var(--accent); color: #0d1117;
+      font-family: var(--mono); font-size: .85rem; font-weight: 600; letter-spacing: .04em;
+      transition: opacity .2s, transform .2s;
+    }
+    .btn-play:hover { opacity: .85; transform: translateY(-2px); }
+
+    /* ── FEATURE SECTIONS ── */
+    .feature { padding: 64px 24px; }
+    .feature:nth-of-type(even) { background: var(--surface); }
+    .feature-inner {
+      max-width: 880px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: center; gap: 56px;
+    }
+    .feature:nth-of-type(even) .feature-inner { flex-direction: row-reverse; }
+    .shot { flex: 0 0 auto; width: 280px; }
+    .shot img {
+      width: 100%; height: auto; display: block; border-radius: 22px;
+      border: 1px solid var(--border); box-shadow: 0 16px 48px rgba(0,0,0,.5);
+    }
+    .feature-text { flex: 1; min-width: 0; }
+    .label { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+    .feature-text h2 { font-family: var(--mono); font-size: 1.5rem; font-weight: 600; line-height: 1.3; margin: 6px 0 4px; }
+    .feature-text .tagline { color: var(--muted); font-size: .95rem; margin-bottom: 18px; }
+    .feature-text ul { list-style: none; display: grid; gap: 10px; }
+    .feature-text li {
+      position: relative; padding: 12px 14px 12px 40px; border-radius: 10px;
+      background: var(--bg); border: 1px solid var(--border); font-size: .9rem; color: #c9d1d9;
+    }
+    .feature:nth-of-type(even) .feature-text li { background: var(--surface2); }
+    .feature-text li::before {
+      content: ''; position: absolute; left: 16px; top: 21px; width: 10px; height: 10px; border-radius: 50%;
+      background: var(--dot, var(--accent));
+    }
+    .feature:nth-of-type(odd) { --dot: var(--purple); }
+    .feature:nth-of-type(even) { --dot: var(--green); }
+
+    /* ── WHY GRID ── */
+    .why { padding: 72px 24px; max-width: 880px; margin: 0 auto; text-align: center; }
+    .why h2 { font-family: var(--mono); font-size: 1.5rem; font-weight: 600; margin-bottom: 32px; }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; text-align: left; }
+    .why-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+      transition: border-color .2s, transform .2s;
+    }
+    .why-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .why-card .emoji { font-size: 1.6rem; }
+    .why-card h3 { font-family: var(--mono); font-size: .95rem; font-weight: 600; margin: 8px 0 4px; }
+    .why-card p { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 32px 24px 48px; border-top: 1px solid var(--border);
+      font-family: var(--mono); font-size: .75rem; color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 720px) {
+      .feature { padding: 48px 20px; }
+      .feature-inner, .feature:nth-of-type(even) .feature-inner { flex-direction: column; gap: 28px; }
+      .shot { width: min(260px, 70vw); }
+      .hero { padding: 52px 20px 44px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="lang-bar" role="group" aria-label="Language">
+  <button class="lang-btn" data-lang="zh-TW">🇹🇼 繁體中文</button>
+  <button class="lang-btn" data-lang="en">🇺🇸 English</button>
+  <button class="lang-btn" data-lang="zh-CN">🇨🇳 简体中文</button>
+  <button class="lang-btn" data-lang="ja">🇯🇵 日本語</button>
+  <button class="lang-btn" data-lang="ko">🇰🇷 한국어</button>
+</div>
+
+<section class="hero">
+  <img class="hero-icon" src="img/outfitmemory-icon.png" alt="Outfit Memory icon" />
+  <h1>Outfit Memory</h1>
+  <p class="sub" data-i18n="sub"></p>
+  <p class="desc" data-i18n="desc"></p>
+  <div class="chips">
+    <a class="chip" href="#timeline">🗓️ <span data-i18n="nav_timeline"></span></a>
+    <a class="chip" href="#capture">📸 <span data-i18n="nav_capture"></span></a>
+    <a class="chip" href="#browse">🔍 <span data-i18n="nav_browse"></span></a>
+    <a class="chip" href="#style">📊 <span data-i18n="nav_style"></span></a>
+    <a class="chip" href="#detail">👗 <span data-i18n="nav_detail"></span></a>
+  </div>
+  <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.jurassiclab.outfitmemory" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.04-.22l12.2-7.05-2.82-2.82-11.42 10.09zM20.54 9.3 17.3 7.43 14.23 10.5l3.08 3.08 3.23-1.87a2.01 2.01 0 0 0 0-3.41zM1.2.48A2 2 0 0 0 .5 2v20a2 2 0 0 0 .7 1.52L13.34 12 1.2.48zM5.22.46 16.64 7.5l-2.82 2.82L5.22.46z"/></svg>
+    Google Play
+  </a>
+</section>
+
+<!-- 01 Timeline -->
+<section class="feature" id="timeline">
+  <div class="feature-inner">
+    <div class="shot"><img src="img/outfitmemory_timeline.jpeg" alt="Outfit Timeline" loading="lazy" /></div>
+    <div class="feature-text">
+      <div class="label"><span data-i18n="feature"></span> 01</div>
+      <h2 data-i18n="t1_h"></h2>
+      <p class="tagline" data-i18n="t1_s"></p>
+      <ul>
+        <li data-i18n="t1_a"></li>
+        <li data-i18n="t1_b"></li>
+        <li data-i18n="t1_c"></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Capture -->
+<section class="feature" id="capture">
+  <div class="feature-inner">
+    <div class="shot"><img src="img/outfitmemory_capture.jpeg" alt="Capture Outfit" loading="lazy" /></div>
+    <div class="feature-text">
+      <div class="label"><span data-i18n="feature"></span> 02</div>
+      <h2 data-i18n="t2_h"></h2>
+      <p class="tagline" data-i18n="t2_s"></p>
+      <ul>
+        <li data-i18n="t2_a"></li>
+        <li data-i18n="t2_b"></li>
+        <li data-i18n="t2_c"></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 03 Browse -->
+<section class="feature" id="browse">
+  <div class="feature-inner">
+    <div class="shot"><img src="img/outfitmemory_browse.jpeg" alt="My Style grid" loading="lazy" /></div>
+    <div class="feature-text">
+      <div class="label"><span data-i18n="feature"></span> 03</div>
+      <h2 data-i18n="t3_h"></h2>
+      <p class="tagline" data-i18n="t3_s"></p>
+      <ul>
+        <li data-i18n="t3_a"></li>
+        <li data-i18n="t3_b"></li>
+        <li data-i18n="t3_c"></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 04 Style -->
+<section class="feature" id="style">
+  <div class="feature-inner">
+    <div class="shot"><img src="img/outfitmemory_style.jpeg" alt="My Style stats" loading="lazy" /></div>
+    <div class="feature-text">
+      <div class="label"><span data-i18n="feature"></span> 04</div>
+      <h2 data-i18n="t4_h"></h2>
+      <p class="tagline" data-i18n="t4_s"></p>
+      <ul>
+        <li data-i18n="t4_a"></li>
+        <li data-i18n="t4_b"></li>
+        <li data-i18n="t4_c"></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 05 Detail -->
+<section class="feature" id="detail">
+  <div class="feature-inner">
+    <div class="shot"><img src="img/outfitmemory_detail.jpeg" alt="My Outfit detail" loading="lazy" /></div>
+    <div class="feature-text">
+      <div class="label"><span data-i18n="feature"></span> 05</div>
+      <h2 data-i18n="t5_h"></h2>
+      <p class="tagline" data-i18n="t5_s"></p>
+      <ul>
+        <li data-i18n="t5_a"></li>
+        <li data-i18n="t5_b"></li>
+        <li data-i18n="t5_c"></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <h2 data-i18n="why_h"></h2>
+  <div class="why-grid">
+    <div class="why-card"><div class="emoji">📸</div><h3 data-i18n="w1_h"></h3><p data-i18n="w1_p"></p></div>
+    <div class="why-card"><div class="emoji">🗓️</div><h3 data-i18n="w2_h"></h3><p data-i18n="w2_p"></p></div>
+    <div class="why-card"><div class="emoji">🎨</div><h3 data-i18n="w3_h"></h3><p data-i18n="w3_p"></p></div>
+    <div class="why-card"><div class="emoji">🏷️</div><h3 data-i18n="w4_h"></h3><p data-i18n="w4_p"></p></div>
+    <div class="why-card"><div class="emoji">🔍</div><h3 data-i18n="w5_h"></h3><p data-i18n="w5_p"></p></div>
+    <div class="why-card"><div class="emoji">📊</div><h3 data-i18n="w6_h"></h3><p data-i18n="w6_p"></p></div>
+  </div>
+</section>
+
+<footer>
+  © 2026 JurassicLab ·
+  <a href="https://jurassiclab2000-pixel.github.io/">Home</a> ·
+  <a href="https://play.google.com/store/apps/details?id=com.jurassiclab.outfitmemory" target="_blank" rel="noopener">Google Play</a>
+</footer>
+
+<script>
+const I18N = {
+  en: {
+    title: "Outfit Memory — Outfit Journal",
+    sub: "Your outfit journal. Snap what you wear and find any look again in seconds.",
+    desc: "Add a photo, pick the colors, tag the occasion, and your outfit is saved on your personal timeline, ready to find again in seconds. No more scrolling through your camera roll wondering, “What did I wear with these pants last time?”",
+    nav_timeline: "Timeline", nav_capture: "Capture", nav_browse: "Browse", nav_style: "Style", nav_detail: "Detail",
+    feature: "Feature",
+    t1_h: "Snap & Save Every Look", t1_s: "Your outfit timeline, one tap at a time",
+    t1_a: "A monthly calendar marks every day you logged an outfit",
+    t1_b: "Tap any day to see the looks you wore, with their tags",
+    t1_c: "Move month by month with the arrows",
+    t2_h: "Save an Outfit in One Tap", t2_s: "Pick colors and tags in seconds",
+    t2_a: "Choose a photo and set the date you wore it",
+    t2_b: "Pick top and bottom colors from quick swatches, or choose Other",
+    t2_c: "Tap a suggested tag or type your own, then hit Save",
+    t3_h: "Find It Fast", t3_s: "Browse every look you've saved",
+    t3_a: "Search by tags or notes, like “denim jacket”",
+    t3_b: "A photo grid shows all your saved looks at a glance",
+    t3_c: "See how many looks you saved in a time range, such as the last 30 days",
+    t4_h: "See What You Wear Most", t4_s: "Your colors and combos, tracked automatically",
+    t4_a: "Count your outfits over the last 30 days and all time",
+    t4_b: "Top color combos ranked by how often you wear them, labeled Classic or Statement",
+    t4_c: "Common tags show the occasions you dress for most",
+    t5_h: "Repeat With Confidence", t5_s: "Rediscover pairings that always work",
+    t5_a: "Open any outfit to see the full photo, date, tags, and colors",
+    t5_b: "Get a pairing label and ideas for what else goes with your top color",
+    t5_c: "Edit or delete an entry anytime",
+    why_h: "Why You'll Love It",
+    w1_h: "Photo Journal", w1_p: "Every look saved with a photo, not just a note.",
+    w2_h: "Personal Timeline", w2_p: "See what you wore on any day at a glance.",
+    w3_h: "Color Picks", w3_p: "Set top and bottom colors in a tap.",
+    w4_h: "Smart Tags", w4_p: "Use suggested tags or type your own.",
+    w5_h: "Quick Search", w5_p: "Find any look again in seconds.",
+    w6_h: "Style Insights", w6_p: "Your favorite colors and combos, tracked for you."
+  },
+  "zh-TW": {
+    title: "Outfit Memory — 穿搭日記",
+    sub: "你的穿搭日記。拍下今天的穿著，幾秒鐘就能再找到任何一套搭配。",
+    desc: "加上一張照片、選好顏色、標記場合，這套穿搭就會存進你專屬的時間軸，隨時幾秒鐘找回來。再也不用在相簿裡一直滑，想著「上次這件褲子我是怎麼搭的？」",
+    nav_timeline: "時間軸", nav_capture: "記錄", nav_browse: "瀏覽", nav_style: "風格", nav_detail: "詳情",
+    feature: "功能",
+    t1_h: "拍下並保存每一套穿搭", t1_s: "你的穿搭時間軸，輕點一下就好",
+    t1_a: "月曆會標示每一天是否有記錄穿搭",
+    t1_b: "點選任何一天，就能看到當天的穿搭與標籤",
+    t1_c: "用箭頭按月份前後切換",
+    t2_h: "一鍵記錄穿搭", t2_s: "幾秒鐘選好顏色與標籤",
+    t2_a: "選一張照片，並設定穿著的日期",
+    t2_b: "用快速色塊選擇上衣與下身的顏色，或選「其他」",
+    t2_c: "點選建議標籤或自行輸入，再按儲存",
+    t3_h: "快速找到", t3_s: "瀏覽所有保存過的穿搭",
+    t3_a: "用標籤或備註搜尋，例如「牛仔外套」",
+    t3_b: "照片網格讓你一眼看完所有穿搭",
+    t3_c: "查看指定期間（例如最近 30 天）保存了多少套",
+    t4_h: "看看你最常穿什麼", t4_s: "顏色與搭配組合，自動為你統計",
+    t4_a: "統計最近 30 天與全部時間的穿搭數量",
+    t4_b: "依穿著次數排名的配色組合，並標示為「經典」或「亮點」",
+    t4_c: "常用標籤顯示你最常出席的場合",
+    t5_h: "安心再穿一次", t5_s: "重新發現那些百搭的配對",
+    t5_a: "開啟任一套穿搭，查看完整照片、日期、標籤與顏色",
+    t5_b: "取得配色評語，以及上衣顏色還能搭配什麼的靈感",
+    t5_c: "隨時編輯或刪除記錄",
+    why_h: "為什麼你會愛上它",
+    w1_h: "照片日記", w1_p: "每套穿搭都有照片，不只是文字筆記。",
+    w2_h: "個人時間軸", w2_p: "任何一天穿了什麼，一眼就知道。",
+    w3_h: "顏色選擇", w3_p: "輕點即可設定上衣與下身的顏色。",
+    w4_h: "智慧標籤", w4_p: "使用建議標籤，或輸入自己的。",
+    w5_h: "快速搜尋", w5_p: "幾秒鐘就能找回任何一套穿搭。",
+    w6_h: "風格洞察", w6_p: "你最愛的顏色與搭配，自動幫你統計。"
+  },
+  "zh-CN": {
+    title: "Outfit Memory — 穿搭日记",
+    sub: "你的穿搭日记。拍下今天的穿着，几秒钟就能再找到任何一套搭配。",
+    desc: "添加一张照片、选好颜色、标记场合，这套穿搭就会存进你专属的时间轴，随时几秒钟找回来。再也不用在相册里一直翻，想着“上次这条裤子我是怎么搭的？”",
+    nav_timeline: "时间轴", nav_capture: "记录", nav_browse: "浏览", nav_style: "风格", nav_detail: "详情",
+    feature: "功能",
+    t1_h: "拍下并保存每一套穿搭", t1_s: "你的穿搭时间轴，轻点一下就好",
+    t1_a: "日历会标示每一天是否有记录穿搭",
+    t1_b: "点选任何一天，就能看到当天的穿搭与标签",
+    t1_c: "用箭头按月份前后切换",
+    t2_h: "一键记录穿搭", t2_s: "几秒钟选好颜色与标签",
+    t2_a: "选一张照片，并设置穿着的日期",
+    t2_b: "用快速色块选择上衣与下装的颜色，或选“其他”",
+    t2_c: "点选建议标签或自行输入，再点保存",
+    t3_h: "快速找到", t3_s: "浏览所有保存过的穿搭",
+    t3_a: "用标签或备注搜索，例如“牛仔外套”",
+    t3_b: "照片网格让你一眼看完所有穿搭",
+    t3_c: "查看指定时间段（例如最近 30 天）保存了多少套",
+    t4_h: "看看你最常穿什么", t4_s: "颜色与搭配组合，自动为你统计",
+    t4_a: "统计最近 30 天与全部时间的穿搭数量",
+    t4_b: "按穿着次数排名的配色组合，并标示为“经典”或“亮点”",
+    t4_c: "常用标签显示你最常出席的场合",
+    t5_h: "安心再穿一次", t5_s: "重新发现那些百搭的配对",
+    t5_a: "打开任一套穿搭，查看完整照片、日期、标签与颜色",
+    t5_b: "获取配色评语，以及上衣颜色还能搭配什么的灵感",
+    t5_c: "随时编辑或删除记录",
+    why_h: "为什么你会爱上它",
+    w1_h: "照片日记", w1_p: "每套穿搭都有照片，不只是文字笔记。",
+    w2_h: "个人时间轴", w2_p: "任何一天穿了什么，一眼就知道。",
+    w3_h: "颜色选择", w3_p: "轻点即可设置上衣与下装的颜色。",
+    w4_h: "智能标签", w4_p: "使用建议标签，或输入自己的。",
+    w5_h: "快速搜索", w5_p: "几秒钟就能找回任何一套穿搭。",
+    w6_h: "风格洞察", w6_p: "你最爱的颜色与搭配，自动帮你统计。"
+  },
+  ja: {
+    title: "Outfit Memory — コーデ日記",
+    sub: "あなたのコーデ日記。着た服を撮るだけで、どんな着こなしも数秒で見つかります。",
+    desc: "写真を追加して、色を選び、シーンのタグを付けるだけ。コーデはあなた専用のタイムラインに保存され、数秒で見つけ直せます。カメラロールをスクロールしながら「前にこのパンツ、何と合わせたっけ？」と悩むのはもう終わりです。",
+    nav_timeline: "タイムライン", nav_capture: "記録", nav_browse: "一覧", nav_style: "スタイル", nav_detail: "詳細",
+    feature: "機能",
+    t1_h: "すべてのコーデを撮って保存", t1_s: "ワンタップで作るコーデタイムライン",
+    t1_a: "コーデを記録した日がカレンダーに表示されます",
+    t1_b: "日付をタップすると、その日のコーデとタグを確認できます",
+    t1_c: "矢印で月ごとに切り替えられます",
+    t2_h: "ワンタップでコーデを保存", t2_s: "色とタグを数秒で選択",
+    t2_a: "写真を選んで、着た日付を設定します",
+    t2_b: "トップスとボトムスの色をスウォッチから選択、または「その他」を選択",
+    t2_c: "おすすめタグをタップするか自分で入力して、保存を押すだけ",
+    t3_h: "すばやく見つける", t3_s: "保存したコーデをまとめてチェック",
+    t3_a: "タグやメモで検索できます（例：「デニムジャケット」）",
+    t3_b: "写真グリッドで保存したコーデを一目で確認",
+    t3_c: "直近30日など、期間ごとの保存数を確認できます",
+    t4_h: "よく着る服がわかる", t4_s: "色と組み合わせを自動で集計",
+    t4_a: "直近30日とこれまでのコーデ数をカウント",
+    t4_b: "着用回数順の配色ランキングに「定番」「主役」のラベル付き",
+    t4_c: "よく使うタグで、普段のシーンがわかります",
+    t5_h: "自信を持ってリピート", t5_s: "間違いのない組み合わせを再発見",
+    t5_a: "コーデを開くと、写真・日付・タグ・色をまとめて確認できます",
+    t5_b: "配色のラベルと、トップスの色に合う他の組み合わせのヒントを表示",
+    t5_c: "記録はいつでも編集・削除できます",
+    why_h: "選ばれる理由",
+    w1_h: "フォトジャーナル", w1_p: "メモだけでなく、写真でコーデを保存。",
+    w2_h: "マイタイムライン", w2_p: "どの日に何を着たか、ひと目でわかります。",
+    w3_h: "カラー選択", w3_p: "トップスとボトムスの色をタップで設定。",
+    w4_h: "スマートタグ", w4_p: "おすすめタグも、自分のタグも使えます。",
+    w5_h: "かんたん検索", w5_p: "どのコーデも数秒で見つかります。",
+    w6_h: "スタイル分析", w6_p: "お気に入りの色や組み合わせを自動で集計。"
+  },
+  ko: {
+    title: "Outfit Memory — 코디 일기",
+    sub: "나만의 코디 일기. 입은 옷을 찍어 두면 어떤 룩이든 몇 초 만에 다시 찾을 수 있어요.",
+    desc: "사진을 추가하고, 색상을 고르고, 상황 태그를 붙이면 코디가 나만의 타임라인에 저장되어 몇 초 만에 다시 찾을 수 있어요. 갤러리를 계속 넘기며 “지난번에 이 바지에 뭘 입었더라?” 고민할 필요가 없어요.",
+    nav_timeline: "타임라인", nav_capture: "기록", nav_browse: "둘러보기", nav_style: "스타일", nav_detail: "상세",
+    feature: "기능",
+    t1_h: "모든 룩을 찍고 저장하세요", t1_s: "한 번의 탭으로 만드는 코디 타임라인",
+    t1_a: "코디를 기록한 날이 달력에 표시돼요",
+    t1_b: "날짜를 탭하면 그날의 코디와 태그를 볼 수 있어요",
+    t1_c: "화살표로 월별로 넘겨 볼 수 있어요",
+    t2_h: "한 번에 코디 저장", t2_s: "몇 초 만에 색상과 태그 선택",
+    t2_a: "사진을 고르고 입은 날짜를 설정해요",
+    t2_b: "상의와 하의 색상을 빠르게 고르거나 ‘기타’를 선택해요",
+    t2_c: "추천 태그를 탭하거나 직접 입력한 뒤 저장을 누르세요",
+    t3_h: "빠르게 찾기", t3_s: "저장한 모든 룩을 둘러보세요",
+    t3_a: "태그나 메모로 검색해요 (예: “데님 재킷”)",
+    t3_b: "사진 그리드로 저장한 코디를 한눈에 확인해요",
+    t3_c: "최근 30일 등 기간별 저장 개수를 볼 수 있어요",
+    t4_h: "가장 많이 입은 옷 확인", t4_s: "색상과 조합을 자동으로 집계해요",
+    t4_a: "최근 30일과 전체 기간의 코디 수를 집계해요",
+    t4_b: "착용 횟수 순위의 색상 조합에 ‘클래식’, ‘포인트’ 라벨이 붙어요",
+    t4_c: "자주 쓰는 태그로 가장 많이 입는 상황을 알 수 있어요",
+    t5_h: "자신 있게 다시 입기", t5_s: "언제나 잘 어울리는 조합을 다시 발견하세요",
+    t5_a: "코디를 열면 전체 사진, 날짜, 태그, 색상을 볼 수 있어요",
+    t5_b: "조합 라벨과 상의 색상에 어울리는 다른 아이디어를 확인해요",
+    t5_c: "기록은 언제든 수정하거나 삭제할 수 있어요",
+    why_h: "이래서 좋아요",
+    w1_h: "포토 저널", w1_p: "메모만이 아니라 사진으로 코디를 저장해요.",
+    w2_h: "나만의 타임라인", w2_p: "어느 날 무엇을 입었는지 한눈에 확인해요.",
+    w3_h: "색상 선택", w3_p: "상의와 하의 색상을 탭 한 번으로 설정해요.",
+    w4_h: "스마트 태그", w4_p: "추천 태그를 쓰거나 직접 입력하세요.",
+    w5_h: "빠른 검색", w5_p: "어떤 룩이든 몇 초 만에 찾을 수 있어요.",
+    w6_h: "스타일 인사이트", w6_p: "좋아하는 색상과 조합을 자동으로 집계해요."
+  }
+};
+
+function detectLang() {
+  try { const s = localStorage.getItem('om_lang'); if (s && I18N[s]) return s; } catch (e) {}
+  const l = (navigator.language || 'en').toLowerCase();
+  if (l.startsWith('zh')) return (l.includes('cn') || l.includes('hans')) ? 'zh-CN' : 'zh-TW';
+  if (l.startsWith('ja')) return 'ja';
+  if (l.startsWith('ko')) return 'ko';
+  return 'en';
+}
+
+function setLang(code) {
+  const d = I18N[code] || I18N.en;
+  document.documentElement.lang = code;
+  document.title = d.title;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = d[el.dataset.i18n];
+    if (v !== undefined) el.textContent = v;
+  });
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === code));
+  try { localStorage.setItem('om_lang', code); } catch (e) {}
+}
+
+document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+setLang(detectLang());
+</script>
+</body>
+</html>
