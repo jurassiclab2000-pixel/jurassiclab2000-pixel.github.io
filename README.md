@@ -29,4 +29,6 @@
 
 ### Outfit Memory
 * [Outfit Memory Privacy Policy](https://jurassiclab2000-pixel.github.io/outfitmemory_privacy_policy.html)
+* [Outfit Memory - Learn More](https://jurassiclab2000-pixel.github.io/outfit_memory.html)
+* [Outfit Memory - Terms of Use](https://jurassiclab2000-pixel.github.io/outfit_terms_of_use.html)
 
