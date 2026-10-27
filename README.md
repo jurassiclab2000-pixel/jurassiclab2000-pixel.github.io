@@ -34,3 +34,4 @@
 
 ### CopyMe 
 * [CopyMe Privacy Policy](https://jurassiclab2000-pixel.github.io/copyme_privacy_policy.html)
+* [CopyMe - Terms of Use](https://jurassiclab2000-pixel.github.io/copyme_terms_of_use.html)
