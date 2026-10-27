@@ -32,3 +32,5 @@
 * [Outfit Memory - Learn More](https://jurassiclab2000-pixel.github.io/outfit_memory.html)
 * [Outfit Memory - Terms of Use](https://jurassiclab2000-pixel.github.io/outfit_terms_of_use.html)
 
+### CopyMe 
+* [CopyMe Privacy Policy](https://jurassiclab2000-pixel.github.io/copyme_privacy_policy.html)
