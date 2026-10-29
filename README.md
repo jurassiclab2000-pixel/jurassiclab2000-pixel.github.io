@@ -2,6 +2,7 @@
 
 ## Jurassic Lab App page
 * [Jurassic Lab](https://jurassiclab2000-pixel.github.io/)
+* [Jurassic Lab in CF](https://jurassiclab.pages.dev/)
 * [Jurassic Lab in netlify](https://jurassiclab.netlify.app/)
   
 ## app-ads.txt
